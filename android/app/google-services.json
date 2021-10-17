@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "191749796740",
+    "project_id": "everlong-122db",
+    "storage_bucket": "everlong-122db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191749796740:android:bee061f31b2df7f00063d1",
+        "android_client_info": {
+          "package_name": "co.notero.everlong"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191749796740-pb4jkp95b6ho1t93j5h7a2ej201qjg0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYc55-WTqve-dfiF4CUo_MjpGxk0AEFoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191749796740-pb4jkp95b6ho1t93j5h7a2ej201qjg0k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191749796740-9durul4upkm2rjsdodv5rm2sluafscrh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.notero.everlong"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
