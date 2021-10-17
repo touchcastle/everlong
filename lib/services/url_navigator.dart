@@ -33,7 +33,6 @@ class UrlHandler {
 
   static void cancel() => uniLinkSub?.cancel();
 
-  ///TODO: Need to test init link (from cold start)
   static void handleDynamicLink(BuildContext context) async {
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData? dynamicLink) async {

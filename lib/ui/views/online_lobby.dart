@@ -30,7 +30,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
 
   double _dialogRatio() => Setting.isTablet() ? 0.6 : 0.8;
   double _logoRatio() => Setting.isTablet() ? 0.8 : 1;
-  double _topSpaceRatio() => Setting.isTablet() ? 0.05 : 0.1;
+  double _topSpaceRatio() => Setting.isTablet() ? 0.05 : 0.05;
   String _header() =>
       widget.lobbyType == LobbyType.join ? kJoinHeader : kCreateHeader;
 

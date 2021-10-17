@@ -9,7 +9,6 @@ import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/constants.dart';
 
-///TODO: organize
 class OnlineMemberList extends StatefulWidget {
   @override
   _OnlineMemberListState createState() => new _OnlineMemberListState();
