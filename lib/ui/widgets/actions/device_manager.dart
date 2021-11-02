@@ -23,7 +23,7 @@ class _DeviceManagerState extends State<DeviceManager> {
       isActive: _isShow,
       icon: svgIcon(
         name: kDeviceManageIcon,
-        width: kIconWidth2,
+        width: kIconWidth,
         color: buttonLabelColor(isActive: _isShow),
       ),
       text: Text(kDeviceManager,

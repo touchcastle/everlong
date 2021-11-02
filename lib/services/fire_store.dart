@@ -9,11 +9,14 @@ class FireStore {
   /// Collection in firestore
   late CollectionReference col;
 
+  /// Message collection
+  late CollectionReference messageCol;
+
   /// Member collection
   late CollectionReference membersCol;
 
-  /// Message collection
-  late CollectionReference messageCol;
+  /// Config collection
+  // late CollectionReference configsCol;
 
   /// Periodic function for check member's state function.
   Timer? _clockIn;
@@ -33,13 +36,19 @@ class FireStore {
   CollectionReference getCollection() =>
       FirebaseFirestore.instance.collection(kFireStoreCollection);
 
+  Future prepareCollections(String roomID) async {
+    messageCol = col.doc(roomID).collection(kFireStoreMessageCol);
+    membersCol = col.doc(roomID).collection(kFireStoreMemberCol);
+    // configsCol = col.doc(roomID).collection('configs');
+  }
+
   /// For message and session control value.
   Future addSessionMessageAndCtrl(
       String roomID, String type, String value, String sender) async {
     if (await Setting.isConnectToInternet()) {
-      print('Firebase write: Add MIDI field');
       // await col
       // .doc(roomID)
+      print('write: $value');
       await messageCol
           .doc(kFireStoreMessageDoc)
           .set(
@@ -53,29 +62,8 @@ class FireStore {
         sessionID: roomID,
         sender: sender,
       );
-      // if (type == 'message') await analytic.logSessionAnalytic(event: );
     }
   }
-
-  // /// For message and session control value.
-  // Future sendMIDImessage(String roomID, String value, String sender) async {
-  //   if (await Setting.isConnectToInternet()) {
-  //     print('Firebase write: Add MIDI field');
-  //     await col
-  //         .doc(roomID)
-  //         .update(
-  //           {'type': 'message', 'value': value, 'sender': sender},
-  //         )
-  //         .then((value) => print("Message sent"))
-  //         .catchError((error) => print("Failed to add message: $error"));
-  //     await analytic.logSessionAnalytic(
-  //       event: 'midi_message',
-  //       sessionID: roomID,
-  //       sender: sender,
-  //     );
-  //     // if (type == 'message') await analytic.logSessionAnalytic(event: );
-  //   }
-  // }
 
   /// For other custom value.
   Future addColCustomField(
@@ -87,6 +75,8 @@ class FireStore {
       print('Firebase write: Add custom field: $value');
       await col
           .doc(roomID)
+          // await configsCol
+          //     .doc(kFireStoreConfigDoc)
           .set({fieldName: value}, SetOptions(merge: true))
           .then((value) => print("Message sent"))
           .catchError((error) => print("Failed to add message: $error"));
@@ -98,42 +88,15 @@ class FireStore {
     }
   }
 
-  // Future updateColCustomField(
-  //     {required String roomID,
-  //     required String fieldName,
-  //     required dynamic value,
-  //     required String sender}) async {
-  //   if (await Setting.isConnectToInternet()) {
-  //     print('Firebase write: Add custom field');
-  //     await col
-  //         .doc(roomID)
-  //         .update({fieldName: value}, SetOptions(merge: true))
-  //         .then((value) => print("Message updated"))
-  //         .catchError((error) => print("Failed to add message: $error"));
-  //     await analytic.logSessionAnalytic(
-  //       event: 'room_info_update',
-  //       sessionID: roomID,
-  //       sender: sender,
-  //     );
-  //   }
-  // }
-
-  Future getMessageCol(String roomID) async {
-    messageCol = col.doc(roomID).collection('messages');
-  }
-
   /// Function to add member to room. and periodically update timestamp
   /// to cloud for check member's state function.
   Future addMember(String roomID, String memberID, String name,
       {required bool isHost}) async {
-    membersCol = col.doc(roomID).collection('members');
+    // membersCol = col.doc(roomID).collection('members');
     await _setMember(roomID, memberID, name, isHost);
 
     _clockIn = Timer.periodic(kClockInPeriod,
         (Timer t) => _clockInMember(roomID, memberID, name, isHost));
-    // // _keepAlive = Timer.periodic(Duration(seconds: 10), (Timer t) async {
-    // //   await _updateMember(roomID, memberID, name, isHost);
-    // // });
   }
 
   /// Cloud set function for member
@@ -163,7 +126,6 @@ class FireStore {
   Future _clockInMember(
       String roomID, String memberID, String name, bool isHost) async {
     if (await Setting.isConnectToInternet()) {
-      print('Firebase write: Clock in member');
       await membersCol
           .doc(memberID)
           .update({'lastSeen': DateTime.now().millisecondsSinceEpoch})
@@ -180,8 +142,10 @@ class FireStore {
 
   Future<int> countMember(String roomID) async {
     int _count = 0;
+    print('aa');
     CollectionReference _memberCollection =
-        col.doc(roomID).collection('members');
+        col.doc(roomID).collection(kFireStoreMemberCol);
+    print('bb');
     await _memberCollection.get().then((querySnapshot) {
       final _members = querySnapshot.docs.map((doc) => doc.data()).toList();
       _count = _members.length;
@@ -239,14 +203,20 @@ class FireStore {
   }
 
   /// To get room's field[field] data.
-  Future<dynamic> getRoomData(
+  Future<dynamic> getRoomConfig(
       {required String sessionID,
       required String field,
       required String sender}) async {
     dynamic _result;
-    if (await Setting.isConnectToInternet())
-      await col.doc(sessionID).get().then(
-          (value) => value.data() != null ? _result = value[field] : null);
+    // if (await Setting.isConnectToInternet())
+    await col
+        .doc(sessionID)
+        .get()
+        .then((value) => value.data() != null ? _result = value[field] : null);
+    // await configsCol
+    //     .doc(kFireStoreConfigDoc)
+    //     .get()
+    //     .then((value) => value.data() != null ? _result = value[field] : null);
     await analytic.logSessionAnalytic(
       event: 'session_query',
       sessionID: sessionID,

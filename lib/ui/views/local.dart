@@ -28,6 +28,7 @@ class _LocalPageState extends State<LocalPage> {
         .read<BluetoothControl>()
         .collectScanResult()
         .listen((result) => result ? setState(() {}) : null);
+    // Setting.currentContext = context;
   }
 
   void _swiper(DragEndDetails details) {
@@ -40,11 +41,14 @@ class _LocalPageState extends State<LocalPage> {
 
   void dispose() {
     Setting.sessionMode = SessionMode.none;
+    Setting.currentContext = null;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    Setting.deviceWidth = MediaQuery.of(context).size.width;
+    Setting.deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kLocalAccentColor,
@@ -66,7 +70,10 @@ class _LocalPageState extends State<LocalPage> {
                         context.watch<Classroom>().showList &&
                                 !Setting.isTablet()
                             ? SizedBox.shrink()
-                            : Expanded(flex: 1, child: Screen()),
+                            : Expanded(
+                                flex: 1,
+                                child: Screen(),
+                              ),
                         context.watch<Classroom>().showList
                             ? Expanded(
                                 flex: 1,

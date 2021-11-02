@@ -1,14 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:image/image.dart' as image;
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image/image.dart' as image;
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/images.dart';
 import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/constants.dart';
 
 class LatencySelect extends StatefulWidget {
@@ -18,10 +21,13 @@ class LatencySelect extends StatefulWidget {
 
 class _LatencySelectState extends State<LatencySelect> {
   ui.Image? thumbImage;
+  DrawableRoot? svgRoot;
+  final String rawSvg = kSliderThumbIcon;
 
   @override
   void initState() {
     loadImage(kSliderImage);
+    loadSVG();
     super.initState();
   }
 
@@ -30,6 +36,10 @@ class _LatencySelectState extends State<LatencySelect> {
     final bytes = data.buffer.asUint8List();
     final image = await decodeImageFromList(bytes);
     setState(() => this.thumbImage = image);
+  }
+
+  Future loadSVG() async {
+    svgRoot = await svg.fromSvgString(rawSvg, rawSvg);
   }
 
   Future getUiImage(String imageAssetPath, int height, int width) async {
@@ -73,7 +83,8 @@ class _LatencySelectState extends State<LatencySelect> {
             trackHeight: 15,
             // trackShape: RectangularSliderTrackShape(),
             trackShape: RoundedRectSliderTrackShape(),
-            thumbShape: SliderThumbImage(thumbImage),
+            // thumbShape: SliderThumbImage(thumbImage),
+            thumbShape: SliderThumbImage(svgRoot),
           ),
           child: Slider(
             value: Setting.noteDelayScale,
@@ -105,9 +116,17 @@ class _LatencySelectState extends State<LatencySelect> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(kSettingLatencyLow2, style: dialogDetail(color: kRed1)),
-                  Text(kSettingLatencyHigh2,
-                      style: dialogDetail(color: kTextColorDark),
-                      textAlign: TextAlign.end)
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(kSettingLatencyHigh2,
+                            style: dialogDetail(color: kTextColorDark),
+                            textAlign: TextAlign.end),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ],
@@ -119,7 +138,8 @@ class _LatencySelectState extends State<LatencySelect> {
 }
 
 class SliderThumbImage extends SliderComponentShape {
-  final ui.Image? image;
+  // final ui.Image? image;
+  final DrawableRoot? image;
 
   SliderThumbImage(this.image);
 
@@ -141,16 +161,44 @@ class SliderThumbImage extends SliderComponentShape {
       required double textScaleFactor,
       required double value}) {
     final canvas = context.canvas;
-    final imageWidth = image!.width;
-    final imageHeight = image!.height;
+    Size desiredSize = Size(60, 60);
+    canvas.save();
+// [center] below is the Offset of the center of the area where I want the Svg to be drawn
+    canvas.translate(center.dx - desiredSize.width / 2,
+        center.dy - desiredSize.height / 2.3);
 
-    Offset imageOffset = Offset(
-      center.dx - (imageWidth / 2),
-      center.dy - (imageHeight / 2),
-    );
-
-    Paint paint = Paint()..filterQuality = FilterQuality.high;
-
-    canvas.drawImage(image!, imageOffset, paint);
+    Size svgSize = image!.viewport.size;
+    var matrix = Matrix4.identity();
+    matrix.scale(
+        desiredSize.width / svgSize.width, desiredSize.height / svgSize.height);
+    canvas.transform(matrix.storage);
+    image!.draw(canvas, Rect.zero);
+    canvas.restore();
   }
+
+  // @override
+  // void paint(PaintingContext context, Offset center,
+  //     {required Animation<double> activationAnimation,
+  //     required Animation<double> enableAnimation,
+  //     required bool isDiscrete,
+  //     required TextPainter labelPainter,
+  //     required RenderBox parentBox,
+  //     required Size sizeWithOverflow,
+  //     required SliderThemeData sliderTheme,
+  //     required TextDirection textDirection,
+  //     required double textScaleFactor,
+  //     required double value}) {
+  //   final canvas = context.canvas;
+  //   final imageWidth = image!.width;
+  //   final imageHeight = image!.height;
+  //
+  //   Offset imageOffset = Offset(
+  //     center.dx - (imageWidth / 2),
+  //     center.dy - (imageHeight / 2),
+  //   );
+  //
+  //   Paint paint = Paint()..filterQuality = FilterQuality.high;
+  //
+  //   canvas.drawImage(image!, imageOffset, paint);
+  // }
 }

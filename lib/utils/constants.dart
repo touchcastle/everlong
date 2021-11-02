@@ -21,9 +21,12 @@ const String kLocalId = 'local_screen';
 const String kOnlineLobbyId = 'online_lobby';
 const String kOnlineRoomId = 'online_room';
 
-///Google config.
+///Google and Room config.
+///CHECK FIRESTORE RULES WHEN UPDATE !!
 const String kFireStoreCollection = 'notero_mirror';
+const String kFireStoreMessageCol = 'messages';
 const String kFireStoreMessageDoc = 'message';
+const String kFireStoreMemberCol = 'members';
 const String kPrefix = 'https://notero.page.link';
 const String kDisplayUrl = 'https://notero.app';
 const String kBundle = 'co.notero.everlong';

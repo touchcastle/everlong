@@ -39,10 +39,15 @@ class GlobalTopMenu extends StatelessWidget {
             ],
           ),
           Setting.isOnline()
-              ? roomDetail(
-                  name: context.watch<Online>().myRoomName,
-                  id: context.read<Online>().roomID,
-                  isHost: context.watch<Online>().isRoomHost,
+              ? Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: roomDetail(
+                      name: context.watch<Online>().myRoomName,
+                      id: context.read<Online>().roomID,
+                      isHost: context.watch<Online>().isRoomHost,
+                    ),
+                  ),
                 )
               : SizedBox.shrink(),
         ],

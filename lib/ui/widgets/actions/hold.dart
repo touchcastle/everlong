@@ -51,11 +51,17 @@ class _HoldState extends State<Hold> with SingleTickerProviderStateMixin {
                     : Setting.isOnline()
                         ? kTextColorLight
                         : kLocalLabelColor,
-                width: kIconWidth2),
+                width: kIconWidth),
         text: Text(context.watch<Classroom>().isHolding ? kToUnHold : kToHold,
             style: buttonTextStyle(
-                isActive: context.watch<Classroom>().isHolding,
-                isVertical: true),
+              isActive: context.watch<Classroom>().isHolding,
+              isVertical: true,
+              color: context.watch<Classroom>().isHolding
+                  ? _colorTween.value
+                  : Setting.isOnline()
+                      ? kTextColorLight
+                      : kLocalLabelColor,
+            ),
             textAlign: TextAlign.center),
         onPressed: () async {
           if (Setting.sessionMode == SessionMode.offline) {

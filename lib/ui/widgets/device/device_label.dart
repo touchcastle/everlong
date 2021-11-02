@@ -88,8 +88,17 @@ class DeviceLabel extends StatelessWidget {
                 width: _hostIconAreaWidth,
                 child: _showAsMaster() ? _showHostIcon() : SizedBox.shrink()),
             SizedBox(width: 3),
-            _showConnectStatus(),
-            _showAsMaster() ? _showMasterText() : SizedBox.shrink(),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _showConnectStatus(),
+                    _showAsMaster() ? _showMasterText() : SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
           ]),
         ),
       ],

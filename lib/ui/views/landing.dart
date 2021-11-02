@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/bluetooth.dart';
 import 'package:everlong/services/classroom.dart';
+import 'package:everlong/services/online.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/device_db.dart';
@@ -36,6 +37,7 @@ class _LandingScreenState extends State<LandingScreen> {
       Staff.staffList = Staff.genStaffList();
       Piano.keyList = Piano.generateKeysList();
       // UrlHandler.handleDynamicLink(context);
+      await context.read<Online>().initFirebase();
       Navigator.of(context).pushReplacement(PageRouteBuilder(
           settings: RouteSettings(name: kMainPageName),
           transitionDuration: kLandingTransitionDur,

@@ -22,7 +22,7 @@ class Save extends StatelessWidget {
       ),
       icon: svgIcon(
         name: kSaveIcon,
-        width: kIconWidth2,
+        width: kIconWidth,
         color: kTextColorRed,
       ),
       onPressed: this.onPressed,

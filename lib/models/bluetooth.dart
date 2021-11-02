@@ -6,9 +6,8 @@ import 'package:rxdart/rxdart.dart';
 import 'dart:typed_data';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
-import 'package:everlong/services/staff.dart';
 import 'package:everlong/services/online.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/midi.dart';
 
 enum ConnectionState { connected, disconnected, working }
@@ -62,6 +61,12 @@ class BLEDevice extends ChangeNotifier {
   /// keep update and store device's connection state in this parameter.
   BluetoothDeviceState lastKnownState;
 
+  /// was connected before.
+  bool onceConnected = false;
+
+  /// intentionally disconnect.
+  bool userDisconnect = false;
+
   BLEDevice(this._classroom, this._online,
       {required this.device,
       this.isConnecting = false,
@@ -113,6 +118,7 @@ class BLEDevice extends ChangeNotifier {
   /// Connected Event(Device stage) handler
   void _onConnected() async {
     this.lastKnownState = BluetoothDeviceState.connected;
+    this.onceConnected = true;
     // if (Platform.isAndroid) this._requestMTU();
     await this._getMIDIService();
     await this._getMIDICharacteristic();
@@ -153,6 +159,15 @@ class BLEDevice extends ChangeNotifier {
 
   /// Disconnected Event(Device stage) handler
   void _onDisconnected() async {
+    print('Lost connection from ${this.displayName}');
+    print(userDisconnect);
+    if (!this.userDisconnect &&
+        this.onceConnected &&
+        Setting.currentContext != null) {
+      Snackbar.show(Setting.currentContext!,
+          text: 'Lost connection from ${this.displayName}');
+    }
+    this.userDisconnect = false;
     this.isExpanding = false;
     this.lastKnownState = BluetoothDeviceState.disconnected;
     await this.inputSubscribe?.cancel();
@@ -162,7 +177,10 @@ class BLEDevice extends ChangeNotifier {
   }
 
   /// Disconnect device
-  Future disconnect() async => await this.device.disconnect();
+  Future disconnect() async {
+    userDisconnect = true;
+    await this.device.disconnect();
+  }
 
   Future _getMIDIService() async {
     List<BluetoothService> _services = await this.device.discoverServices();

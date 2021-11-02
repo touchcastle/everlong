@@ -48,7 +48,7 @@ class _ResetState extends State<Reset> with SingleTickerProviderStateMixin {
           child: svgIcon(
               name: kResetIcon,
               color: buttonLabelColor(isActive: _isResetting),
-              width: kIconWidth2 - 3)),
+              width: kIconWidth - 3)),
       text: Text(
         _isResetting ? kResetting : kResetLight,
         style: buttonTextStyle(isActive: _isResetting, isVertical: true),

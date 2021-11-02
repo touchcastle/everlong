@@ -60,7 +60,7 @@ class MainMenuButton extends StatelessWidget {
             ),
             icon: svgIcon(
               name: _icon(),
-              width: kIconWidth2,
+              width: kIconWidth,
               color: buttonLabelColor(color: Colors.white),
             ),
             onPressed: () {

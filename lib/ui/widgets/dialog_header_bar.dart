@@ -32,14 +32,25 @@ Container dialogHeaderBar({
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               titleIconName != null
-                  ? svgIcon(
-                      name: titleIconName,
-                      width: kIconWidth2,
-                      color: titleIconColor ?? _defaultLabelColor)
+                  ? Row(
+                      children: [
+                        SizedBox(width: 10),
+                        svgIcon(
+                            name: titleIconName,
+                            width: kIconWidth,
+                            color: titleIconColor ?? _defaultLabelColor),
+                      ],
+                    )
                   : SizedBox.shrink(),
               SizedBox(width: 10),
-              Text(title,
-                  style: dialogHeader(color: titleColor ?? _defaultLabelColor)),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(title,
+                      style: dialogHeader(
+                          color: titleColor ?? _defaultLabelColor)),
+                ),
+              ),
             ],
           ),
         ),

@@ -34,7 +34,7 @@ class Online extends ChangeNotifier {
 
   ///Authentication
   Auth _auth = Auth();
-  late UserCredential? _user;
+  late UserCredential? user;
 
   ///Subscription to room message and command.
   dynamic _roomMessageSubscribe;
@@ -49,7 +49,7 @@ class Online extends ChangeNotifier {
   late int roomCreateTime;
 
   ///Device's UUID
-  late String myID;
+  // late String myID;
 
   ///Device's system name
   late String myDeviceName;
@@ -57,13 +57,8 @@ class Online extends ChangeNotifier {
   ///Name in room
   late String myRoomName;
 
-  // int sessionParticipants = 0;
+  bool roomClosed = false;
 
-  // /// Store room members retrieved from firestore
-  // dynamic roomMembers = [];
-
-  // Analytic analytic;
-  // dynamic _connectivitySub;
   dynamic _memberSubscribe;
   List<SessionMember> membersList = [];
 
@@ -74,14 +69,18 @@ class Online extends ChangeNotifier {
     // this.analytic,
   );
 
-  ///Initialize firebase and prepare [myID] and [myDeviceName]
-  Future init() async {
+  Future initFirebase() async {
     await _fireStore.initializeFlutterFire();
-    _auth.initAuth();
-    _fireStore.col = _fireStore.getCollection();
-    myID = await Setting.getId();
     myDeviceName = await Setting.getName();
   }
+
+  Future prepare() async {
+    _auth.initAuth();
+    _fireStore.col = _fireStore.getCollection();
+    await _login();
+  }
+
+  String _uid() => user!.user!.uid;
 
   ///Set connection state boolean
   void connectionSet({required bool lostConnection}) {
@@ -109,8 +108,6 @@ class Online extends ChangeNotifier {
       {required LobbyType type,
       required String? name,
       required String? room}) async {
-    name = _nameSelector(name);
-
     ///Navigate to online room screen when success.
     _toRoom() {
       _showInProgress(false);
@@ -122,22 +119,28 @@ class Online extends ChangeNotifier {
 
     _showInProgress(true);
     try {
+      // ///Initialize online session variables and parameters.
+      // await init();
+      name = _nameSelector(name);
       if (type == LobbyType.join) {
-        _validateRoomInput(room);
-        await _login();
-
-        await _joinRoom(room!, name);
+        await _validateRoomInput(room);
+        await _validateRoomAvail(room!);
+        await _joinRoom(room, name);
 
         _toRoom();
       } else if (type == LobbyType.create) {
-        await _login();
         await _createRoom(name);
         _toRoom();
       }
     } catch (e) {
       _showInProgress(false);
-      Snackbar.show(context,
-          text: 'Error: \"$e\"', icon: kBluetoothIconDisconnected);
+      print('$e');
+      Snackbar.show(
+        context,
+        text: 'Error: $e',
+        icon: kBluetoothIconDisconnected,
+        verticalMargin: false,
+      );
     }
   }
 
@@ -145,12 +148,19 @@ class Online extends ChangeNotifier {
   Future _createRoom(String displayName) async {
     this.roomID = await _generateRoomID();
     try {
-      ///Create firestore document by adding new member(self).
-      await _fireStore.addMember(roomID, await Setting.getId(), displayName,
-          isHost: true);
+      print('0');
 
-      ///Prepare room messages collection.
-      await _fireStore.getMessageCol(roomID);
+      ///Prepare room collections.
+      await _fireStore.prepareCollections(roomID);
+
+      ///Create firestore document by adding new member(self).
+      await _fireStore.addMember(
+        roomID,
+        // await Setting.getId(),
+        _uid(),
+        displayName,
+        isHost: true,
+      );
 
       ///Crate room command field.
       await _roomCommand('OPEN');
@@ -160,19 +170,22 @@ class Online extends ChangeNotifier {
           roomID: this.roomID,
           fieldName: 'create_time',
           value: DateTime.now().millisecondsSinceEpoch,
-          sender: myID);
+          sender: _uid());
 
       ///Add create by.
       await _fireStore.addColCustomField(
           roomID: this.roomID,
           fieldName: 'create_by',
-          value: myID,
-          sender: myID);
+          value: _uid(),
+          sender: _uid());
 
       ///When create, First set to mute.
       isMute = false;
       await _fireStore.addColCustomField(
-          roomID: this.roomID, fieldName: 'mute', value: isMute, sender: myID);
+          roomID: this.roomID,
+          fieldName: 'mute',
+          value: isMute,
+          sender: _uid());
 
       ///When create, First set to not hold.
       classroom.isHolding = false;
@@ -180,7 +193,7 @@ class Online extends ChangeNotifier {
           roomID: this.roomID,
           fieldName: 'hold',
           value: classroom.isHolding,
-          sender: myID);
+          sender: _uid());
 
       ///Mark as room host.
       _toggleRoomHost(true);
@@ -188,13 +201,14 @@ class Online extends ChangeNotifier {
       await _onRoomEntered(id: this.roomID);
     } catch (e) {
       throw (kErr1005);
+      // throw (e);
     }
   }
 
   void _showInProgress(bool inProgress) async {
     if (inProgress) {
       EasyLoading.show(
-        status: 'loading...',
+        status: 'Loading...',
         maskType: EasyLoadingMaskType.black,
       );
     } else {
@@ -207,21 +221,28 @@ class Online extends ChangeNotifier {
   /// for too long and OS kill the app.)
   Future _joinRoom(String id, String displayName) async {
     this.roomID = id;
-    _validateRoomAvail(id);
+    print('z');
+
+    ///Prepare room messages collection.
+    await _fireStore.prepareCollections(roomID);
+
+    // _validateRoomAvail(id);
     try {
       ///In case that host was kicked out for some reasons.(such as minimized
       ///app for too long while in room. -> app killed)
       ///When host re-join room, app need to know.
-      String _roomHost = await _fireStore.getRoomData(
-          sessionID: id, field: 'create_by', sender: myID);
-      if (_roomHost == myID) _toggleRoomHost(true);
-
-      ///Prepare room messages collection.
-      await _fireStore.getMessageCol(roomID);
+      String _roomHost = await _fireStore.getRoomConfig(
+          sessionID: id, field: 'create_by', sender: _uid());
+      if (_roomHost == _uid()) _toggleRoomHost(true);
 
       ///Add member to room.
-      await _fireStore.addMember(id, await Setting.getId(), displayName,
-          isHost: this.isRoomHost);
+      await _fireStore.addMember(
+        id,
+        // await Setting.getId(),
+        user!.user!.uid,
+        displayName,
+        isHost: this.isRoomHost,
+      );
       await _onRoomEntered(id: id);
     } catch (e) {
       throw (kErr1006);
@@ -239,19 +260,23 @@ class Online extends ChangeNotifier {
     _membersListener(id);
 
     Setting.inOnlineClass = true;
+    roomClosed = false;
 
     ///Get room create time.
-    roomCreateTime = await _fireStore.getRoomData(
-        sessionID: id, field: 'create_time', sender: myID);
+    roomCreateTime = await _fireStore.getRoomConfig(
+        sessionID: id, field: 'create_time', sender: _uid());
+    print('9');
 
     ///Get current room mute mode.
-    isMute = await _fireStore.getRoomData(
-        sessionID: id, field: 'mute', sender: myID);
+    isMute = await _fireStore.getRoomConfig(
+        sessionID: id, field: 'mute', sender: _uid());
 
     ///Get current room hold mode.
-    isHold = await _fireStore.getRoomData(
-        sessionID: id, field: 'hold', sender: myID);
+    isHold = await _fireStore.getRoomConfig(
+        sessionID: id, field: 'hold', sender: _uid());
     if (isHold && !isRoomHost) _setHold(true);
+
+    print('10');
 
     ///For children, listen to room messages and commands.
     if (!isRoomHost) _roomListener(id: id);
@@ -270,7 +295,7 @@ class Online extends ChangeNotifier {
       roomID: this.roomID,
       fieldName: 'hold',
       value: classroom.isHolding,
-      sender: myID,
+      sender: _uid(),
     );
     if (!classroom.isHolding) classroom.resetDisplay();
     _showInProgress(false);
@@ -280,7 +305,7 @@ class Online extends ChangeNotifier {
     _showInProgress(true);
     isMute = !isMute;
     await _fireStore.addColCustomField(
-        roomID: this.roomID, fieldName: 'mute', value: isMute, sender: myID);
+        roomID: this.roomID, fieldName: 'mute', value: isMute, sender: _uid());
     await _roomCommand(isMute ? 'MUTE_ON' : 'MUTE_OFF');
     notifyListeners();
     _showInProgress(false);
@@ -333,13 +358,13 @@ class Online extends ChangeNotifier {
   Future _roomCommand(String code) async {
     if (this.roomID != '')
       await _fireStore.addSessionMessageAndCtrl(
-          this.roomID, 'CTRL', code, myID);
+          this.roomID, 'CTRL', code, _uid());
   }
 
   /// send MIDI message
   Future _sendRoomMessage(dynamic value) async => roomID != ''
       ? await _fireStore.addSessionMessageAndCtrl(
-          roomID, 'message', value, myID)
+          roomID, 'message', value, _uid())
       : null;
 
   /// <Currently closed> All members will listen to all MIDI message and room control
@@ -353,7 +378,7 @@ class Online extends ChangeNotifier {
             .listen((data) {
       switch (data['type']) {
         case 'message':
-          if (data['sender'] != myID) {
+          if (data['sender'] != _uid()) {
             print('get message..........');
             classroom.sendLocal(
                 _messageDecryptor(raw: double.parse(data['value'])),
@@ -397,6 +422,7 @@ class Online extends ChangeNotifier {
   void _roomController(String value) {
     switch (value) {
       case 'CLOSE': //Room closed
+        roomClosed = true;
         _onRoomExited();
         break;
       case 'MUTE_ON':
@@ -436,11 +462,12 @@ class Online extends ChangeNotifier {
   Future roomExit(String id) async {
     _showInProgress(true);
     final int _members = membersList.length;
-    await _fireStore.delMember(id, myID);
     if (isRoomHost || _members == 1) {
       await _roomCommand('CLOSE');
+    }
+    await _fireStore.delMember(id, _uid());
+    if (isRoomHost || _members == 1) {
       await _fireStore.closeRoom(id);
-      // _toggleRoomHost(false);
     }
     _onRoomExited();
     _showInProgress(false);
@@ -503,7 +530,6 @@ class Online extends ChangeNotifier {
           minimumVersion: kAppStoreMinVer,
           appStoreId: kAppStoreId,
         ));
-    // final Uri outUrl = await parameters.buildUrl();
     final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
     final Uri outUrl = shortDynamicLink.shortUrl;
     return outUrl;
@@ -513,17 +539,19 @@ class Online extends ChangeNotifier {
   ///VALIDATION
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  void _validateRoomInput(String? room) {
+  Future _validateRoomInput(String? room) async {
     if (room == null || room.length != kSessionIdLength) throw (kErr1001);
   }
 
   Future _validateRoomAvail(String room) async {
     if (await _fireStore.checkRoomAvail(room) == false) throw (kErr1003);
-    if (await _fireStore.countMember(roomID) >= kMaxMember) throw (kErr1004);
+    print('1');
+    if (await _fireStore.countMember(room) >= kMaxMember) throw (kErr1004);
+    print('2');
   }
 
   Future _login() async {
-    _user = await _auth.anonymousSignIn();
-    if (_user == null) throw (kErr1002);
+    user = await _auth.anonymousSignIn();
+    if (user == null) throw (kErr1002);
   }
 }

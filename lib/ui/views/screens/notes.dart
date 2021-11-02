@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/models/staff.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
 import 'dart:ui' as ui;
 import 'package:everlong/utils/colors.dart';
@@ -18,8 +19,10 @@ Widget notesPainter(
   required KeySig keySig,
   required double width,
   required double height,
-  ui.Image? imageSharp,
-  ui.Image? imageFlat,
+  // ui.Image? imageSharp,
+  // ui.Image? imageFlat,
+  DrawableRoot? svgSharp,
+  DrawableRoot? svgFlat,
 }) {
   double _clefArea() => width / kClefAreaProportion;
   return Container(
@@ -29,8 +32,10 @@ Widget notesPainter(
     child: CustomPaint(
         foregroundPainter: NotePainter(_playing,
             keySig: keySig,
-            imageSharp: imageSharp != null ? imageSharp : null,
-            imageFlat: imageFlat != null ? imageFlat : null),
+            // imageSharp: imageSharp != null ? imageSharp : null,
+            // imageFlat: imageFlat != null ? imageFlat : null,
+            svgSharp: svgSharp != null ? svgSharp : null,
+            svgFlat: svgFlat != null ? svgFlat : null),
         size: _size),
   );
 }
@@ -39,13 +44,18 @@ Widget notesPainter(
 class NotePainter extends CustomPainter {
   final KeySig keySig;
   List<StaffStore> playing;
-  final ui.Image? imageSharp;
-  final ui.Image? imageFlat;
+  // final ui.Image? imageSharp;
+  // final ui.Image? imageFlat;
+  final DrawableRoot? svgSharp;
+  final DrawableRoot? svgFlat;
+
   NotePainter(
     this.playing, {
     required this.keySig,
-    this.imageSharp,
-    this.imageFlat,
+    // this.imageSharp,
+    // this.imageFlat,
+    this.svgSharp,
+    this.svgFlat,
   });
 
   ///Maximum display notes for each key.
@@ -63,8 +73,14 @@ class NotePainter extends CustomPainter {
   ///Expanded length of left column staff.
   double _leftLineExpand() => keySig == KeySig.g ? 0.175 : 0.22;
 
+  Size _signatureSize({required bool isSharp}) =>
+      isSharp ? Size(12, 12) : Size(10, 18);
+
   ///Padding for key signatures image display for correctly positioned.
-  double _signatureTopPadding({required bool isSharp}) => isSharp ? 8.5 : 13.5;
+  double _signatureTopPadding({required bool isSharp}) => isSharp ? 6.3 : 13.5;
+
+  ///Padding for key signatures image display for correctly positioned.
+  double _signatureLeftPadding({required bool isSharp}) => isSharp ? 2 : 0;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -195,19 +211,36 @@ class NotePainter extends CustomPainter {
     void _drawSignatureImage(int index, {required StaffStore note}) {
       /// Check if it needs to be paint.
       if (note.isOn && (note.withSharp || note.withFlat)) {
-        ///Select image to paint.
-        ui.Image _image() => note.withSharp ? imageSharp! : imageFlat!;
-        canvas.drawImage(
-          _image(),
-          Offset(
-            ///Sharp/Flat image will be painted left of corresponding note
-            ///by [_imageLeftIndent] pixel.
-            _noteXAxisPosition(index) - _imageLeftIndent,
+        DrawableRoot _sig() => note.withSharp ? svgSharp! : svgFlat!;
+        Size desiredSize = _signatureSize(isSharp: note.withSharp);
+        canvas.save();
+        canvas.translate(
+            _noteXAxisPosition(index) -
+                _imageLeftIndent -
+                _signatureLeftPadding(isSharp: note.withSharp),
             _noteYAxisPosition(index) -
-                _signatureTopPadding(isSharp: note.withSharp),
-          ),
-          paintSignature,
-        );
+                _signatureTopPadding(isSharp: note.withSharp));
+        Size svgSize = _sig().viewport.size;
+        var matrix = Matrix4.identity();
+        matrix.scale(desiredSize.width / svgSize.width,
+            desiredSize.height / svgSize.height);
+        canvas.transform(matrix.storage);
+        _sig().draw(canvas, Rect.zero);
+        canvas.restore();
+
+        // ///Select image to paint.
+        // ui.Image _image() => note.withSharp ? imageSharp! : imageFlat!;
+        // canvas.drawImage(
+        //   _image(),
+        //   Offset(
+        //     ///Sharp/Flat image will be painted left of corresponding note
+        //     ///by [_imageLeftIndent] pixel.
+        //     _noteXAxisPosition(index) - _imageLeftIndent,
+        //     _noteYAxisPosition(index) -
+        //         _signatureTopPadding(isSharp: note.withSharp),
+        //   ),
+        //   paintSignature,
+        // );
       }
     }
 

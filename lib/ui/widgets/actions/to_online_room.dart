@@ -36,7 +36,7 @@ class ToOnlineRoom extends StatelessWidget {
             ),
             icon: svgIcon(
                 name: inType == LobbyType.join ? kJoinIcon : kOnlineIcon,
-                width: kIconWidth2,
+                width: kIconWidth,
                 color: buttonLabelColor()),
             onPressed: onPressed),
       ],

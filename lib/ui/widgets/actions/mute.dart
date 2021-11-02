@@ -46,11 +46,16 @@ class _MuteState extends State<Mute> with SingleTickerProviderStateMixin {
                 : Setting.isOnline()
                     ? kTextColorLight
                     : kTextColorRed,
-            width: kIconWidth2),
+            width: kIconWidth),
         text: Text(_isMute ? kUnmute : kMute,
             style: buttonTextStyle(
               isActive: _isMute,
               isVertical: true,
+              color: _isMute
+                  ? _colorTween.value
+                  : Setting.isOnline()
+                      ? kTextColorLight
+                      : kTextColorRed,
             ),
             textAlign: TextAlign.center),
         onPressed: () async {

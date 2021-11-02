@@ -42,11 +42,16 @@ class Setting {
   static bool onlineMenuInStack = false;
   static bool inOnlineClass = false;
   static String? prefName;
-  static late double deviceWidth;
-  static late double deviceHeight;
+  static double deviceWidth = 600;
+  static double deviceHeight = 600;
+  static BuildContext? currentContext;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
+
+    ///Get screen width & height
+    deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
 
     ///Delay scale
     final _scale = prefs.getInt('delay') ?? 20;
@@ -62,10 +67,6 @@ class Setting {
 
     ///Prevent screen saver
     await Wakelock.enable();
-
-    ///Get screen width & height
-    deviceWidth = MediaQuery.of(context).size.width;
-    deviceHeight = MediaQuery.of(context).size.height;
   }
 
   static ListenMode _mode(String str) => (str == ListenMode.off.toString())
@@ -115,9 +116,11 @@ class Setting {
   static Future<String> getName() async {
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
+      print('ios');
       var iosDeviceInfo = await deviceInfo.iosInfo;
       return iosDeviceInfo.name; // unique ID on iOS
     } else {
+      print('android');
       var androidDeviceInfo = await deviceInfo.androidInfo;
       return androidDeviceInfo.model; // unique ID on Android
     }

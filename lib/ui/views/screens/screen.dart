@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:flutter/widgets.dart';
 import 'package:everlong/services/staff.dart' as staffService;
@@ -13,6 +14,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/images.dart';
+import 'package:everlong/utils/icons.dart';
 
 enum KeySig {
   f,
@@ -28,13 +30,15 @@ class Screen extends StatefulWidget {
 }
 
 class _ScreenState extends State<Screen> {
-  ui.Image? imageSharp;
-  ui.Image? imageFlat;
+  // ui.Image? imageSharp;
+  // ui.Image? imageFlat;
+  DrawableRoot? sharpSvg;
+  DrawableRoot? flatSvg;
 
   double _minHeight = 200;
   double _baseHeight = 200;
   double _height = 200;
-  final double _width = 300;
+  // final double _width = 300;
 
   final double _keySignatureLeftPadding = 10;
 
@@ -52,22 +56,29 @@ class _ScreenState extends State<Screen> {
 
   @override
   void initState() {
-    loadImage(kSharpSigImage, isSharp: true);
-    loadImage(kFlatSigImage, isSharp: false);
-    // loadSVG();
+    // loadImage(kSharpSigImage, isSharp: true);
+    // loadImage(kFlatSigImage, isSharp: false);
+    loadSVG();
     super.initState();
   }
 
-  // Future loadSVG() async {
-  //   svgRoot = await svg.fromSvgString(rawSvg, rawSvg);
-  // }
-
-  Future loadImage(String path, {required bool isSharp}) async {
-    final data = await rootBundle.load(path);
-    final bytes = data.buffer.asUint8List();
-    final image = await decodeImageFromList(bytes);
-    setState(() => isSharp ? this.imageSharp = image : this.imageFlat = image);
+  Future loadSVG() async {
+    sharpSvg = await svg.fromSvgString(kSharpIcon, kSharpIcon);
+    flatSvg = await svg.fromSvgString(kFlatIcon, kFlatIcon);
   }
+
+  double _width() {
+    double _result = Setting.deviceWidth * 0.9;
+    if (_result > 300) _result = 300;
+    return _result;
+  }
+
+  // Future loadImage(String path, {required bool isSharp}) async {
+  //   final data = await rootBundle.load(path);
+  //   final bytes = data.buffer.asUint8List();
+  //   final image = await decodeImageFromList(bytes);
+  //   setState(() => isSharp ? this.imageSharp = image : this.imageFlat = image);
+  // }
 
   Stack _musicNotationPainter(
     BuildContext context,
@@ -81,7 +92,7 @@ class _ScreenState extends State<Screen> {
           child: staffsPainter(
             context,
             keySig: keySig,
-            width: _width,
+            width: _width(),
             height: _height,
           ),
         ),
@@ -92,17 +103,19 @@ class _ScreenState extends State<Screen> {
             SizedBox(width: _keySignatureLeftPadding),
             keyImage(
               keySig: keySig,
-              width: _width,
+              width: _width(),
               height: _height,
             ),
             notesPainter(
               _playing,
               _size,
               keySig: keySig,
-              width: _width,
+              width: _width(),
               height: _height,
-              imageSharp: imageSharp,
-              imageFlat: imageFlat,
+              // imageSharp: imageSharp,
+              // imageFlat: imageFlat,
+              svgSharp: sharpSvg,
+              svgFlat: flatSvg,
             ),
           ],
         ),
@@ -122,12 +135,20 @@ class _ScreenState extends State<Screen> {
         children: [
           SizedBox(height: Setting.deviceHeight * 0.04),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _musicNotationPainter(ct, _playing, _size, keySig: KeySig.g),
-                _musicNotationPainter(ct, _playing, _size, keySig: KeySig.f),
-              ],
+            child: Center(
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _musicNotationPainter(ct, _playing, _size,
+                          keySig: KeySig.g),
+                      _musicNotationPainter(ct, _playing, _size,
+                          keySig: KeySig.f),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
           PlayingInfo(),

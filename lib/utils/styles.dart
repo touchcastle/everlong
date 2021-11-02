@@ -48,14 +48,14 @@ InputDecoration kRenameTextDecor(String hint) {
     filled: true,
     fillColor: kTextColorWhite,
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(0),
       borderSide: BorderSide(
         color: Colors.black,
         width: 2.0,
       ),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(0),
       borderSide: BorderSide(
         color: Colors.black,
         width: 2.0,

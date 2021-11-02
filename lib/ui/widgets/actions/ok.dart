@@ -17,7 +17,7 @@ class Ok extends StatelessWidget {
           style: buttonTextStyle(color: Colors.white),
           textAlign: TextAlign.center,
         ),
-        icon: svgIcon(name: kOkIcon, width: kIconWidth2, color: Colors.white),
+        icon: svgIcon(name: kOkIcon, width: kIconWidth, color: Colors.white),
         onPressed: onPressed ?? () async => Navigator.pop(context));
   }
 }

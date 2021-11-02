@@ -37,7 +37,7 @@ class _PingAllState extends State<PingAll> with SingleTickerProviderStateMixin {
         isActive: _isPingAll,
         icon: svgIcon(
           name: kPingIcon,
-          width: kIconWidth2 - 0,
+          width: kIconWidth - 0,
           color: _isPingAll
               ? _colorTween.value
               : Setting.isOnline()
@@ -45,7 +45,15 @@ class _PingAllState extends State<PingAll> with SingleTickerProviderStateMixin {
                   : kLocalLabelColor,
         ),
         text: Text(kIdentAll,
-            style: buttonTextStyle(isActive: _isPingAll, isVertical: true),
+            style: buttonTextStyle(
+              isActive: _isPingAll,
+              isVertical: true,
+              color: _isPingAll
+                  ? _colorTween.value
+                  : Setting.isOnline()
+                      ? kTextColorLight
+                      : kLocalLabelColor,
+            ),
             textAlign: TextAlign.center),
         onPressed: () async {
           if (!_isPingAll) {

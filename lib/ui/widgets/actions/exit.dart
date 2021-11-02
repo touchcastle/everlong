@@ -20,7 +20,7 @@ class Exit extends StatelessWidget {
       borderRadius: this.borderRadius,
       icon: svgIcon(
           name: kExitIcon,
-          width: kIconWidth2,
+          width: kIconWidth,
           color: buttonLabelColor(color: color)),
       onPressed: onPressed ?? () => Navigator.pop(context),
     );

@@ -26,7 +26,10 @@ Widget mode(BuildContext context, ListenMode mode,
       Setting.isTablet() ? SizedBox(height: 10) : SizedBox(width: 15);
   Widget _cover({required Widget child}) => Setting.isTablet()
       ? SizedBox(height: 45, child: child)
-      : SizedBox(child: child);
+      : Expanded(
+          child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal, child: SizedBox(child: child)),
+        );
 
   String _text() => mode == ListenMode.off
       ? kSettingModeOff

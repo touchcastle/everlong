@@ -70,7 +70,7 @@ class _OnlineMemberListState extends State<OnlineMemberList> {
                                 child: _memberStateIcon(_member.lastSeen)),
                             SizedBox(width: 3),
                             Text(_member.name, style: kMemberName),
-                            context.read<Online>().myID == _member.id
+                            context.read<Online>().user!.user!.uid == _member.id
                                 ? Text('(me)', style: kMemberName)
                                 : SizedBox.shrink(),
                           ],

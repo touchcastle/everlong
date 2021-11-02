@@ -59,7 +59,7 @@ Widget roomDetail(
       ),
       SizedBox(width: 10),
       isHost ? Copy() : SizedBox.shrink(),
-      isHost ? SessionLink() : SizedBox.shrink(),
+      isHost ? SessionLink() : SizedBox.shrink()
     ],
   );
 }

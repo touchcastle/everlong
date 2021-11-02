@@ -13,7 +13,7 @@ class SessionLink extends StatelessWidget {
     return Button(
         icon: svgIcon(
           name: kLinkIcon,
-          width: kIconWidth2,
+          width: kIconWidth,
           color: kOnlineButton,
         ),
         onPressed: () async => await context.read<Online>().shareLink());

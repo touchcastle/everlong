@@ -37,7 +37,8 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   @override
   void initState() {
     super.initState();
-    context.read<Online>().init();
+    // ///Initialize online session variables and parameters.
+    context.read<Online>().prepare();
     if (widget.roomID != null) {
       _roomToJoin = widget.roomID!;
       _roomIdInputCtrl = TextEditingController(text: _roomToJoin);
@@ -93,6 +94,8 @@ class _OnlineLobbyState extends State<OnlineLobby> {
 
   @override
   Widget build(BuildContext context) {
+    Setting.deviceWidth = MediaQuery.of(context).size.width;
+    Setting.deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor: kGreenMain,
@@ -153,9 +156,12 @@ class _OnlineLobbyState extends State<OnlineLobby> {
                                 name: _nameToJoin,
                                 room: _roomToJoin);
                           } else {
-                            Snackbar.show(context,
-                                text: kNoInternetMsg,
-                                icon: kBluetoothIconDisconnected);
+                            Snackbar.show(
+                              context,
+                              text: kNoInternetMsg,
+                              icon: kBluetoothIconDisconnected,
+                              verticalMargin: false,
+                            );
                           }
                         },
                       ),

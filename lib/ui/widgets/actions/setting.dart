@@ -20,7 +20,7 @@ class _SettingState extends State<Setting> {
         isActive: _isShow,
         icon: svgIcon(
           name: kSettingIcon,
-          width: kIconWidth2,
+          width: kIconWidth,
           color: buttonLabelColor(isActive: _isShow),
         ),
         onPressed: () async {

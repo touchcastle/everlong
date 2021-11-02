@@ -13,20 +13,21 @@ enum MessageType {
 
 class Snackbar {
   static double _dialogRatio() => Setting.isTablet() ? 0.2 : 0.1;
-
   static void show(
     BuildContext context, {
     required String text,
     String? actionLabel,
     String? icon,
     MessageType type = MessageType.error,
+    bool verticalMargin = true,
   }) {
+    double _verticalMargin() => verticalMargin ? 0.08 : 0.02;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       elevation: 0,
       margin: EdgeInsets.symmetric(
         horizontal: Setting.deviceWidth * _dialogRatio(),
-        vertical: Setting.deviceHeight * 0.02,
+        vertical: Setting.deviceHeight * _verticalMargin(),
       ),
       backgroundColor:
           type == MessageType.error ? kErrorSnackBoxBg : kTextColorWhite,
@@ -36,7 +37,7 @@ class Snackbar {
           type == MessageType.error
               ? svgIcon(
                   name: icon ?? kErrorIcon,
-                  width: kIconWidth2,
+                  width: kIconWidth,
                   color: type == MessageType.error
                       ? kErrorSnackBoxText
                       : kTextColorDark)
@@ -67,7 +68,7 @@ class Snackbar {
         ],
       ),
       duration:
-          actionLabel != null ? Duration(seconds: 10) : Duration(seconds: 7),
+          actionLabel != null ? Duration(seconds: 10) : Duration(seconds: 4),
       action: actionLabel != null
           ? SnackBarAction(
               label: actionLabel,

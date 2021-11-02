@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/url_navigator.dart';
 import 'package:everlong/ui/widgets/logo.dart';
@@ -21,6 +23,9 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     super.initState();
+    print('pass init of main_menu');
+    // ///Initialize online session variables and parameters.
+    // context.read<Online>().init();
     Setting.sessionMode = SessionMode.none;
     UrlHandler.handleDynamicLink(context);
   }
@@ -32,11 +37,13 @@ class _MainMenuState extends State<MainMenu> {
           Expanded(child: Divider(color: kOrangeMain)),
         ],
       );
-  double _dialogRatio() => Setting.isTablet() ? 0.45 : 0.7;
-  double _logoRatio() => Setting.isTablet() ? 0.8 : 1;
 
   @override
   Widget build(BuildContext context) {
+    Setting.deviceWidth = MediaQuery.of(context).size.width;
+    Setting.deviceHeight = MediaQuery.of(context).size.height;
+    double _dialogRatio() => Setting.isTablet() ? 0.45 : 0.7;
+    double _logoRatio() => Setting.isTablet() ? 0.8 : 1;
     return Scaffold(
       backgroundColor: kGreenMain,
       body: AnnotatedRegion<SystemUiOverlayStyle>(

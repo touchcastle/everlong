@@ -8,7 +8,7 @@ Widget dialogBox({required BuildContext context, required Widget content}) {
   final BoxConstraints _constraints = BoxConstraints(
     maxWidth: Setting.deviceWidth * _dialogRatio(),
     maxHeight: Setting.deviceHeight * _dialogRatio(),
-    minWidth: 300,
+    minWidth: 200,
     minHeight: 250,
   );
 

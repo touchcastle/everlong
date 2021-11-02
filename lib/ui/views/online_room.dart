@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/online.dart';
+import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/views/global_top_menu.dart';
 import 'package:everlong/ui/views/online_bottom_menu.dart';
 import 'package:everlong/utils/styles.dart';
@@ -30,6 +31,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
   @override
   void initState() {
     super.initState();
+    Setting.currentContext = context;
     _myConnectivity();
   }
 
@@ -57,12 +59,15 @@ class _OnlineRoomState extends State<OnlineRoom> {
   @override
   dispose() {
     _connectivitySub?.cancel();
+    Setting.currentContext = null;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double _screenWidth = MediaQuery.of(context).size.width;
+    Setting.deviceWidth = MediaQuery.of(context).size.width;
+    Setting.deviceHeight = MediaQuery.of(context).size.height;
+    // double _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: kOnlineAccentColor,
       // backgroundColor: Colors.black,
@@ -75,8 +80,12 @@ class _OnlineRoomState extends State<OnlineRoom> {
               // borderRadius: kBoxBorderRadius,
             ),
             child: Center(
-              child: context.watch<Online>().roomID != ''
-                  ? Column(
+              child: context.watch<Online>().roomID == '' &&
+                      context.watch<Online>().roomClosed
+                  ? sessionEnded(
+                      onPressed: () => Navigator.popUntil(
+                          context, ModalRoute.withName(kMainPageName)))
+                  : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         GlobalTopMenu(),
@@ -104,7 +113,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
                                             (context
                                                     .watch<Classroom>()
                                                     .showList &&
-                                                !_isMobile(_screenWidth))
+                                                Setting.isTablet())
                                         ? Expanded(flex: 1, child: Screen())
                                         : SizedBox.shrink(),
                                     context.watch<Classroom>().showList
@@ -120,10 +129,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
                         OnlineBottomMenu(
                             isRoomHost: context.read<Online>().isRoomHost),
                       ],
-                    )
-                  : sessionEnded(
-                      onPressed: () => Navigator.popUntil(
-                          context, ModalRoute.withName(kMainPageName))),
+                    ),
             ),
           ),
         ),

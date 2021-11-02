@@ -283,7 +283,7 @@ class _SelfExpansionTileState extends State<SelfExpansionTile>
                         height: 12,
                         child: svgIcon(
                             name: kArrowIcon,
-                            width: kIconWidth2,
+                            width: kIconWidth,
                             color: kConnectedBoxColor)
                         // Icon(
                         //   Icons.arrow_drop_down,

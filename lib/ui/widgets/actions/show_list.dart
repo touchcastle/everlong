@@ -15,7 +15,7 @@ class ShowList extends StatelessWidget {
       isActive: _isShow,
       icon: svgIcon(
         name: kShowListIcon,
-        width: kIconWidth2,
+        width: kIconWidth,
         color: buttonLabelColor(isActive: _isShow),
       ),
       onPressed: () => context.read<Classroom>().toggleListDisplay(),
