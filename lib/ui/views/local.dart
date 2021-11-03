@@ -28,7 +28,7 @@ class _LocalPageState extends State<LocalPage> {
         .read<BluetoothControl>()
         .collectScanResult()
         .listen((result) => result ? setState(() {}) : null);
-    // Setting.currentContext = context;
+    Setting.currentContext = context;
   }
 
   void _swiper(DragEndDetails details) {
@@ -94,7 +94,7 @@ class _LocalPageState extends State<LocalPage> {
                   ),
                 ),
               ),
-              LocalBottomMenu(),
+              LocalBottomMenu(onScanPressed: () => setState(() {})),
             ]),
           ),
         ),

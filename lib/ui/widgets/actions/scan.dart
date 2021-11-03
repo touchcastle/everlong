@@ -13,12 +13,14 @@ class Scan extends StatelessWidget {
   final bool isDialogButton;
   final double paddingVertical;
   final BorderRadiusGeometry? borderRadius;
+  final Function()? onScanPressed;
   Scan({
     this.borderRadius,
     this.isExpanded = false,
     this.paddingVertical = 0,
     this.isDialogButton = false,
     required this.isVertical,
+    this.onScanPressed,
   });
 
   @override
@@ -44,8 +46,10 @@ class Scan extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          onPressed: () =>
-              context.read<BluetoothControl>().doScan(timeout: kReScanDuration),
+          onPressed: () {
+            onScanPressed;
+            context.read<BluetoothControl>().doScan(timeout: kReScanDuration);
+          },
         );
       },
     );

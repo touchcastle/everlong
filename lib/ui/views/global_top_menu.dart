@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/online.dart';
@@ -40,12 +41,15 @@ class GlobalTopMenu extends StatelessWidget {
           ),
           Setting.isOnline()
               ? Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: roomDetail(
-                      name: context.watch<Online>().myRoomName,
-                      id: context.read<Online>().roomID,
-                      isHost: context.watch<Online>().isRoomHost,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: roomDetail(
+                        name: context.watch<Online>().myRoomName,
+                        id: context.read<Online>().roomID,
+                        isHost: context.watch<Online>().isRoomHost,
+                      ),
                     ),
                   ),
                 )

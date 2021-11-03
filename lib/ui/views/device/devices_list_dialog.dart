@@ -82,12 +82,12 @@ class _DeviceAnimatedListDialogState extends State<DeviceAnimatedListDialog> {
             child: Row(
               children: [
                 Scan(
-                  borderRadius: kBottom,
-                  isVertical: false,
-                  isExpanded: true,
-                  isDialogButton: true,
-                  paddingVertical: 5,
-                ),
+                    borderRadius: kBottom,
+                    isVertical: false,
+                    isExpanded: true,
+                    isDialogButton: true,
+                    paddingVertical: 5,
+                    onScanPressed: () => setState(() {})),
               ],
             ),
           )

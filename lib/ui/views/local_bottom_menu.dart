@@ -7,6 +7,9 @@ import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 
 class LocalBottomMenu extends StatelessWidget {
+  final Function()? onScanPressed;
+  LocalBottomMenu({this.onScanPressed});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +21,7 @@ class LocalBottomMenu extends StatelessWidget {
         children: [
           Hold(),
           Reset(),
-          Scan(isVertical: true),
+          Scan(isVertical: true, onScanPressed: onScanPressed),
           PingAll(),
         ],
       ),
