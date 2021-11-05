@@ -8,7 +8,7 @@ const int kSessionIdLength = 10;
 ///Config
 const String kVersion = '1.0.0';
 const String kHeroLogo = 'logo';
-const Duration kClockInPeriod = Duration(seconds: 15);
+const Duration kClockInPeriod = Duration(milliseconds: 15000);
 const int kClockInCheckPeriod = 20000; //in millisec.
 
 /// String to store in static when there is no host.
@@ -32,7 +32,7 @@ const String kDisplayUrl = 'https://notero.app';
 const String kBundle = 'co.notero.everlong';
 const int kAndroidMinVer = 1;
 const String kAppStoreMinVer = '1.0.0';
-const String kAppStoreId = '123456789';
+const String kAppStoreId = '1593845953';
 
 ///Snackbar
 const String kNoInternetMsg = 'NO INTERNET CONNECTION';
@@ -48,10 +48,10 @@ const String kMainPageName = '/main_menu_page';
 const String kJoinHeader = 'Join Online Session';
 const String kCreateHeader = 'Create Online Session';
 const String kUserNameLabel = 'User Name';
-const String kUserName = 'name';
+const String kUserName = 'Name';
 const String kUserNameLabel2 = 'Name will be remember automatically';
 const String kSessionIdLabel = 'Session ID';
-const String kSession = 'session';
+const String kSession = 'Session';
 
 ///Online Room
 const String kParticipant = 'Participants: ';

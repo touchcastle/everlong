@@ -72,7 +72,7 @@ class _RenameDialogState extends State<RenameDialog> {
                       cursorColor: Colors.black,
                       autofocus: true,
                       enabled: true,
-                      decoration: kRenameTextDecor('device name'),
+                      decoration: kRenameTextDecor('Device name'),
                       onChanged: (newText) => _newName = newText,
                     ),
                   ),
