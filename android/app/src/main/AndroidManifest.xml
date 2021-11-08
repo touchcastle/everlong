@@ -44,7 +44,10 @@
                 <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
                 <data
                     android:scheme="https"
-                    android:host="everlong.page.link" />
+                    android:host="noteromirror.page.link" />
+                <data
+                    android:scheme="http"
+                    android:host="noteromirror.page.link" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
