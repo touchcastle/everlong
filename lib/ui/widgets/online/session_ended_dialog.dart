@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/widgets/svg.dart';
@@ -13,7 +14,7 @@ Widget sessionEnded({required Function() onPressed}) {
   return Center(
     child: Container(
       width: Setting.deviceWidth * _dialogRatio,
-      height: 240,
+      // height: 240,
       decoration: BoxDecoration(
         borderRadius: kAllBorderRadius,
         gradient: kBGGradient(kSessionEndedBG),
@@ -22,6 +23,7 @@ Widget sessionEnded({required Function() onPressed}) {
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

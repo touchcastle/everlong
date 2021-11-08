@@ -104,10 +104,10 @@ class _OnlineLobbyState extends State<OnlineLobby> {
           scrollDirection: Axis.vertical,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: Setting.deviceHeight * _topSpaceRatio()),
+                // SizedBox(height: Setting.deviceHeight * _topSpaceRatio()),
                 logo(_logoRatio),
                 Container(
                   decoration: kOnlineLobbyDialogDecor,
@@ -168,6 +168,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
                     ],
                   ),
                 ),
+                // SizedBox(height: Setting.deviceHeight * 0.1),
               ],
             ),
           ),

@@ -1,12 +1,13 @@
 ///LAYOUT & ANIMATION
 const double kTabletStartWidth = 600.0;
+const double kTabletMaxDynamicWidth = 1000.0;
 const int kListAnimateDuration = 200;
 const int kBeforeNextAnimate = 10;
 const int kMaxMember = 10;
 const int kSessionIdLength = 10;
 
 ///Config
-const String kVersion = '1.0.0';
+const String kVersion = '1.0.1';
 const String kHeroLogo = 'logo';
 const Duration kClockInPeriod = Duration(milliseconds: 15000);
 const int kClockInCheckPeriod = 20000; //in millisec.

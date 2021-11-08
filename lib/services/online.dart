@@ -265,7 +265,6 @@ class Online extends ChangeNotifier {
     ///Get room create time.
     roomCreateTime = await _fireStore.getRoomConfig(
         sessionID: id, field: 'create_time', sender: _uid());
-    print('9');
 
     ///Get current room mute mode.
     isMute = await _fireStore.getRoomConfig(
@@ -276,10 +275,10 @@ class Online extends ChangeNotifier {
         sessionID: id, field: 'hold', sender: _uid());
     if (isHold && !isRoomHost) _setHold(true);
 
-    print('10');
-
     ///For children, listen to room messages and commands.
     if (!isRoomHost) _roomListener(id: id);
+
+    classroom.resetDisplay();
 
     notifyListeners();
   }

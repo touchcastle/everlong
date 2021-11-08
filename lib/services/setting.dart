@@ -37,7 +37,7 @@ class Setting {
   static late double noteDelayScale; //Default setting
   static late int noteDelayMillisec; //Default setting
   static ListenMode appListenMode = ListenMode.onMute;
-  static int asChord = 3;
+  static int asChord = Platform.isIOS ? 3 : 0;
   static late SessionMode sessionMode;
   static bool onlineMenuInStack = false;
   static bool inOnlineClass = false;
@@ -45,6 +45,7 @@ class Setting {
   static double deviceWidth = 600;
   static double deviceHeight = 600;
   static BuildContext? currentContext;
+  static int initScale = Platform.isIOS ? 20 : 60;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,7 +55,7 @@ class Setting {
     deviceHeight = MediaQuery.of(context).size.height;
 
     ///Delay scale
-    final _scale = prefs.getInt('delay') ?? 20;
+    final _scale = prefs.getInt('delay') ?? initScale;
     // final _scale = 20;
     noteDelayScale = _scale.toDouble();
 
@@ -116,11 +117,9 @@ class Setting {
   static Future<String> getName() async {
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
-      print('ios');
       var iosDeviceInfo = await deviceInfo.iosInfo;
       return iosDeviceInfo.name; // unique ID on iOS
     } else {
-      print('android');
       var androidDeviceInfo = await deviceInfo.androidInfo;
       return androidDeviceInfo.model; // unique ID on Android
     }

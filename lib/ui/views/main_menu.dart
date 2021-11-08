@@ -68,6 +68,7 @@ class _MainMenuState extends State<MainMenu> {
                   ],
                 ),
               ),
+              SizedBox(height: Setting.deviceHeight * 0.1),
             ],
           ),
         ),
