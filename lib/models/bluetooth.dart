@@ -124,7 +124,9 @@ class BLEDevice extends ChangeNotifier {
     await this._getMIDICharacteristic();
     if (this.isMaster ||
         Setting.sessionMode == SessionMode.online && _online.isRoomHost) {
-      _classroom.hostReconnected(id: this.id(), name: this.displayName);
+      if (Setting.sessionMode == SessionMode.offline) {
+        _classroom.hostReconnected(id: this.id(), name: this.displayName);
+      }
       this.listenTo();
     }
     _classroom.sortList(ReorderType.connected, this.id());
