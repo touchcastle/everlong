@@ -15,31 +15,31 @@ class PlayingInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.all(0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                SizedBox(
-                  width: 70,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text('Key: ',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
-                  ),
-                ),
-                Text('C Major',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: kRed1)),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(0),
+          //   child: Row(
+          //     crossAxisAlignment: CrossAxisAlignment.baseline,
+          //     textBaseline: TextBaseline.alphabetic,
+          //     children: [
+          //       SizedBox(
+          //         width: 70,
+          //         child: Align(
+          //           alignment: Alignment.centerRight,
+          //           child: Text('Key: ',
+          //               style: TextStyle(
+          //                   fontSize: 18,
+          //                   fontWeight: FontWeight.w500,
+          //                   color: Colors.black)),
+          //         ),
+          //       ),
+          //       Text('C Major',
+          //           style: TextStyle(
+          //               fontSize: 16,
+          //               fontWeight: FontWeight.w500,
+          //               color: kRed1)),
+          //     ],
+          //   ),
+          // ),
           Padding(
             padding: EdgeInsets.only(top: 0),
             child: Row(

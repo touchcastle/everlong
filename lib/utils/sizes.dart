@@ -2,7 +2,7 @@ import 'package:everlong/ui/widgets/text_resp.dart';
 
 ///Button's Text Size
 ///Button with icon above.
-double kVerticalButtonTextSize = textSizeResp(ratio: 30);
+double kVerticalButtonTextSize = textSizeResp(ratio: 30, max: 18);
 
 ///Main menu button.
 double kButtonTextSize = textSizeResp(ratio: 25);

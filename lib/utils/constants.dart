@@ -9,7 +9,8 @@ const int kMaxMember = 10;
 const int kSessionIdLength = 10;
 
 ///Config
-String kVersion = Platform.isIOS ? '1.0.1' : '1.0.2';
+// String kVersion = Platform.isIOS ? '1.0.1' : '1.0.2';
+String kVersion = Platform.isIOS ? '1.1.0' : '1.1.0';
 const String kHeroLogo = 'logo';
 const Duration kClockInPeriod = Duration(milliseconds: 15000);
 const int kClockInCheckPeriod = 20000; //in millisec.

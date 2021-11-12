@@ -9,7 +9,7 @@ import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 
 Widget sessionEnded({required Function() onPressed}) {
-  double _dialogRatio = Setting.isTablet() ? 0.6 : 0.8;
+  double _dialogRatio = Setting.isTablet() ? 0.5 : 0.7;
 
   return Center(
     child: Container(
@@ -20,7 +20,7 @@ Widget sessionEnded({required Function() onPressed}) {
         gradient: kBGGradient(kSessionEndedBG),
       ),
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -51,7 +51,7 @@ Widget sessionEnded({required Function() onPressed}) {
               ),
             ),
             SizedBox(height: 20),
-            Ok(onPressed: onPressed)
+            OkOrCustomButton(onPressed: onPressed)
           ],
         ),
       ),
