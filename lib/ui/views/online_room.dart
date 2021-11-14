@@ -16,6 +16,7 @@ import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/ui/widgets/online/session_ended_dialog.dart';
 import 'package:everlong/ui/widgets/online/online_info_bar.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
+import 'package:everlong/ui/views/piano/piano_list.dart';
 import 'package:everlong/ui/views/online_members.dart';
 import 'package:everlong/utils/colors.dart';
 

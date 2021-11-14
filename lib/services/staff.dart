@@ -42,7 +42,6 @@ class Staff extends ChangeNotifier {
   /// [_outOfStaff] is for display function (Color, Text,...)
   /// Then pass parameters to 'storeStaff' function to check Flat / Sharp
   static void updateStaff(int note, int noteSwitch) {
-    print('update staff with $note $noteSwitch');
     storeStaff(note, noteSwitch, 0);
   }
 

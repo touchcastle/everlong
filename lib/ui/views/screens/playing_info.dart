@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:everlong/services/piano.dart';
+import 'package:provider/provider.dart';
+import 'package:everlong/services/classroom.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 
@@ -58,7 +59,9 @@ class PlayingInfo extends StatelessWidget {
                   ),
                 ),
                 Flexible(
-                  child: Text(Piano.pressingKeys(Piano.pressingKeyList),
+                  child: Text(
+                      context.watch<Classroom>().piano.pressingKeys(
+                          context.watch<Classroom>().piano.pressingKeyList),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: 16,
@@ -84,7 +87,9 @@ class PlayingInfo extends StatelessWidget {
                   Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                    Piano.pressingChord == '' ? '-' : Piano.pressingChord,
+                    context.watch<Classroom>().piano.pressingChord == ''
+                        ? '-'
+                        : context.watch<Classroom>().piano.pressingChord,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontSize: 40,

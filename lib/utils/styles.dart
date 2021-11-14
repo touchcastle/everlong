@@ -87,6 +87,8 @@ const TextStyle kDeviceInfoId = TextStyle(color: kTextColorDark, fontSize: 14);
 
 ///Online
 const TextStyle kMemberName = TextStyle(color: kMemberDetail, fontSize: 24);
+const TextStyle kMemberNameSmall =
+    TextStyle(color: kMemberDetail, fontSize: 14);
 const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 
 ///Dialog Text Style

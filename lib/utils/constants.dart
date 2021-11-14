@@ -12,8 +12,11 @@ const int kSessionIdLength = 10;
 // String kVersion = Platform.isIOS ? '1.0.1' : '1.0.2';
 String kVersion = Platform.isIOS ? '1.1.0' : '1.1.0';
 const String kHeroLogo = 'logo';
-const Duration kClockInPeriod = Duration(milliseconds: 15000);
-const int kClockInCheckPeriod = 20000; //in millisec.
+// const Duration kClockInPeriod = Duration(milliseconds: 15000);
+// const int kClockInCheckPeriod = 20000; //in millisec.
+///TODO: change back
+const Duration kClockInPeriod = Duration(days: 15000);
+const int kClockInCheckPeriod = 200000000000000; //in millisec.
 
 /// String to store in static when there is no host.
 const String kNoMaster = 'N/A';
@@ -31,6 +34,7 @@ const String kFireStoreCollection = 'notero_mirror';
 const String kFireStoreMessageCol = 'messages';
 const String kFireStoreMessageDoc = 'message';
 const String kFireStoreMemberCol = 'members';
+const String kFireStoreStudentMessageCol = 'student_messages';
 const String kPrefix = 'https://noteromirror.page.link';
 const String kDisplayUrl = 'https://notero.app';
 const String kBundle = 'co.notero.everlong';

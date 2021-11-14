@@ -15,6 +15,9 @@ class FireStore {
   /// Member collection
   late CollectionReference membersCol;
 
+  /// Student's Message collection
+  late CollectionReference studentMessageCol;
+
   /// Config collection
   // late CollectionReference configsCol;
 
@@ -39,26 +42,56 @@ class FireStore {
   Future prepareCollections(String roomID) async {
     messageCol = col.doc(roomID).collection(kFireStoreMessageCol);
     membersCol = col.doc(roomID).collection(kFireStoreMemberCol);
+    studentMessageCol = col.doc(roomID).collection(kFireStoreStudentMessageCol);
     // configsCol = col.doc(roomID).collection('configs');
   }
 
   /// For message and session control value.
-  Future addSessionMessageAndCtrl(
-      String roomID, String type, String value, String sender) async {
+  Future addSessionMessageAndCtrl({
+    required String roomID,
+    required String type,
+    required String value,
+    required String sender,
+    bool initialize = false,
+  }) async {
     if (await Setting.isConnectToInternet()) {
       // await col
       // .doc(roomID)
-      print('write: $value');
-      await messageCol
-          .doc(kFireStoreMessageDoc)
-          .set(
-            {'type': type, 'value': value, 'sender': sender},
-            SetOptions(merge: true),
-          )
-          .then((value) => print("Message sent"))
-          .catchError((error) => print("Failed to add message: $error"));
+      initialize
+          ? await messageCol.doc(kFireStoreMessageDoc).set(
+              {'type': type, 'value': value, 'sender': sender},
+              SetOptions(merge: true),
+            )
+          : await messageCol.doc(kFireStoreMessageDoc).update(
+              {'type': type, 'value': value, 'sender': sender},
+            );
       await analytic.logSessionAnalytic(
         event: type,
+        sessionID: roomID,
+        sender: sender,
+      );
+    }
+  }
+
+  /// For message and session control value.
+  Future addStudentMessage({
+    required String roomID,
+    required String type,
+    required String value,
+    required String sender,
+    bool initialize = false,
+  }) async {
+    if (await Setting.isConnectToInternet()) {
+      initialize
+          ? await studentMessageCol.doc(kFireStoreMessageDoc).set(
+              {'type': type, 'value': value, 'sender': sender},
+              SetOptions(merge: true),
+            )
+          : await studentMessageCol.doc(kFireStoreMessageDoc).update(
+              {'type': type, 'value': value, 'sender': sender},
+            );
+      await analytic.logSessionAnalytic(
+        event: 'student_midi',
         sessionID: roomID,
         sender: sender,
       );
@@ -110,7 +143,8 @@ class FireStore {
             'name': name,
             'id': memberID,
             'host': isHost,
-            'lastSeen': DateTime.now().millisecondsSinceEpoch
+            'lastSeen': DateTime.now().millisecondsSinceEpoch,
+            'listenable': false,
           })
           .then((value) => print("member added"))
           .onError((error, stackTrace) => print("on error"))
@@ -140,16 +174,22 @@ class FireStore {
     }
   }
 
+  Future toggleMemberListenable({
+    required String memberId,
+    required bool listenable,
+  }) async {
+    if (await Setting.isConnectToInternet()) {
+      await membersCol.doc(memberId).update({'listenable': listenable});
+    }
+  }
+
   Future<int> countMember(String roomID) async {
     int _count = 0;
-    print('aa');
     CollectionReference _memberCollection =
         col.doc(roomID).collection(kFireStoreMemberCol);
-    print('bb');
     await _memberCollection.get().then((querySnapshot) {
       final _members = querySnapshot.docs.map((doc) => doc.data()).toList();
       _count = _members.length;
-      print('Room member check: $_count');
     });
     return _count;
   }
@@ -178,6 +218,11 @@ class FireStore {
       });
     });
     await _batch.commit();
+    await messageCol
+        .doc(kFireStoreMessageDoc)
+        .delete()
+        .then((value) => print("messages deleted"))
+        .catchError((error) => print("Failed to delete message: $error"));
     await col
         .doc(roomID)
         .delete()

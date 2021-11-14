@@ -35,7 +35,8 @@ class _LandingScreenState extends State<LandingScreen> {
       await Future.delayed(kScanDuration);
       context.read<Classroom>().keepAwake();
       Staff.staffList = Staff.genStaffList();
-      Piano.keyList = Piano.generateKeysList();
+      context.read<Classroom>().piano.keyList =
+          context.read<Classroom>().piano.generateKeysList();
       // UrlHandler.handleDynamicLink(context);
       await context.read<Online>().initFirebase();
       Navigator.of(context).pushReplacement(PageRouteBuilder(

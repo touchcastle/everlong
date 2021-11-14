@@ -38,7 +38,9 @@ class Online extends ChangeNotifier {
 
   ///Subscription to room message and command.
   dynamic _roomMessageSubscribe;
+  dynamic _studentMessageSubscribe;
   bool isRoomHost = false;
+  bool imListenable = false;
   bool lostConnection = false;
   bool isMute = false;
 
@@ -148,8 +150,6 @@ class Online extends ChangeNotifier {
   Future _createRoom(String displayName) async {
     this.roomID = await _generateRoomID();
     try {
-      print('0');
-
       ///Prepare room collections.
       await _fireStore.prepareCollections(roomID);
 
@@ -163,7 +163,7 @@ class Online extends ChangeNotifier {
       );
 
       ///Crate room command field.
-      await _roomCommand('OPEN');
+      await _roomCommand('OPEN', initialize: true);
 
       ///Room create time. So, other member can display room's clock.
       await _fireStore.addColCustomField(
@@ -221,7 +221,6 @@ class Online extends ChangeNotifier {
   /// for too long and OS kill the app.)
   Future _joinRoom(String id, String displayName) async {
     this.roomID = id;
-    print('z');
 
     ///Prepare room messages collection.
     await _fireStore.prepareCollections(roomID);
@@ -233,7 +232,11 @@ class Online extends ChangeNotifier {
       ///When host re-join room, app need to know.
       String _roomHost = await _fireStore.getRoomConfig(
           sessionID: id, field: 'create_by', sender: _uid());
-      if (_roomHost == _uid()) _toggleRoomHost(true);
+      if (_roomHost == _uid()) {
+        _toggleRoomHost(true);
+      } else {
+        _toggleRoomHost(false);
+      }
 
       ///Add member to room.
       await _fireStore.addMember(
@@ -277,6 +280,7 @@ class Online extends ChangeNotifier {
 
     ///For children, listen to room messages and commands.
     if (!isRoomHost) _roomListener(id: id);
+    if (isRoomHost) _studentMessageListener();
 
     classroom.resetDisplay();
 
@@ -326,12 +330,19 @@ class Online extends ChangeNotifier {
     // if (raw.isNotEmpty && this.isRoomHost) {
     if (raw.isNotEmpty) {
       String _message = _messageEncryptor(raw: raw);
-      bool holdingDup() => classroom.holdingKeys.contains(_message[kKeyPos]);
-      if (!classroom.isHolding) {
-        await _sendRoomMessage(_message);
-      } else {
-        if (raw[kSwitchPos] == kNoteOn && !holdingDup()) {
+      bool _holdingDup() => classroom.holdingKeys.contains(raw[kKeyPos]);
+      bool _isNoteOnWhileHolding() =>
+          classroom.isHolding && (raw[kSwitchPos] == kNoteOn && !_holdingDup());
+      if (this.isRoomHost) {
+        //Broadcast from room host.
+        if (!classroom.isHolding || _isNoteOnWhileHolding()) {
           await _sendRoomMessage(_message);
+        }
+      } else {
+        //Broadcast from student.
+        ///Student will broadcast message only between C3 and B5
+        if (raw[kKeyPos] >= 48 && raw[kKeyPos] <= 83) {
+          await _sendStudentMessage(_message);
         }
       }
     }
@@ -354,31 +365,47 @@ class Online extends ChangeNotifier {
   }
 
   /// To send out room command code (host's function).
-  Future _roomCommand(String code) async {
-    if (this.roomID != '')
+  Future _roomCommand(String code, {bool initialize = false}) async {
+    if (this.roomID != '') {
       await _fireStore.addSessionMessageAndCtrl(
-          this.roomID, 'CTRL', code, _uid());
+          roomID: this.roomID,
+          type: 'CTRL',
+          value: code,
+          sender: _uid(),
+          initialize: initialize);
+      if (initialize) {
+        await _fireStore.addStudentMessage(
+            roomID: this.roomID,
+            type: 'CTRL',
+            value: code,
+            sender: _uid(),
+            initialize: true);
+      }
+    }
   }
 
   /// send MIDI message
   Future _sendRoomMessage(dynamic value) async => roomID != ''
       ? await _fireStore.addSessionMessageAndCtrl(
-          roomID, 'message', value, _uid())
+          roomID: roomID, type: 'message', value: value, sender: _uid())
+      : null;
+
+  /// send MIDI message by student
+  Future _sendStudentMessage(dynamic value) async => roomID != ''
+      ? await _fireStore.addStudentMessage(
+          roomID: roomID, type: 'message', value: value, sender: _uid())
       : null;
 
   /// <Currently closed> All members will listen to all MIDI message and room control
   /// but filter out own messages by checking sender = [myID].
   void _roomListener({required String id}) {
-    this._roomMessageSubscribe =
-        // _fireStore.col.doc(id).snapshots().listen((data) {
-        _fireStore.messageCol
-            .doc(kFireStoreMessageDoc)
-            .snapshots()
-            .listen((data) {
+    this._roomMessageSubscribe = _fireStore.messageCol
+        .doc(kFireStoreMessageDoc)
+        .snapshots()
+        .listen((data) {
       switch (data['type']) {
         case 'message':
           if (data['sender'] != _uid()) {
-            print('get message..........');
             classroom.sendLocal(
                 _messageDecryptor(raw: double.parse(data['value'])),
                 withLight: true,
@@ -386,7 +413,6 @@ class Online extends ChangeNotifier {
           }
           break;
         case 'CTRL':
-          print('get control..........');
           _roomController(data['value']);
           break;
       }
@@ -425,12 +451,10 @@ class Online extends ChangeNotifier {
         _onRoomExited();
         break;
       case 'MUTE_ON':
-        print('listen mute got ON');
         isMute = true;
         // Setting.appListenMode = ListenMode.onMute;
         break;
       case 'MUTE_OFF':
-        print('listen mute got OFF');
         isMute = false;
         // Setting.appListenMode = ListenMode.on;
         break;
@@ -488,9 +512,17 @@ class Online extends ChangeNotifier {
     }
   }
 
+  ///Keep listen to change in members collection in firestore.
+  ///Don't refresh all data but one-by-one compare instead to prevent
+  ///student virtual piano to be refreshed.
+  ///
+  ///When will this snapshots got update?
+  ///- New member
+  ///- Member leave room
+  ///- Member clock in
+  ///- Host toggle member's listenable flag
   void _membersListener(String sessionID) {
     _memberSubscribe = _fireStore.membersCol.snapshots().listen((data) {
-      print('got update from members listener');
       final users = data.docs.map((doc) => doc.data()).toList();
       List<SessionMember> _preList = [];
       for (dynamic user in users) {
@@ -499,14 +531,108 @@ class Online extends ChangeNotifier {
           name: user['name'],
           isHost: user['host'],
           lastSeen: user['lastSeen'],
+          listenable: user['listenable'],
         ));
+        _updateMyListenable(
+            memberId: user['id'], listenable: user['listenable']);
       }
-      membersList.clear();
-      membersList = _preList;
+
+      ///Modify current member list
+      for (int _i = 0; _i < membersList.length; _i++) {
+        int _avail = _preList.indexWhere((e) => e.id == membersList[_i].id);
+        if (_avail >= 0) {
+          membersList[_i].lastSeen = _preList[_avail].lastSeen;
+        } else {
+          membersList[_i].isSignedOut = true;
+        }
+      }
+
+      ///Delete signed out member
+      membersList.removeWhere((e) => e.isSignedOut);
+
+      ///Append new member
+      for (int _i = 0; _i < _preList.length; _i++) {
+        int _new = membersList.indexWhere((e) => e.id == _preList[_i].id);
+        if (_new < 0) {
+          _preList[_i].initPiano();
+          membersList.add(_preList[_i]);
+        }
+      }
+
       notifyListeners();
     });
   }
 
+  ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  ///MIRROR FROM STUDENT
+  ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  ///
+  ///[Host's function]
+  ///Toggle students listenable mode by set flag locally and update firestore.
+  Future toggleMemberListenable(
+      {required String memberId, required bool listenable}) async {
+    //Not toggle myself.
+    if (memberId != _uid()) {
+      _showInProgress(true);
+      int _i = membersList.indexWhere((d) => d.id == memberId);
+      if (_i >= 0) {
+        await _fireStore.toggleMemberListenable(
+            memberId: memberId, listenable: listenable);
+        membersList[_i].toggleListenable(listenable);
+      }
+      notifyListeners();
+      _showInProgress(false);
+    }
+  }
+
+  ///[Student's function]
+  ///Since all member listening to change in members collection on firestore,
+  ///When got an update from firestore, locally check if listenable flag of
+  ///myself is still the same? if not, then perform some action.
+  void _updateMyListenable(
+      {required String memberId, required bool listenable}) {
+    if (!this.isRoomHost &&
+        memberId == _uid() &&
+        listenable != this.imListenable) {
+      this.imListenable = listenable;
+      if (this.imListenable) {
+        classroom.subscribeAllConnectedDevice();
+      } else {
+        classroom.cancelDeviceSubscribe();
+      }
+    }
+  }
+
+  ///Function to keep listen to student_message collection on firestore.
+  void _studentMessageListener() {
+    this._studentMessageSubscribe = _fireStore.studentMessageCol
+        .doc(kFireStoreMessageDoc)
+        .snapshots()
+        .listen((data) {
+      switch (data['type']) {
+        case 'message':
+          //Only display student's playing notes in on corresponding student's
+          //virtual piano.
+          int _i = membersList.indexWhere((d) => d.id == data['sender']);
+          if (_i >= 0) {
+            Uint8List _data =
+                _messageDecryptor(raw: double.parse(data['value']));
+            if (_data[kSwitchPos] == kNoteOn) {
+              membersList[_i].piano.addPressing(_data[kKeyPos]);
+              notifyListeners();
+            } else if (_data[kSwitchPos] == kNoteOff) {
+              membersList[_i].piano.removePressing(_data[kKeyPos]);
+              notifyListeners();
+            }
+          }
+          break;
+      }
+    });
+  }
+
+  ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  ///DYNAMIC LINKS
+  ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Future shareLink() async {
     _showInProgress(true);
     Uri _link = await _buildLink();
@@ -537,16 +663,13 @@ class Online extends ChangeNotifier {
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///VALIDATION
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
   Future _validateRoomInput(String? room) async {
     if (room == null || room.length != kSessionIdLength) throw (kErr1001);
   }
 
   Future _validateRoomAvail(String room) async {
     if (await _fireStore.checkRoomAvail(room) == false) throw (kErr1003);
-    print('1');
     if (await _fireStore.countMember(room) >= kMaxMember) throw (kErr1004);
-    print('2');
   }
 
   Future _login() async {

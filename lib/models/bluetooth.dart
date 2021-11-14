@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/online.dart';
+import 'package:everlong/services/piano.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/midi.dart';
 
@@ -67,6 +68,8 @@ class BLEDevice extends ChangeNotifier {
   /// intentionally disconnect.
   bool userDisconnect = false;
 
+  Piano piano = Piano();
+
   BLEDevice(this._classroom, this._online,
       {required this.device,
       this.isConnecting = false,
@@ -115,20 +118,28 @@ class BLEDevice extends ChangeNotifier {
     return _isSuccess;
   }
 
+  void initPiano() => this.piano.keyList = this.piano.generateKeysList();
+
   /// Connected Event(Device stage) handler
   void _onConnected() async {
     this.lastKnownState = BluetoothDeviceState.connected;
     this.onceConnected = true;
+    this.initPiano();
     // if (Platform.isAndroid) this._requestMTU();
     await this._getMIDIService();
     await this._getMIDICharacteristic();
-    if (this.isMaster ||
-        Setting.sessionMode == SessionMode.online && _online.isRoomHost) {
-      if (Setting.sessionMode == SessionMode.offline) {
-        _classroom.hostReconnected(id: this.id(), name: this.displayName);
-      }
-      this.listenTo();
+    if (Setting.sessionMode == SessionMode.offline && this.isMaster) {
+      _classroom.masterReconnected(id: this.id(), name: this.displayName);
     }
+
+    bool _isLocalMaster() =>
+        Setting.sessionMode == SessionMode.offline && this.isMaster;
+    bool _isOnlineSpeaker() =>
+        Setting.sessionMode == SessionMode.online &&
+        (_online.isRoomHost || _online.imListenable);
+
+    if (_isLocalMaster() || _isOnlineSpeaker()) this.listenTo();
+
     _classroom.sortList(ReorderType.connected, this.id());
     if (_isPopPiano()) {
       // await Future.delayed(Duration(milliseconds: 200));
@@ -283,7 +294,8 @@ class BLEDevice extends ChangeNotifier {
           if (Setting.sessionMode == SessionMode.offline) {
             _classroom.localMessageBroadcast(_uintData);
           } else if (Setting.sessionMode == SessionMode.online) {
-            _classroom.staffDisplay(_uintData);
+            //On student's screen, NOT show self playing notes on music staff.
+            if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
           }
         }

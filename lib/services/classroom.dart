@@ -53,6 +53,8 @@ class Classroom extends ChangeNotifier {
   bool showList = true;
   // bool showSetting = false;
 
+  Piano piano = Piano();
+
   /// Constructor
   Classroom(this._db, this._ui);
 
@@ -60,15 +62,15 @@ class Classroom extends ChangeNotifier {
     bool _withSound = false;
     bool _withLight = false;
     bool _withDelay = false;
-    bool isListening() => Setting.appListenMode != ListenMode.off;
-    bool isListenAll() => Setting.appListenMode == ListenMode.on;
-    bool isBlind() => Setting.appListenMode == ListenMode.onBlind;
-    bool isMute() => Setting.appListenMode == ListenMode.onMute;
-    bool holdingDup() => holdingKeys.contains(data[kKeyPos]);
-    if (isListening() && !holdingDup()) {
-      if (!isBlind()) _withLight = true;
-      if (!isMute()) _withSound = true;
-      if (isListenAll()) _withDelay = true;
+    bool _isListening() => Setting.appListenMode != ListenMode.off;
+    bool _isListenAll() => Setting.appListenMode == ListenMode.on;
+    bool _isBlind() => Setting.appListenMode == ListenMode.onBlind;
+    bool _isMute() => Setting.appListenMode == ListenMode.onMute;
+    bool _holdingDup() => holdingKeys.contains(data[kKeyPos]);
+    if (_isListening() && !_holdingDup()) {
+      if (!_isBlind()) _withLight = true;
+      if (!_isMute()) _withSound = true;
+      if (_isListenAll()) _withDelay = true;
       sendLocal(
         data,
         withSound: _withSound,
@@ -85,11 +87,14 @@ class Classroom extends ChangeNotifier {
   /// for [ListenMode.on] -> send both sound and light.
   /// for [ListenMode.onMute] -> send light only.
   /// for [ListenMode.onBlind] -> send sound only.
-  Future sendLocal(Uint8List data,
-      {required bool withSound,
-      required bool withLight,
-      bool withDelay = false}) async {
-    staffDisplay(data);
+  Future sendLocal(
+    Uint8List data, {
+    required bool withSound,
+    required bool withLight,
+    bool withDelay = false,
+    bool withStaff = true,
+  }) async {
+    if (withStaff) staffDisplay(data);
     if ((!isHolding || (isHolding && data[kSwitchPos] == kNoteOn))) {
       if (isHolding) holdingKeys.add(data[kKeyPos]);
       if (_countChild() > 0) {
@@ -110,15 +115,14 @@ class Classroom extends ChangeNotifier {
   /// Update staff display on screen.
   void staffDisplay(Uint8List data) async {
     if (data[kSwitchPos] == kNoteOn) {
-      Piano.addPressing(data[kKeyPos]);
+      piano.addPressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
-    } else if (data[kSwitchPos] == kNoteOff) {
-      if (!isHolding) {
-        Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
-        Piano.removePressing(data[kKeyPos]);
-      }
+      notifyListeners();
+    } else if (data[kSwitchPos] == kNoteOff && !isHolding) {
+      piano.removePressing(data[kKeyPos]);
+      Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   /// Delay
@@ -253,7 +257,7 @@ class Classroom extends ChangeNotifier {
     notifyListeners();
   }
 
-  void hostReconnected({required String id, required String name}) {
+  void masterReconnected({required String id, required String name}) {
     this.masterID = id;
     this.masterName = name;
     notifyListeners();
@@ -400,7 +404,7 @@ class Classroom extends ChangeNotifier {
   /// NotifyListeners for actual update screen.
   void resetDisplay({bool onlineRelease = false}) {
     Staff.resetDisplay();
-    Piano.resetDisplay();
+    piano.resetDisplay();
     // resetKeyLight();
     notifyListeners();
   }
