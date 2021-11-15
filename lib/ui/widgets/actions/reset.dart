@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/ui/views/setting.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
+import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
@@ -55,10 +57,33 @@ class _ResetState extends State<Reset> with SingleTickerProviderStateMixin {
         textAlign: TextAlign.center,
       ),
       onPressed: () async {
-        _controller.repeat();
-        bool _foundChild = await context.read<Classroom>().resetKeyLight();
-        _controller.reset();
-        if (!_foundChild && !Setting.isOnline()) {
+        if (context.read<Classroom>().countChild() > 0) {
+          if (Setting.isOffline()) {
+            Future.delayed(
+                Duration(milliseconds: 500),
+                () => Snackbar.show(
+                      context,
+                      text: kLightFreeze,
+                      fullWidth: true,
+                      bgColor: kGreen4,
+                      actionLabel: kToSetting,
+                      action: () async {
+                        context.read<Classroom>().toggleShowingSetting(true);
+                        await showDialog(
+                          context: context,
+                          builder: (BuildContext context) => dialogBox(
+                            context: context,
+                            content: settingDialog(context),
+                          ),
+                        );
+                        context.read<Classroom>().toggleShowingSetting(false);
+                      },
+                    ));
+          }
+          _controller.repeat();
+          await context.read<Classroom>().resetKeyLight();
+          _controller.reset();
+        } else {
           Snackbar.show(context, text: kNoChildMsg);
         }
       },

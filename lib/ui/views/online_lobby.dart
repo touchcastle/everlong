@@ -29,9 +29,13 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   TextEditingController? _roomIdInputCtrl;
   TextEditingController? _nameInputCtrl;
 
+  ///Lobby box width
   double _dialogRatio() => Setting.isTablet() ? 0.6 : 0.8;
+
+  ///Logo width
   double _logoRatio() => Setting.isTablet() ? 0.8 : 1;
-  double _topSpaceRatio() => Setting.isTablet() ? 0.05 : 0.05;
+
+  ///Lobby header text
   String _header() =>
       widget.lobbyType == LobbyType.join ? kJoinHeader : kCreateHeader;
 
@@ -51,6 +55,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
     Check.internet(context);
   }
 
+  ///Text field for username
   Column _usernameInput(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +76,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
     );
   }
 
+  ///Text field for session id
   Column _sessionIdInput(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +104,6 @@ class _OnlineLobbyState extends State<OnlineLobby> {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       backgroundColor: kGreenMain,
       body: Scrollbar(
         child: SingleChildScrollView(
@@ -108,7 +113,6 @@ class _OnlineLobbyState extends State<OnlineLobby> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // SizedBox(height: Setting.deviceHeight * _topSpaceRatio()),
                 logo(_logoRatio),
                 Container(
                   decoration: kOnlineLobbyDialogDecor,

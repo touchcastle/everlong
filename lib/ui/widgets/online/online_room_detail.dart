@@ -6,60 +6,85 @@ import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/sizes.dart';
 import 'package:everlong/utils/colors.dart';
+import 'package:everlong/utils/texts.dart';
 
-Widget roomDetail(
-    {required String name, required String id, required bool isHost}) {
+class RoomInfoAndShare extends StatelessWidget {
+  ///Username
+  final String name;
+
+  ///Session ID
+  final String id;
+
+  ///Flag true if user is session host
+  final bool isHost;
+
+  RoomInfoAndShare(
+      {required this.name, required this.id, required this.isHost});
+
   TextStyle _style(Color color) =>
       TextStyle(fontSize: kInfoBarTextSize, color: color);
 
-  return Row(
-    children: [
-      Row(
+  ///Room information label
+  Column _roomInfoLabel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text('$kUsername: ', style: _style(kOnlineRoomSubject)),
+        Text('$kSessionId: ', style: _style(kOnlineRoomSubject)),
+      ],
+    );
+  }
+
+  ///Show text and icon for host.
+  Widget _host() => isHost
+      ? Row(
+          children: [
+            Text(' ($kHost) ', style: _style(kOnlineRoomDetail)),
+            svgIcon(
+              name: kOnlineIcon,
+              width: kInfoBarTextSize,
+              color: kOnlineRoomDetail,
+            )
+          ],
+        )
+      : SizedBox.shrink();
+
+  ///Room information detail
+  Container _roomInfoDetail() {
+    return Container(
+      constraints: BoxConstraints(maxWidth: Setting.deviceWidth * 0.25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('User: ', style: _style(kOnlineRoomSubject)),
-              Text('Session ID: ', style: _style(kOnlineRoomSubject)),
-            ],
-          ),
-          Container(
-            constraints: BoxConstraints(maxWidth: Setting.deviceWidth * 0.25),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Text(name, style: _style(kOnlineRoomDetail)),
-                      isHost
-                          ? Row(
-                              children: [
-                                Text(
-                                  ' (Host) ',
-                                  style: _style(kOnlineRoomDetail),
-                                ),
-                                svgIcon(
-                                  name: kOnlineIcon,
-                                  width: kInfoBarTextSize,
-                                  color: kOnlineRoomDetail,
-                                )
-                              ],
-                            )
-                          : SizedBox.shrink(),
-                    ],
-                  ),
-                ),
-                Text(id, style: _style(kTextColorWhite)),
+                Text(name, style: _style(kOnlineRoomDetail)),
+                _host(),
               ],
             ),
           ),
+          Text(id, style: _style(kTextColorWhite)),
         ],
       ),
-      SizedBox(width: 10),
-      isHost ? Copy() : SizedBox.shrink(),
-      isHost ? SessionLink() : SizedBox.shrink()
-    ],
-  );
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Row(
+          children: [
+            _roomInfoLabel(),
+            _roomInfoDetail(),
+          ],
+        ),
+        SizedBox(width: 10),
+        isHost ? Copy() : SizedBox.shrink(),
+        isHost ? SessionLink() : SizedBox.shrink()
+      ],
+    );
+  }
 }

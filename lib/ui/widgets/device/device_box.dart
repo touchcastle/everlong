@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:everlong/models/bluetooth.dart';
 import 'package:everlong/ui/widgets/device/device_title.dart';
-import 'package:everlong/ui/widgets/device/device_actions.dart';
+import 'package:everlong/ui/widgets/device/device_detail.dart';
 import 'package:everlong/ui/widgets/extends/custom_expansion_tile.dart';
 import 'package:everlong/utils/styles.dart';
 
@@ -32,7 +32,7 @@ class _DeviceBoxState extends State<DeviceBox> {
               decoration: kBoxDecor,
               child: SelfExpansionTile(
                 title: DeviceTitle(widget.device, _isConnected()),
-                children: [DeviceAction(widget.device)],
+                children: [DeviceDetail(widget.device)],
                 initiallyExpanded: widget.device.isExpanding,
                 onExpansionChanged: (_exp) =>
                     setState(() => widget.device.isExpanding = _exp),

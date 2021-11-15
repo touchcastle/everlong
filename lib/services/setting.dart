@@ -47,6 +47,7 @@ class Setting {
   static BuildContext? currentContext;
   static int initScale = Platform.isIOS ? 20 : 60;
   static bool notRemindMaster = false;
+  static bool isShowingDialog = false;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();

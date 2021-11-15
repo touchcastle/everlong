@@ -4,21 +4,20 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/views/global_top_menu.dart';
 import 'package:everlong/ui/views/online_bottom_menu.dart';
-import 'package:everlong/utils/styles.dart';
-import 'package:everlong/utils/constants.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:everlong/ui/views/screens/screen.dart';
+import 'package:everlong/ui/views/online_members.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/ui/widgets/online/session_ended_dialog.dart';
 import 'package:everlong/ui/widgets/online/online_info_bar.dart';
-import 'package:everlong/ui/views/screens/screen.dart';
-import 'package:everlong/ui/views/piano/piano_list.dart';
-import 'package:everlong/ui/views/online_members.dart';
 import 'package:everlong/utils/colors.dart';
+import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/constants.dart';
 
 class OnlineRoom extends StatefulWidget {
   static const id = kOnlineRoomId; //for route.
@@ -27,7 +26,13 @@ class OnlineRoom extends StatefulWidget {
 }
 
 class _OnlineRoomState extends State<OnlineRoom> {
+  ///Subscribe to own internet connectivity
   dynamic _connectivitySub;
+
+  ///If room was closed while user still inside.
+  bool _roomClosed() =>
+      context.watch<Online>().roomID == '' &&
+      context.watch<Online>().roomClosed;
 
   @override
   void initState() {
@@ -36,11 +41,11 @@ class _OnlineRoomState extends State<OnlineRoom> {
     _myConnectivity();
   }
 
+  ///Function to handle when lost internet connection during class.
   void _myConnectivity() {
     _connectivitySub = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      // _myConnection = result;
       if (result == ConnectivityResult.none) {
         // Lost connection.
         Snackbar.show(context, text: 'No Internet Connection');
@@ -55,8 +60,6 @@ class _OnlineRoomState extends State<OnlineRoom> {
     });
   }
 
-  bool _isMobile(double width) => width < kTabletStartWidth;
-
   @override
   dispose() {
     _connectivitySub?.cancel();
@@ -64,25 +67,59 @@ class _OnlineRoomState extends State<OnlineRoom> {
     super.dispose();
   }
 
+  ///Main area padding
+  EdgeInsetsGeometry _mainAreaPad =
+      EdgeInsets.only(left: 8, right: 8, bottom: 15, top: 8);
+
+  ///Empty area
+  SizedBox _empty = SizedBox.shrink();
+
+  ///Show music notation logic.
+  bool _showNotation() =>
+      !context.watch<Classroom>().showList ||
+      (context.watch<Classroom>().showList && Setting.isTablet());
+
+  bool _showList() => context.watch<Classroom>().showList;
+
+  ///Set flag when user swipe to change view mode.
+  void _swiper(DragEndDetails details) {
+    if (details.primaryVelocity! > 0) {
+      context.read<Classroom>().toggleListDisplay(forceShow: false);
+    } else if (details.primaryVelocity! < 0) {
+      context.read<Classroom>().toggleListDisplay(forceShow: true);
+    }
+  }
+
+  ///User can swipe in main area to switch between music notation view only
+  ///and music notation and member's list view.
+  GestureDetector _mainArea(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragEnd: _swiper,
+      child: Padding(
+        padding: _mainAreaPad,
+        child: Row(
+          children: [
+            _showNotation() ? Expanded(flex: 1, child: Screen()) : _empty,
+            _showList() ? Expanded(flex: 1, child: OnlineMemberList()) : _empty,
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
-    // double _screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: kOnlineAccentColor,
-      // backgroundColor: Colors.black,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: SafeArea(
           child: Container(
-            decoration: BoxDecoration(
-              gradient: kBGGradient(kOnlineBG),
-              // borderRadius: kBoxBorderRadius,
-            ),
+            decoration: BoxDecoration(gradient: kBGGradient(kOnlineBG)),
             child: Center(
-              child: context.watch<Online>().roomID == '' &&
-                      context.watch<Online>().roomClosed
+              child: _roomClosed()
                   ? sessionEnded(
                       onPressed: () => Navigator.popUntil(
                           context, ModalRoute.withName(kMainPageName)))
@@ -92,40 +129,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
                         GlobalTopMenu(),
                         onlineInfoBar(),
                         Expanded(
-                          child: SizedBox.expand(
-                            child: GestureDetector(
-                              onHorizontalDragEnd: (DragEndDetails details) {
-                                if (details.primaryVelocity! > 0) {
-                                  context
-                                      .read<Classroom>()
-                                      .toggleListDisplay(forceShow: false);
-                                } else if (details.primaryVelocity! < 0) {
-                                  context
-                                      .read<Classroom>()
-                                      .toggleListDisplay(forceShow: true);
-                                }
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 8, right: 8, bottom: 15, top: 8),
-                                child: Row(
-                                  children: [
-                                    !context.watch<Classroom>().showList ||
-                                            (context
-                                                    .watch<Classroom>()
-                                                    .showList &&
-                                                Setting.isTablet())
-                                        ? Expanded(flex: 1, child: Screen())
-                                        : SizedBox.shrink(),
-                                    context.watch<Classroom>().showList
-                                        ? Expanded(
-                                            flex: 1, child: OnlineMemberList())
-                                        : SizedBox.shrink(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          child: SizedBox.expand(child: _mainArea(context)),
                         ),
                         OnlineBottomMenu(
                             isRoomHost: context.read<Online>().isRoomHost),

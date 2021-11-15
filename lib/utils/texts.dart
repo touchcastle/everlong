@@ -1,8 +1,12 @@
 ///Error messages
+const String kError = 'Error';
 const String kNoInternetMsg = 'NO INTERNET CONNECTION';
 const String kNoMasterMsg = 'Please set master device.';
 const String kNoConnectedMsg = 'No connected device.';
 const String kNoChildMsg = 'Child\'s device not found.';
+const String kLightFreeze =
+    'Experiencing key\'s light freeze?  Try increase MIDI latency.';
+const String kToSetting = 'SETTING';
 
 ///Online Lobby
 const String kJoinHeader = 'Join Online Session';
@@ -16,13 +20,20 @@ const String kSession = 'Session';
 ///Online Room
 const String kParticipant = 'Participants: ';
 const String kTime = 'Active Time: ';
-const String kMe = '(me)';
+const String kMe = 'me';
 const String kHost = 'Host';
 const String kMemberConnected = 'Connected';
+const String kUsername = 'User';
+const String kSessionId = 'Session ID';
+const String kSessionEndedHeader = 'Session Ended';
+const String kSessionEndedInfo =
+    'The session was terminated by the\nhost. You will be automatically taken\nback to main menu';
+const String kExitHeader = 'Leave room?';
+const String kExitInfo = 'Are you sure you want to leave room?';
 
 ///Local Screen
 const String kMasterDevice = 'Master Device: ';
-const String kInfoNoMaster = '(None)';
+const String kInfoNoMaster = 'None';
 
 ///Devices
 const String kNoDeviceText = 'Not found any \'Smart Piano\' in range.\n\n\n'
@@ -35,7 +46,7 @@ const String kDisconnectingText = 'Disconnecting';
 const String kMaster = 'Master';
 const String kDevicesMng = 'Devices Manager';
 
-///Button  label
+///Button label
 const String kToHold = 'Hold';
 const String kToUnHold = 'Release';
 const String kResetLight = 'Reset Keys';
@@ -53,8 +64,11 @@ const String kUnmute = 'Unmute';
 const String kOnlineCreate = 'CREATE ONLINE SESSION';
 const String kOnlineJoin = 'JOIN ONLINE SESSION';
 const String kLocal = 'START LOCAL SESSION';
+const String kCancel = 'Cancel';
+const String kConfirm = 'Confirm';
 
 ///Setting Dialog
+const String kSettingHeader = 'Setting';
 const String kSettingLatency = 'Latency Adjustment';
 const String kSettingLatencyLow1 = 'Lower Latency';
 const String kSettingLatencyLow2 = 'Lower MIDI Stability';
@@ -67,6 +81,7 @@ const String kSettingModeOnTablet = 'Light & Sound\n(Higher Latency)';
 const String kSettingModeOnMute = 'Light Only (Default)';
 const String kSettingModeOnMuteTablet = 'Light Only\n(Default)';
 const String kSettingModeOnBlind = 'Sound Only';
+const String kVersionLabel = 'version';
 
 ///Rename Device Dialog
 const String kRenameHeader = 'Rename Midi Device';

@@ -9,7 +9,6 @@ import 'package:everlong/services/animation.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/device_db.dart';
 import 'package:everlong/services/staff.dart';
-import 'package:everlong/services/piano.dart';
 import 'package:everlong/ui/views/main_menu.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/colors.dart';

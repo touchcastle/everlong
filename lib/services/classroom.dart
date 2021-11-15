@@ -98,8 +98,8 @@ class Classroom extends ChangeNotifier {
     if (withStaff) staffDisplay(data);
     if ((!isHolding || (isHolding && data[kSwitchPos] == kNoteOn))) {
       if (isHolding) holdingKeys.add(data[kKeyPos]);
-      if (_countChild() > 0) {
-        int _delay = Setting.noteDelayMillisec ~/ _countChild();
+      if (countChild() > 0) {
+        int _delay = Setting.noteDelayMillisec ~/ countChild();
         for (BLEDevice _device
             in bluetoothDevices.where((d) => d.isConnected() && !d.isMaster)) {
           /// Send light.
@@ -131,7 +131,7 @@ class Classroom extends ChangeNotifier {
       await Future.delayed(Duration(milliseconds: millisec));
 
   /// To count connected children devices.
-  int _countChild() => bluetoothDevices
+  int countChild() => bluetoothDevices
       .where((d) => d.isConnected() && !d.isMaster)
       .toList()
       .length;
@@ -142,8 +142,8 @@ class Classroom extends ChangeNotifier {
   void devicesIncrement() {
     final int _count = 5;
     final int _delay = 10;
-    if (_countChild() > _count)
-      Setting.noteDelayMillisec += ((_countChild() - _count) * _delay);
+    if (countChild() > _count)
+      Setting.noteDelayMillisec += ((countChild() - _count) * _delay);
   }
 
   /// After host start hold. every pressed keys will be kept in [holdingKeys].
@@ -351,12 +351,13 @@ class Classroom extends ChangeNotifier {
   }
 
   /// Update user's edited device's name to database and [bluetoothDevices].
-  Future updateDeviceDisplayName(
-      {required String id, required String name}) async {
-    await _db.updateName(id: id, name: name);
-    bluetoothDevices[_getIndexFromID(id)].displayName = name;
-    if (masterID == id) masterName = name;
-    notifyListeners();
+  Future updateDeviceDisplayName({required String id, String? name}) async {
+    if (name != null) {
+      await _db.updateName(id: id, name: name);
+      bluetoothDevices[_getIndexFromID(id)].displayName = name;
+      if (masterID == id) masterName = name;
+      notifyListeners();
+    }
   }
 
   /// Return index of device's id.
@@ -407,6 +408,12 @@ class Classroom extends ChangeNotifier {
     Staff.resetDisplay();
     piano.resetDisplay();
     // resetKeyLight();
+    notifyListeners();
+  }
+
+  bool showingSetting = false;
+  void toggleShowingSetting(bool show) {
+    showingSetting = show;
     notifyListeners();
   }
 }

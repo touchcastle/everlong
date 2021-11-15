@@ -284,26 +284,21 @@ class BLEDevice extends ChangeNotifier {
         }
       }
       TimerStream(data, Duration(milliseconds: _delay)).listen((_data) {
+        ///Otherwise it's unknown message.
         if (_data.length >= 5) {
-          //Otherwise it's unknown message.
-          // _classroom.keyListener(Uint8List.fromList(_data));
           /// Listening function from host's key.
-          // Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
           final Uint8List _uintData = Uint8List.fromList(_data);
-          // _classroom.staffDisplay(_uintData);
           if (Setting.sessionMode == SessionMode.offline) {
             _classroom.localMessageBroadcast(_uintData);
           } else if (Setting.sessionMode == SessionMode.online) {
-            //On student's screen, NOT show self playing notes on music staff.
+            ///On student's screen, NOT show self playing notes on music staff.
             if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
           }
         }
       });
       _lastPressed = DateTime.now().millisecondsSinceEpoch;
-    },
-        onDone: () => print('On done'),
-        onError: (e) => print('listen error: $e}'));
+    }, onError: (e) => print('listen error: $e}'));
   }
 
   /// Cancel listener.
@@ -315,10 +310,6 @@ class BLEDevice extends ChangeNotifier {
   }
 
   /// Write MIDI data to device.
-  // Future write({required Uint8List message}) async =>
-  //     this.characteristic != null
-  //         ? await this.characteristic!.write(message, withoutResponse: true)
-  //         : null;
   Future write({required Uint8List message}) async {
     if (this.characteristic != null) {
       print('BLE write: ${message.toString()}');
@@ -326,17 +317,12 @@ class BLEDevice extends ChangeNotifier {
     }
   }
 
-  bool _isPopPiano() {
-    if (this.device.name.contains('POP Piano') ||
-        this.device.name.contains('POP piano') ||
-        this.device.name.contains('pop piano') ||
-        this.device.name.contains('pop Piano') ||
-        this.device.name.contains('Pop Piano')) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  ///Check if device is Pop Piano since it has difference connection method.
+  bool _isPopPiano() => (this.device.name.contains('POP Piano') ||
+      this.device.name.contains('POP piano') ||
+      this.device.name.contains('pop piano') ||
+      this.device.name.contains('pop Piano') ||
+      this.device.name.contains('Pop Piano'));
 
   Future writeLightMessage(int key, noteSwitch) async {
     // int _lightSwitch;
@@ -374,7 +360,6 @@ class BLEDevice extends ChangeNotifier {
 
   Future lightOffAllKeys() async {
     for (int _key = kFirstKey; _key <= kLastKey; _key++) {
-      // await this.write(message: _classroom.lightMIDI(_key, kNoteOff));
       await this.writeLightMessage(_key, kNoteOff);
       await Future.delayed(Duration(milliseconds: Setting.noteDelayMillisec));
     }

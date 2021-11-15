@@ -8,8 +8,13 @@ import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 
 class DeviceTitle extends StatelessWidget {
+  ///Bluetooth device
   final BLEDevice device;
+
+  ///Device connection status
   final bool isConnected;
+
+  ///Constructor
   DeviceTitle(this.device, this.isConnected);
 
   /// Decoration for device's box.
@@ -22,19 +27,14 @@ class DeviceTitle extends StatelessWidget {
         : kDisconnectedBoxColor;
     return BoxDecoration(
       color: _color(),
-      borderRadius: BorderRadius.all(kBorderRadius),
+      borderRadius: kAllBorderRadius,
     );
   }
 
-  double _expandPadding() => device.isExpanding ? 3 : 0;
   double _boxPadding() => Setting.isOnline() ? 0 : 10;
-  double _innerBoxBottomPadding() => Setting.isOnline() ? 15 : 10;
-  double _innerBoxPadding() => device.isExpanding ? 12 : 15;
-  double _innerBoxLeftPadding() => device.isExpanding ? 2 : 5;
 
   @override
   Widget build(BuildContext context) {
-    ///Without border
     return Container(
       decoration: BoxDecoration(
         color: device.isExpanding ? kTextColorDark : kTextColorDark,
@@ -47,49 +47,13 @@ class DeviceTitle extends StatelessWidget {
           padding: EdgeInsets.only(left: 5, right: 10, top: 10, bottom: 12),
           child: Row(
             children: [
-              Expanded(child: DeviceLabel(this.device, this.isConnected)),
-              Connection(device, this.isConnected),
+              Expanded(child: DeviceLabel(device, isConnected)),
+              Connection(device, isConnected),
               SizedBox(width: 10),
             ],
           ),
         ),
       ),
     );
-
-    ///With border
-    // return Container(
-    //   decoration: BoxDecoration(
-    //     color: kConnectedBoxColor,
-    //     borderRadius: BorderRadius.all(kBorderRadius),
-    //   ),
-    //   padding: EdgeInsets.only(
-    //       top: _expandPadding(),
-    //       left: _expandPadding(),
-    //       right: _expandPadding()),
-    //   child: Container(
-    //     decoration: BoxDecoration(
-    //       color: device.isExpanding ? kTextColorDark : kTextColorDark,
-    //       borderRadius: BorderRadius.all(kBorderRadius),
-    //     ),
-    //     padding: EdgeInsets.only(bottom: _boxPadding()),
-    //     child: Container(
-    //       decoration: _deviceBoxDecor(isConnected),
-    //       child: Padding(
-    //         padding: EdgeInsets.only(
-    //             left: _innerBoxLeftPadding(),
-    //             right: _innerBoxPadding(),
-    //             top: _innerBoxPadding(),
-    //             bottom: _innerBoxBottomPadding()),
-    //         child: Row(
-    //           children: [
-    //             Expanded(child: DeviceLabel(this.device, this.isConnected)),
-    //             Connection(device, this.isConnected),
-    //             SizedBox(width: 10),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }

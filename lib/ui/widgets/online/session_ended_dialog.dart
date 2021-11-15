@@ -7,6 +7,7 @@ import 'package:everlong/ui/widgets/text_resp.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/texts.dart';
 
 Widget sessionEnded({required Function() onPressed}) {
   double _dialogRatio = Setting.isTablet() ? 0.5 : 0.7;
@@ -14,7 +15,6 @@ Widget sessionEnded({required Function() onPressed}) {
   return Center(
     child: Container(
       width: Setting.deviceWidth * _dialogRatio,
-      // height: 240,
       decoration: BoxDecoration(
         borderRadius: kAllBorderRadius,
         gradient: kBGGradient(kSessionEndedBG),
@@ -34,7 +34,7 @@ Widget sessionEnded({required Function() onPressed}) {
                     color: kTextColorLight),
                 SizedBox(width: 15),
                 Text(
-                  'Session Ended',
+                  kSessionEndedHeader,
                   style: TextStyle(
                     color: kTextColorLight,
                     fontSize: textSizeResp(ratio: 20),
@@ -44,7 +44,7 @@ Widget sessionEnded({required Function() onPressed}) {
             ),
             SizedBox(height: 20),
             Text(
-              'The session was terminated by the\nhost. You will be automatically taken\nback to main menu',
+              kSessionEndedInfo,
               style: TextStyle(
                 color: kTextColorWhite,
                 fontSize: textSizeResp(ratio: 30),

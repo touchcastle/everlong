@@ -11,8 +11,6 @@ import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/texts.dart';
 
-// Widget renameDialog(BuildContext context, BLEDevice device) {
-
 class RenameDialog extends StatefulWidget {
   final BLEDevice device;
   RenameDialog(this.device);
@@ -24,25 +22,78 @@ class RenameDialog extends StatefulWidget {
 class _RenameDialogState extends State<RenameDialog> {
   String? _newName;
 
+  ///Inner horizontal padding
+  EdgeInsetsGeometry _innerPad =
+      EdgeInsets.symmetric(horizontal: Setting.deviceWidth * 0.08);
+
+  ///Text field to change device name
+  Padding _deviceTextField(BuildContext context) {
+    return Padding(
+      padding: _innerPad,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(kRenameBoxLabel, style: textFieldLabel(color: kTextColorRed)),
+          Theme(
+            data: Theme.of(context).copyWith(
+                textSelectionTheme:
+                    TextSelectionThemeData(selectionColor: Colors.green)),
+            child: TextFormField(
+              initialValue: widget.device.displayName,
+              style: kTextFieldStyle,
+              cursorColor: Colors.black,
+              autofocus: true,
+              enabled: true,
+              decoration: kRenameTextDecor(kRenameBoxLabel),
+              onChanged: (newText) => _newName = newText,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///Device's metadata
+  Padding _deviceMetadata() => Padding(
+        padding: _innerPad,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //Device's factory name
+            Text(
+              ('${widget.device.device.name}  '),
+              style: textFieldSubLabel(color: kTextColorDark),
+            ),
+            SizedBox(width: Setting.deviceWidth * 0.01),
+            //Device UUID
+            Flexible(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  widget.device.id(),
+                  textAlign: TextAlign.right,
+                  style: textFieldSubLabel(color: kTextColorDark),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  SizedBox _verticalSpace(double multiplier) =>
+      SizedBox(height: Setting.deviceHeight * multiplier);
+
   @override
   Widget build(BuildContext context) {
-    // final double _screenWidth = MediaQuery.of(context).size.width;
-    // final double _screenHeight = MediaQuery.of(context).size.height;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(kBorderRadius),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [0.2, 0.9],
-          colors: kLocalBG,
-        ),
+        borderRadius: kAllBorderRadius,
+        gradient: kBGGradient(kLocalBG),
       ),
       child: Padding(
         padding: EdgeInsets.only(bottom: 15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             dialogHeaderBar(
               barColor: kLocalAccentColor,
@@ -51,80 +102,18 @@ class _RenameDialogState extends State<RenameDialog> {
               titleIconName: kRenameIcon,
               title: kRenameHeader,
             ),
-            SizedBox(height: Setting.deviceHeight * 0.03),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: Setting.deviceWidth * 0.08),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(kRenameBoxLabel,
-                      style: textFieldLabel(color: kTextColorRed)),
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                        textSelectionTheme: TextSelectionThemeData(
-                            selectionColor: Colors.green)),
-                    child: TextFormField(
-                      initialValue: widget.device.displayName,
-                      style: kTextFieldStyle,
-                      cursorColor: Colors.black,
-                      autofocus: true,
-                      enabled: true,
-                      decoration: kRenameTextDecor(kRenameBoxLabel),
-                      onChanged: (newText) => _newName = newText,
-                    ),
-                  ),
-                ],
-              ),
+            _verticalSpace(0.03),
+            _deviceTextField(context),
+            _verticalSpace(0.005),
+            _deviceMetadata(),
+            _verticalSpace(0.02),
+            Save(
+              onPressed: () async {
+                await context.read<Classroom>().updateDeviceDisplayName(
+                    id: widget.device.id(), name: _newName!);
+                Navigator.pop(context);
+              },
             ),
-            SizedBox(height: Setting.deviceHeight * 0.005),
-            Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: Setting.deviceWidth * 0.08),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    ('${widget.device.device.name}  '),
-                    style: textFieldSubLabel(color: kTextColorDark),
-                  ),
-                  SizedBox(width: Setting.deviceWidth * 0.01),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Text(
-                        widget.device.id(),
-                        textAlign: TextAlign.right,
-                        style: textFieldSubLabel(color: kTextColorDark),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: Setting.deviceHeight * 0.02),
-            Container(
-              // decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.all(kBorderRadius),
-              //     color: Color(0xffF9CC58)),
-              child: Save(
-                onPressed: () {
-                  if (_newName != null)
-                    context.read<Classroom>().updateDeviceDisplayName(
-                        id: widget.device.id(), name: _newName!);
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            // Container(
-            //     child: TextButton(
-            //   child: Text('Confirm'),
-            //   onPressed: () {
-            //     context.read<Classroom>().updateDeviceDisplayName(
-            //         id: widget.device.id(), name: _newName!);
-            //     Navigator.pop(context);
-            //   },
-            // )),
           ],
         ),
       ),

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/ui/widgets/device/device_info.dart';
+import 'package:everlong/ui/widgets/device/device_metadata.dart';
 import 'package:everlong/ui/widgets/actions/rename.dart';
 import 'package:everlong/ui/widgets/actions/host.dart';
 import 'package:everlong/ui/widgets/actions/ping.dart';
 import 'package:everlong/utils/styles.dart';
 
-class DeviceAction extends StatelessWidget {
+class DeviceDetail extends StatelessWidget {
   final BLEDevice device;
-  DeviceAction(this.device);
+  DeviceDetail(this.device);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class DeviceAction extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: DeviceInfo(id: device.id(), name: device.device.name),
+              child: DeviceMetadata(id: device.id(), name: device.device.name),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -30,13 +30,6 @@ class DeviceAction extends StatelessWidget {
                 Ping(device: device)
               ],
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Rename(device: device),
-            //     Row(children: [Host(device: device), Ping(device: device)]),
-            //   ],
-            // ),
           ],
         ),
       ),

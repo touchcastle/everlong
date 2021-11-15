@@ -18,6 +18,7 @@ import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/midi.dart';
 import 'package:everlong/utils/errors.dart';
+import 'package:everlong/utils/texts.dart';
 
 enum LobbyType {
   create,
@@ -102,6 +103,7 @@ class Online extends ChangeNotifier {
     return _out;
   }
 
+  ///To create or join session.
   Future lobby(BuildContext context,
       {required LobbyType type,
       required String? name,
@@ -124,7 +126,6 @@ class Online extends ChangeNotifier {
         await _validateRoomInput(room);
         await _validateRoomAvail(room!);
         await _joinRoom(room, name);
-
         _toRoom();
       } else if (type == LobbyType.create) {
         await _createRoom(name);
@@ -135,7 +136,7 @@ class Online extends ChangeNotifier {
       print('$e');
       Snackbar.show(
         context,
-        text: 'Error: $e',
+        text: '$kError: $e',
         icon: kBluetoothIconDisconnected,
         verticalMargin: false,
       );
@@ -496,6 +497,7 @@ class Online extends ChangeNotifier {
   void _onRoomExited() async {
     this._roomMessageSubscribe?.cancel();
     this._memberSubscribe?.cancel();
+    this._studentMessageSubscribe?.cancel();
     _fireStore.cancelClockIn();
     roomID = '';
     Setting.inOnlineClass = false;

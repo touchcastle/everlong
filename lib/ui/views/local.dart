@@ -23,7 +23,16 @@ class LocalPage extends StatefulWidget {
 }
 
 class _LocalPageState extends State<LocalPage> {
-  dynamic _scanSub;
+  ///For bluetooth scanning subscribe
+  var _scanSub;
+
+  ///Padding
+  Padding _deviceList() => Padding(
+      padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0),
+      child: DeviceAnimatedList());
+
+  ///Empty area
+  SizedBox _empty = SizedBox.shrink();
 
   @override
   void initState() {
@@ -37,6 +46,8 @@ class _LocalPageState extends State<LocalPage> {
     Future.delayed(Duration(seconds: 1), () => _setMaster());
   }
 
+  ///Display set master device dialog when entered local session screen.
+  ///Check [Setting.notRemindMaster] if user had selected to not show again.
   Future _setMaster() async {
     if (!Setting.notRemindMaster)
       showDialog(
@@ -49,6 +60,38 @@ class _LocalPageState extends State<LocalPage> {
       );
   }
 
+  void dispose() {
+    _scanSub?.cancel();
+    Setting.sessionMode = SessionMode.none;
+    Setting.currentContext = null;
+    super.dispose();
+  }
+
+  ///User can swipe in main area to switch between music notation view only
+  ///and music notation and device's list view.
+  GestureDetector _mainArea(bool _showList, bool _hasDevice) {
+    return GestureDetector(
+      onHorizontalDragEnd: _swiper,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Row(
+          children: [
+            _showList && !Setting.isTablet()
+                ? _empty
+                : Expanded(flex: 1, child: Screen()),
+            _showList
+                ? Expanded(
+                    flex: 1,
+                    child: _hasDevice ? _deviceList() : NoDeviceDisplay(),
+                  )
+                : _empty,
+          ],
+        ),
+      ),
+    );
+  }
+
+  ///Set flag when user swipe to change view mode.
   void _swiper(DragEndDetails details) {
     if (details.primaryVelocity! > 0) {
       context.read<Classroom>().toggleListDisplay(forceShow: false);
@@ -57,17 +100,12 @@ class _LocalPageState extends State<LocalPage> {
     }
   }
 
-  void dispose() {
-    _scanSub?.cancel();
-    Setting.sessionMode = SessionMode.none;
-    Setting.currentContext = null;
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
+    bool _showList = context.watch<Classroom>().showList;
+    bool _hasDevice = context.watch<Classroom>().bluetoothDevices.isNotEmpty;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kLocalAccentColor,
@@ -79,42 +117,11 @@ class _LocalPageState extends State<LocalPage> {
             child: Column(children: [
               GlobalTopMenu(),
               localInfoBar(context.watch<Classroom>().masterName),
-              Expanded(
-                child: GestureDetector(
-                  onHorizontalDragEnd: _swiper,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Row(
-                      children: [
-                        context.watch<Classroom>().showList &&
-                                !Setting.isTablet()
-                            ? SizedBox.shrink()
-                            : Expanded(
-                                flex: 1,
-                                child: Screen(),
-                              ),
-                        context.watch<Classroom>().showList
-                            ? Expanded(
-                                flex: 1,
-                                child: context
-                                        .watch<Classroom>()
-                                        .bluetoothDevices
-                                        .isNotEmpty
-                                    ? Padding(
-                                        padding: EdgeInsets.only(
-                                            left: Setting.isTablet() ? 10 : 0),
-                                        child: DeviceAnimatedList(),
-                                      )
-                                    : NoDeviceDisplay(),
-                              )
-                            : SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              Expanded(child: _mainArea(_showList, _hasDevice)),
               // LocalBottomMenu(onScanPressed: () => setState(() {})),
-              LocalBottomMenu(),
+              SizedBox(
+                  // height: Setting.deviceHeight * 0.07,
+                  child: Center(child: LocalBottomMenu())),
             ]),
           ),
         ),

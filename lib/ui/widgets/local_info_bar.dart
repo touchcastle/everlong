@@ -15,7 +15,7 @@ Widget localInfoBar(String masterDevice) {
         Text(kMasterDevice,
             style:
                 TextStyle(fontSize: kInfoBarTextSize, color: kTextColorWhite)),
-        Text(_noMaster() ? kInfoNoMaster : masterDevice,
+        Text(_noMaster() ? '($kInfoNoMaster)' : masterDevice,
             style: TextStyle(
                 fontSize: kInfoBarTextSize,
                 color: _noMaster() ? kLocalAccentColor : kTextColorDark)),

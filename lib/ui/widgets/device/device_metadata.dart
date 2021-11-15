@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/utils/styles.dart';
 
-class DeviceInfo extends StatelessWidget {
-  DeviceInfo({required this.id, required this.name});
+class DeviceMetadata extends StatelessWidget {
+  DeviceMetadata({required this.id, required this.name});
   final String id;
   final String name;
 

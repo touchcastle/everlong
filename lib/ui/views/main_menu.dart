@@ -21,9 +21,6 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     super.initState();
-    print('pass init of main_menu');
-    // ///Initialize online session variables and parameters.
-    // context.read<Online>().init();
     Setting.sessionMode = SessionMode.none;
     UrlHandler.handleDynamicLink(context);
   }

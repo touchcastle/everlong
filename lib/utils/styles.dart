@@ -110,8 +110,6 @@ TextStyle textFieldSubLabel2({Color? color}) =>
     TextStyle(fontSize: 12, color: color ?? Colors.white);
 
 ///Padding
-// const EdgeInsets kMenuButton =
-//     EdgeInsets.symmetric(vertical: 5, horizontal: 10);
 const double kMenuVerticalPadding = 5;
 const double kMenuHorizontalPadding = 10;
 const EdgeInsets kDevicesAreaPadding = EdgeInsets.only(left: 0);

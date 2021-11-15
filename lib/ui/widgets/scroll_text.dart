@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+///Auto scrolling text
 class ScrollingText extends StatefulWidget {
   final String text;
   final TextStyle? textStyle;
@@ -12,9 +13,7 @@ class ScrollingText extends StatefulWidget {
     this.textStyle,
     this.scrollAxis: Axis.horizontal,
     this.ratioOfBlankToScreen: 0.25,
-  }) : assert(
-          text != null,
-        );
+  });
 
   @override
   State<StatefulWidget> createState() {

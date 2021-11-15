@@ -7,7 +7,6 @@ import 'package:everlong/models/session_participants.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/ui/views/piano/virtual_piano.dart';
 import 'package:everlong/ui/widgets/online/connecting_text.dart';
-import 'package:everlong/ui/widgets/actions/listen.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
@@ -59,7 +58,7 @@ class _OnlineMemberListState extends State<OnlineMemberList> {
           SizedBox(width: 3),
           Text(_member.name, style: style),
           context.read<Online>().user!.user!.uid == _member.id
-              ? Text(kMe, style: style)
+              ? Text('($kMe)', style: style)
               : SizedBox.shrink(),
         ],
       ),

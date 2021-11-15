@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:everlong/services/online.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:everlong/services/setting.dart';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/ui/widgets/device/device_name.dart';
+import 'package:everlong/services/setting.dart';
+import 'package:everlong/services/online.dart';
 import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/sizes.dart';
+import 'package:everlong/utils/styles.dart';
 
 class DeviceLabel extends StatelessWidget {
   final BLEDevice device;
@@ -19,19 +19,36 @@ class DeviceLabel extends StatelessWidget {
   final double _hostIconAreaHeight = 25.0;
   DeviceLabel(this.device, this.isConnected);
 
-  Widget _showHostIcon() => SizedBox(
-        height: _hostIconHeight,
-        child: Padding(
-          padding: EdgeInsets.all(2),
-          child: SvgPicture.asset(kHostIcon,
-              width: 12,
-              color: this.device.isExpanding
-                  ? kConnectedBoxColor
-                  : kConnectedTextColor),
-        ),
-      );
+  ///Display master device icon
+  SizedBox _masterIcon(bool isMaster) => SizedBox(
+      width: _hostIconAreaWidth,
+      child: isMaster
+          ? SizedBox(
+              height: _hostIconHeight,
+              child: Padding(
+                padding: EdgeInsets.all(2),
+                child: SvgPicture.asset(kHostIcon,
+                    width: 12, color: _expandColor()),
+              ),
+            )
+          : _empty);
 
-  Widget _showConnectStatus() {
+  ///Display master device status
+  Widget _masterText(bool isMaster) => isMaster
+      ? Text(
+          ', $kMaster',
+          style: TextStyle(
+              color: this.isConnected ? _expandColor() : kOrange5,
+              fontSize: kDeviceStatus),
+        )
+      : _empty;
+
+  ///Label color depend on box expanding
+  Color _expandColor() =>
+      device.isExpanding ? kConnectedBoxColor : kTextColorDark;
+
+  ///Display bluetooth device connection status
+  Widget _Connectivity() {
     if (!this.device.isConnecting) {
       if (this.isConnected) {
         return Text(
@@ -53,48 +70,57 @@ class DeviceLabel extends StatelessWidget {
     }
   }
 
-  Widget _showMasterText() => Text(
-        ', $kMaster',
-        style: TextStyle(
-            color: this.isConnected
-                ? device.isExpanding
-                    ? kConnectedBoxColor
-                    : kTextColorDark
-                : kOrange5,
-            fontSize: kDeviceStatus),
+  ///Display device name with left space [_hostIconAreaWidth]
+  Row _name() => Row(
+        children: [
+          SizedBox(width: _hostIconAreaWidth),
+          SizedBox(width: 3),
+          // DeviceName(device: device, isConnected: this.isConnected),
+          Flexible(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(device.displayName, style: _nameStyle()),
+            ),
+          )
+        ],
       );
+
+  ///Style for device name
+  TextStyle _nameStyle() => TextStyle(
+      fontFamily: kPrimaryFontFamily,
+      fontWeight: FontWeight.w500,
+      fontSize: 22,
+      color: isConnected && device.isConnected()
+          ? device.isExpanding
+              ? kConnectedBoxColor
+              : kConnectedTextColor
+          : kDisconnectedTextColor);
+
+  final SizedBox _empty = SizedBox.shrink();
 
   @override
   Widget build(BuildContext context) {
-    bool _showAsMaster() =>
+    bool _isMaster() =>
         this.device.isMaster ||
         (Setting.sessionMode == SessionMode.online &&
             context.read<Online>().isRoomHost);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            SizedBox(width: _hostIconAreaWidth),
-            SizedBox(width: 3),
-            DeviceName(device: device, isConnected: this.isConnected),
-          ],
-        ),
-        // SizedBox(height: 5.0),
+        _name(),
         SizedBox(
           height: _hostIconAreaHeight,
           child: Row(children: [
-            SizedBox(
-                width: _hostIconAreaWidth,
-                child: _showAsMaster() ? _showHostIcon() : SizedBox.shrink()),
+            _masterIcon(_isMaster()),
             SizedBox(width: 3),
             Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    _showConnectStatus(),
-                    _showAsMaster() ? _showMasterText() : SizedBox.shrink(),
+                    _Connectivity(),
+                    _masterText(_isMaster()),
+                    // _isMaster() ? _masterText() : _empty,
                   ],
                 ),
               ),
