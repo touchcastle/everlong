@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/utils/colors.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/styles.dart';
 

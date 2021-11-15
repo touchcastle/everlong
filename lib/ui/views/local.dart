@@ -6,10 +6,12 @@ import 'package:everlong/services/bluetooth.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/views/global_top_menu.dart';
 import 'package:everlong/ui/views/local_bottom_menu.dart';
+import 'package:everlong/ui/views/set_master_reminder.dart';
 import 'package:everlong/ui/views/device/devices_list.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
 import 'package:everlong/ui/widgets/local_info_bar.dart';
 import 'package:everlong/ui/widgets/device/no_device.dart';
+import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/constants.dart';
@@ -21,14 +23,30 @@ class LocalPage extends StatefulWidget {
 }
 
 class _LocalPageState extends State<LocalPage> {
+  dynamic _scanSub;
+
   @override
   void initState() {
     super.initState();
-    context
+    _scanSub = context
         .read<BluetoothControl>()
         .collectScanResult()
-        .listen((result) => result ? setState(() {}) : null);
+        .listen((result) => result ? setState(() {}) : setState(() {}));
+    // .listen((result) => result ? setState(() {}) : null);
     Setting.currentContext = context;
+    Future.delayed(Duration(seconds: 1), () => _setMaster());
+  }
+
+  Future _setMaster() async {
+    if (!Setting.notRemindMaster)
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => dialogBox(
+          smallerDialog: true,
+          context: context,
+          content: SetMasterReminder(),
+        ),
+      );
   }
 
   void _swiper(DragEndDetails details) {
@@ -40,6 +58,7 @@ class _LocalPageState extends State<LocalPage> {
   }
 
   void dispose() {
+    _scanSub?.cancel();
     Setting.sessionMode = SessionMode.none;
     Setting.currentContext = null;
     super.dispose();
@@ -94,7 +113,8 @@ class _LocalPageState extends State<LocalPage> {
                   ),
                 ),
               ),
-              LocalBottomMenu(onScanPressed: () => setState(() {})),
+              // LocalBottomMenu(onScanPressed: () => setState(() {})),
+              LocalBottomMenu(),
             ]),
           ),
         ),

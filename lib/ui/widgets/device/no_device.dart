@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/styles.dart';
 
 class NoDeviceDisplay extends StatelessWidget {

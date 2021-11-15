@@ -4,6 +4,7 @@ import 'package:everlong/services/bluetooth.dart';
 import 'package:everlong/ui/widgets/progress_indicator.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/styles.dart';
 
 /// Generate scan button

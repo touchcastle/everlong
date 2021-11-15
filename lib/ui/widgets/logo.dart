@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:everlong/ui/widgets/svg.dart';
+import 'package:everlong/utils/icons.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/utils/images.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:everlong/utils/constants.dart';
 
 Hero logo(double _logoRatio()) {

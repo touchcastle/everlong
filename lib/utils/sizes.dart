@@ -11,5 +11,8 @@ double kDialogButtonTextSize = textSizeResp(ratio: 20);
 ///Info bar text size
 double kInfoBarTextSize = textSizeResp(ratio: 35);
 
+///Dialog
+double kDialogSubTextSize = textSizeResp(ratio: 30);
+
 ///Device's status
 double kDeviceStatus = 16;

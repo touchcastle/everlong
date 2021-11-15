@@ -12,6 +12,7 @@ import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 class OnlineMemberList extends StatefulWidget {
   @override
@@ -20,29 +21,87 @@ class OnlineMemberList extends StatefulWidget {
 
 class _OnlineMemberListState extends State<OnlineMemberList> {
   final double _hostIconAreaWidth = 25.0;
-  final double pianoHeight = 45;
-  final double nameHeight = 25;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  final double _pianoHeight = 40;
+  final double _nameHeight = 25;
 
   bool _isLost(int lastSeen) =>
       (DateTime.now().millisecondsSinceEpoch - lastSeen) >
           kClockInCheckPeriod ||
       context.watch<Online>().lostConnection;
 
-  Widget _memberStateIcon(int lastSeen) {
+  ///Whole box for member's detail.(Non-listenable virtual piano)
+  Widget _memberInfo(SessionMember _member, BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      height: _pianoHeight + _nameHeight,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          _memberName(_member, context),
+          _memberState(_member),
+        ],
+      ),
+    );
+  }
+
+  ///First line of member's detail.(status icon & member's name)
+  Widget _memberName(SessionMember _member, BuildContext context,
+      {TextStyle style = kMemberName}) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          SizedBox(
+              width: _hostIconAreaWidth,
+              child: _memberStatusIcon(_member.lastSeen)),
+          SizedBox(width: 3),
+          Text(_member.name, style: style),
+          context.read<Online>().user!.user!.uid == _member.id
+              ? Text(kMe, style: style)
+              : SizedBox.shrink(),
+        ],
+      ),
+    );
+  }
+
+  ///Second line of member's detail.(status text & host)
+  Widget _memberState(SessionMember _member) {
+    return Row(
+      children: [
+        SizedBox(
+          width: _hostIconAreaWidth,
+          child: _member.isHost
+              ? SizedBox(
+                  height: 20,
+                  child: Padding(
+                    padding: EdgeInsets.all(2),
+                    child: SvgPicture.asset(kHostIcon, color: kMemberDetail),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ),
+        SizedBox(width: 3),
+        _memberStatusText(_member.lastSeen),
+        // _member.isHost && _memberState(_member.lastSeen)
+        _member.isHost && !_isLost(_member.lastSeen)
+            ? Text(', $kHost', style: kMemberInfo)
+            : SizedBox.shrink(),
+      ],
+    );
+  }
+
+  Widget _memberStatusIcon(int lastSeen) {
     String _icon() => _isLost(lastSeen) ? kAmberLightIcon : kGreenLightIcon;
     return SvgPicture.asset(_icon());
   }
 
-  Widget _memberStateText(int lastSeen) {
+  Widget _memberStatusText(int lastSeen) {
     if (_isLost(lastSeen)) {
       return ConnectingAnimatedText();
     } else {
-      return Text('Connected', style: kMemberInfo);
+      return Text(kMemberConnected, style: kMemberInfo);
     }
   }
 
@@ -61,7 +120,7 @@ class _OnlineMemberListState extends State<OnlineMemberList> {
                     color: kMemberBox, borderRadius: kAllBorderRadius),
                 child: Padding(
                   padding:
-                      EdgeInsets.only(top: 8, bottom: 8, left: 5, right: 10),
+                      EdgeInsets.only(top: 2, bottom: 5, left: 5, right: 10),
                   child: context.watch<Online>().isRoomHost
                       ? GestureDetector(
                           onTap: () async {
@@ -75,81 +134,22 @@ class _OnlineMemberListState extends State<OnlineMemberList> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Container(
-                                        height: nameHeight,
-                                        child: memberName(_member, context,
+                                        height: _nameHeight,
+                                        child: _memberName(_member, context,
                                             style: kMemberNameSmall)),
                                     VirtualPiano(
                                       _member.piano,
-                                      height: pianoHeight,
+                                      height: _pianoHeight,
                                     ),
                                   ],
                                 )
-                              : memberInfo(_member, context),
+                              : _memberInfo(_member, context),
                         )
-                      : memberInfo(_member, context),
+                      : _memberInfo(_member, context),
                 ),
               ),
             );
           }),
-    );
-  }
-
-  Widget memberInfo(SessionMember _member, BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      height: pianoHeight + nameHeight,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        children: [
-          memberName(_member, context),
-          Row(
-            children: [
-              SizedBox(
-                width: _hostIconAreaWidth,
-                child: _member.isHost
-                    ? SizedBox(
-                        height: 20,
-                        child: Padding(
-                          padding: EdgeInsets.all(2),
-                          child: SvgPicture.asset(
-                            kHostIcon,
-                            color: kMemberDetail,
-                          ),
-                        ),
-                      )
-                    : SizedBox.shrink(),
-              ),
-              SizedBox(width: 3),
-              _memberStateText(_member.lastSeen),
-              // _member.isHost && _memberState(_member.lastSeen)
-              _member.isHost && !_isLost(_member.lastSeen)
-                  ? Text(', Host', style: kMemberInfo)
-                  : SizedBox.shrink(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget memberName(SessionMember _member, BuildContext context,
-      {TextStyle style = kMemberName}) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          SizedBox(
-              width: _hostIconAreaWidth,
-              child: _memberStateIcon(_member.lastSeen)),
-          SizedBox(width: 3),
-          Text(_member.name, style: style),
-          context.read<Online>().user!.user!.uid == _member.id
-              ? Text('(me)', style: style)
-              : SizedBox.shrink(),
-        ],
-      ),
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:everlong/ui/widgets/online/clock.dart';
 import 'package:everlong/ui/widgets/online/online_member_counter.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/sizes.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 Widget onlineInfoBar() {
   final TextStyle _style = TextStyle(

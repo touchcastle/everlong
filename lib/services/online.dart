@@ -65,11 +65,7 @@ class Online extends ChangeNotifier {
   List<SessionMember> membersList = [];
 
   ///Constructor.
-  Online(
-    this.classroom,
-    // this.fireStore,
-    // this.analytic,
-  );
+  Online(this.classroom);
 
   Future initFirebase() async {
     await _fireStore.initializeFlutterFire();
@@ -97,7 +93,7 @@ class Online extends ChangeNotifier {
       myRoomName = fromTextField;
       if (fromTextField != Setting.prefName) {
         Setting.prefName = fromTextField;
-        Setting.saveString('name', fromTextField);
+        Setting.saveString(kNamePref, fromTextField);
       }
     } else {
       _out = myDeviceName;
@@ -573,7 +569,7 @@ class Online extends ChangeNotifier {
       {required String memberId, required bool listenable}) async {
     //Not toggle myself.
     if (memberId != _uid()) {
-      _showInProgress(true);
+      // _showInProgress(true);
       int _i = membersList.indexWhere((d) => d.id == memberId);
       if (_i >= 0) {
         await _fireStore.toggleMemberListenable(
@@ -581,7 +577,7 @@ class Online extends ChangeNotifier {
         membersList[_i].toggleListenable(listenable);
       }
       notifyListeners();
-      _showInProgress(false);
+      // _showInProgress(false);
     }
   }
 

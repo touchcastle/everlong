@@ -95,7 +95,9 @@ const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 TextStyle dialogHeader({Color? color}) => TextStyle(
     fontSize: 22, fontWeight: FontWeight.w500, color: color ?? Colors.white);
 TextStyle dialogSubHeader({Color? color}) => TextStyle(
-    fontSize: 18, fontWeight: FontWeight.w500, color: color ?? Colors.white);
+    fontSize: kDialogSubTextSize,
+    fontWeight: FontWeight.w500,
+    color: color ?? Colors.white);
 TextStyle dialogDetail({Color? color}) =>
     TextStyle(fontSize: 14, color: color ?? Colors.white);
 

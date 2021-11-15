@@ -81,7 +81,7 @@ class _VirtualPianoState extends State<VirtualPiano> {
       Piano piano, double pianoHeight, double blackKeySize, double whiteKeySize,
       {required int octave}) {
     return Container(
-      height: pianoHeight * 0.6,
+      height: pianoHeight * 0.65,
       child: Row(
         children: [
           SizedBox(

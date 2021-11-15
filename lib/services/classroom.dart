@@ -53,6 +53,7 @@ class Classroom extends ChangeNotifier {
   bool showList = true;
   // bool showSetting = false;
 
+  ///For pressing notes and chord(By master device or room host) on screen.
   Piano piano = Piano();
 
   /// Constructor

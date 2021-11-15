@@ -8,7 +8,7 @@ import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 class DeviceManager extends StatefulWidget {
   @override

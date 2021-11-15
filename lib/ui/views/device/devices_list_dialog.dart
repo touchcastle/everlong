@@ -12,7 +12,7 @@ import 'package:everlong/ui/widgets/actions/scan.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 class DeviceAnimatedListDialog extends StatefulWidget {
   @override
@@ -30,7 +30,8 @@ class _DeviceAnimatedListDialogState extends State<DeviceAnimatedListDialog> {
     _scanSub = context
         .read<BluetoothControl>()
         .collectScanResult()
-        .listen((result) => result ? setState(() {}) : null);
+        .listen((result) => result ? setState(() {}) : setState(() {}));
+    // .listen((result) => result ? setState(() {}) : null);
   }
 
   @override

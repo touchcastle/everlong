@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/models/bluetooth.dart';
 import 'package:everlong/ui/widgets/device/device_name.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/sizes.dart';
@@ -54,7 +54,7 @@ class DeviceLabel extends StatelessWidget {
   }
 
   Widget _showMasterText() => Text(
-        kHost,
+        ', $kMaster',
         style: TextStyle(
             color: this.isConnected
                 ? device.isExpanding

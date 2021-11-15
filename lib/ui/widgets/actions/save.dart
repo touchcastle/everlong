@@ -4,7 +4,7 @@ import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 class Save extends StatelessWidget {
   final Function() onPressed;
@@ -13,8 +13,9 @@ class Save extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Button(
-      borderRadius: kAllBorderRadius,
       isVertical: false,
+      bgColor: kYellow2,
+      borderRadius: kAllBorderRadius,
       text: Text(
         kSave,
         style: buttonTextStyle(color: kTextColorRed, isDialogButton: true),

@@ -41,13 +41,13 @@ class GlobalTopMenu extends StatelessWidget {
                         ),
                       );
                     })
-                  //     ? Exit(onPressed: () async {
-                  //   await context
-                  //       .read<Online>()
-                  //       .roomExit(context.read<Online>().roomID);
-                  //   Navigator.popUntil(
-                  //       context, ModalRoute.withName(kMainPageName));
-                  // })
+                  // ? Exit(onPressed: () async {
+                  //     await context
+                  //         .read<Online>()
+                  //         .roomExit(context.read<Online>().roomID);
+                  //     Navigator.popUntil(
+                  //         context, ModalRoute.withName(kMainPageName));
+                  //   })
                   : Exit(onPressed: () async {
                       await context.read<Classroom>().cancelMasterDevice();
                       Navigator.pop(context);

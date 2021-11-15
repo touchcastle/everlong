@@ -1,17 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:everlong/utils/styles.dart';
+import 'package:everlong/models/bluetooth.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
-import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/utils/colors.dart';
 import 'package:everlong/ui/widgets/actions/save.dart';
-import 'package:everlong/ui/widgets/svg.dart';
-import 'package:everlong/utils/icons.dart';
 import 'package:everlong/ui/widgets/dialog_header_bar.dart';
+import 'package:everlong/utils/icons.dart';
+import 'package:everlong/utils/colors.dart';
+import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/texts.dart';
 
 // Widget renameDialog(BuildContext context, BLEDevice device) {
 
@@ -51,7 +49,7 @@ class _RenameDialogState extends State<RenameDialog> {
               exitIconAreaColor: kYellowMain,
               exitIconColor: kTextColorRed,
               titleIconName: kRenameIcon,
-              title: 'Rename Midi Device',
+              title: kRenameHeader,
             ),
             SizedBox(height: Setting.deviceHeight * 0.03),
             Padding(
@@ -60,7 +58,7 @@ class _RenameDialogState extends State<RenameDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Device Name',
+                  Text(kRenameBoxLabel,
                       style: textFieldLabel(color: kTextColorRed)),
                   Theme(
                     data: Theme.of(context).copyWith(
@@ -72,7 +70,7 @@ class _RenameDialogState extends State<RenameDialog> {
                       cursorColor: Colors.black,
                       autofocus: true,
                       enabled: true,
-                      decoration: kRenameTextDecor('Device name'),
+                      decoration: kRenameTextDecor(kRenameBoxLabel),
                       onChanged: (newText) => _newName = newText,
                     ),
                   ),
@@ -106,9 +104,9 @@ class _RenameDialogState extends State<RenameDialog> {
             ),
             SizedBox(height: Setting.deviceHeight * 0.02),
             Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(kBorderRadius),
-                  color: Color(0xffF9CC58)),
+              // decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.all(kBorderRadius),
+              //     color: Color(0xffF9CC58)),
               child: Save(
                 onPressed: () {
                   if (_newName != null)

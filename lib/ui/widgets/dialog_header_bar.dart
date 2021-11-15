@@ -3,10 +3,12 @@ import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/actions/exit.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/constants.dart';
 
 Container dialogHeaderBar({
   required Color barColor,
-  required Color exitIconAreaColor,
+  Color? exitIconAreaColor,
+  bool withExitIcon = true,
   Color? exitIconColor,
   String? titleIconName,
   Color? titleIconColor,
@@ -16,17 +18,20 @@ Container dialogHeaderBar({
 }) {
   Color _defaultLabelColor = Colors.white;
   return Container(
+    height: kButtonMinHeight,
     decoration: BoxDecoration(borderRadius: kTop, color: barColor),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            decoration:
-                BoxDecoration(borderRadius: kTopLeft, color: exitIconAreaColor),
-            child: Exit(
-                color: exitIconColor,
-                onPressed: onExit,
-                borderRadius: kTopLeft)),
+        withExitIcon
+            ? Container(
+                decoration: BoxDecoration(
+                    borderRadius: kTopLeft, color: exitIconAreaColor),
+                child: Exit(
+                    color: exitIconColor,
+                    onPressed: onExit,
+                    borderRadius: kTopLeft))
+            : SizedBox.shrink(),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

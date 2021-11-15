@@ -46,6 +46,7 @@ class Setting {
   static double deviceHeight = 600;
   static BuildContext? currentContext;
   static int initScale = Platform.isIOS ? 20 : 60;
+  static bool notRemindMaster = false;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -55,16 +56,19 @@ class Setting {
     deviceHeight = MediaQuery.of(context).size.height;
 
     ///Delay scale
-    final _scale = prefs.getInt('delay') ?? initScale;
+    final _scale = prefs.getInt(kDelayPref) ?? initScale;
     // final _scale = 20;
     noteDelayScale = _scale.toDouble();
 
     ///Mode
-    final _modeString = prefs.getString('mode') ?? 'ListenMode.onMute';
+    final _modeString = prefs.getString(kModePref) ?? 'ListenMode.onMute';
     changeMode(_mode(_modeString));
 
     ///Name
-    prefName = prefs.getString('name');
+    prefName = prefs.getString(kNamePref);
+
+    ///Remind Master Device Setting Dialog
+    notRemindMaster = prefs.getBool(kMasterRemindPref) ?? false;
 
     ///Prevent screen saver
     await Wakelock.enable();
@@ -88,18 +92,23 @@ class Setting {
     prefs.setString(key, value);
   }
 
+  static void saveBool(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
   static void changeDelay(double scale) {
     noteDelayScale = scale;
     appListenMode == ListenMode.on
         ? noteDelayMillisec = noteDelayScale.toInt() + 30
         : noteDelayMillisec = noteDelayScale.toInt() + 10;
-    saveInt('delay', noteDelayScale.toInt());
+    saveInt(kDelayPref, noteDelayScale.toInt());
   }
 
   static void changeMode(ListenMode mode) {
     appListenMode = mode;
     if (appListenMode == ListenMode.on) asChord = 0;
-    saveString('mode', mode.toString());
+    saveString(kModePref, mode.toString());
     changeDelay(noteDelayScale);
   }
 

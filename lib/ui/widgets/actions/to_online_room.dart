@@ -5,7 +5,7 @@ import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
-import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 class ToOnlineRoom extends StatelessWidget {
   final LobbyType inType;

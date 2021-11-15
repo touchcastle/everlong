@@ -6,6 +6,7 @@ import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';

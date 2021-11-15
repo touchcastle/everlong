@@ -16,7 +16,7 @@ class Button extends StatefulWidget {
     this.isVertical = true,
     this.isTextCenter = false,
     this.align = MainAxisAlignment.center,
-    this.bgColor = Colors.transparent,
+    this.bgColor,
     this.paddingVertical = 0,
     this.paddingHorizontal = 0,
     this.elevation,
@@ -67,7 +67,7 @@ class Button extends StatefulWidget {
 }
 
 class _ButtonState extends State<Button> {
-  final double _defaultButtonPadding = 8.0;
+  final double _defaultButtonPadding = 8;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,8 @@ class _ButtonState extends State<Button> {
       _width = 42;
     }
 
-    final BoxConstraints _constraints = BoxConstraints(minHeight: 50);
+    final BoxConstraints _constraints =
+        BoxConstraints(minHeight: kButtonMinHeight);
 
     Widget _cover({required Widget child}) => (_width != null)
         ? SizedBox(width: _width, child: child)
@@ -114,7 +115,9 @@ class _ButtonState extends State<Button> {
     return _cover(
       child: Material(
         borderRadius: widget.borderRadius ?? null,
-        color: widget.isActive ? Colors.black12 : widget.bgColor,
+        color: widget.isActive
+            ? Colors.black12
+            : widget.bgColor ?? Colors.transparent,
         elevation: widget.elevation ?? 0,
         shadowColor: Colors.black45,
         child: Container(
@@ -137,6 +140,7 @@ class _ButtonState extends State<Button> {
                     horizontal:
                         _defaultButtonPadding + widget.paddingHorizontal),
                 child: Container(
+                  // color: Colors.green,
                   child: _show,
                 ),
               ),
