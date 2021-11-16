@@ -30,7 +30,7 @@ class Snackbar {
     Color? bgColor,
   }) {
     double _hMargin() => Setting.isTablet() ? 0.2 : 0.1;
-    double _vMargin() => verticalMargin ? 0.07 : 0.02;
+    double _vMargin() => verticalMargin ? 0.08 : 0.02;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       elevation: 0,

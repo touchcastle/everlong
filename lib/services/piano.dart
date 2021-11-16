@@ -252,6 +252,9 @@ class Piano {
   void resetDisplay() {
     pressingKeyList.clear();
     pressingChord = '';
+    for (int _i = 0; _i < keyList.length; _i++) {
+      keyList[_i].isPressing = false;
+    }
   }
 }
 

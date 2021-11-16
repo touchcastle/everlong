@@ -581,6 +581,7 @@ class Online extends ChangeNotifier {
         await _fireStore.toggleMemberListenable(
             memberId: memberId, listenable: listenable);
         membersList[_i].toggleListenable(listenable);
+        membersList[_i].piano.resetDisplay();
       }
       notifyListeners();
     }
