@@ -96,6 +96,8 @@ class _ButtonState extends State<Button> {
       ]);
       if (widget.isVertical && Setting.deviceWidth >= kTabletStartWidth) {
         _width = 110;
+      } else if (widget.isVertical && Setting.deviceWidth < kTabletStartWidth) {
+        _width = 70;
       }
     } else {
       //Icon only
@@ -137,10 +139,12 @@ class _ButtonState extends State<Button> {
               child: Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: _defaultButtonPadding + widget.paddingVertical,
-                    horizontal:
-                        _defaultButtonPadding + widget.paddingHorizontal),
+                    horizontal: widget.isVertical
+                        ? 0
+                        : _defaultButtonPadding + widget.paddingHorizontal),
+                // horizontal: 0),
                 child: Container(
-                  // color: Colors.green,
+                  // color: Colors.blue,
                   child: _show,
                 ),
               ),

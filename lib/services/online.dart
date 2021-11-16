@@ -336,8 +336,8 @@ class Online extends ChangeNotifier {
           await _sendRoomMessage(_message);
         }
       } else {
-        //Broadcast from student.
-        ///Student will broadcast message only between C3 and B5
+        // Broadcast from student.
+        // Student will broadcast message only between C3 and B5
         if (raw[kKeyPos] >= 48 && raw[kKeyPos] <= 83) {
           await _sendStudentMessage(_message);
         }
@@ -487,6 +487,7 @@ class Online extends ChangeNotifier {
     }
     await _fireStore.delMember(id, _uid());
     if (isRoomHost || _members == 1) {
+      _storeSubCancel();
       await _fireStore.closeRoom(id);
     }
     _onRoomExited();
@@ -495,9 +496,7 @@ class Online extends ChangeNotifier {
 
   /// On exit event.
   void _onRoomExited() async {
-    this._roomMessageSubscribe?.cancel();
-    this._memberSubscribe?.cancel();
-    this._studentMessageSubscribe?.cancel();
+    _storeSubCancel();
     _fireStore.cancelClockIn();
     roomID = '';
     Setting.inOnlineClass = false;
@@ -508,6 +507,12 @@ class Online extends ChangeNotifier {
     } else {
       notifyListeners();
     }
+  }
+
+  void _storeSubCancel() {
+    this._roomMessageSubscribe?.cancel();
+    this._memberSubscribe?.cancel();
+    this._studentMessageSubscribe?.cancel();
   }
 
   ///Keep listen to change in members collection in firestore.
@@ -569,9 +574,8 @@ class Online extends ChangeNotifier {
   ///Toggle students listenable mode by set flag locally and update firestore.
   Future toggleMemberListenable(
       {required String memberId, required bool listenable}) async {
-    //Not toggle myself.
+    // Not toggle myself.
     if (memberId != _uid()) {
-      // _showInProgress(true);
       int _i = membersList.indexWhere((d) => d.id == memberId);
       if (_i >= 0) {
         await _fireStore.toggleMemberListenable(
@@ -579,7 +583,6 @@ class Online extends ChangeNotifier {
         membersList[_i].toggleListenable(listenable);
       }
       notifyListeners();
-      // _showInProgress(false);
     }
   }
 

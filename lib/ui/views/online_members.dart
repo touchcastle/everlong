@@ -119,7 +119,7 @@ class _OnlineMemberListState extends State<OnlineMemberList> {
                     color: kMemberBox, borderRadius: kAllBorderRadius),
                 child: Padding(
                   padding:
-                      EdgeInsets.only(top: 2, bottom: 5, left: 5, right: 10),
+                      EdgeInsets.only(top: 2, bottom: 5, left: 5, right: 5),
                   child: context.watch<Online>().isRoomHost
                       ? GestureDetector(
                           onTap: () async {

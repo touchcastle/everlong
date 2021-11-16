@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/services/piano.dart';
+import 'package:everlong/utils/colors.dart';
 
 enum KeyColor { WHITE, BLACK }
 
 class VirtualPiano extends StatefulWidget {
   final double height;
   final Piano piano;
-  VirtualPiano(this.piano, {this.height = 60});
+  final int startOctave;
+  final int octave;
+  VirtualPiano(this.piano,
+      {this.height = 60, this.octave = 3, this.startOctave = 3});
   @override
   _VirtualPianoState createState() => new _VirtualPianoState();
 }
@@ -18,12 +22,14 @@ class _VirtualPianoState extends State<VirtualPiano> {
       height: widget.height,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final whiteKeySize = constraints.maxWidth / (21);
+          final whiteKeySize = constraints.maxWidth / (widget.octave * 7);
           final blackKeySize = whiteKeySize / 1.7;
 
           List<Widget> _keysInOctave() {
             List<Widget> _list = [];
-            for (int _octave = 3; _octave <= 5; _octave++) {
+            for (int _octave = widget.startOctave;
+                _octave <= widget.startOctave + widget.octave - 1;
+                _octave++) {
               _list.add(Stack(
                 children: [
                   _buildWhiteKeys(widget.piano, whiteKeySize, octave: _octave),
@@ -149,7 +155,7 @@ class PianoKey extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         color: isPressing
-            ? Colors.red
+            ? kPressingKey
             : color == KeyColor.WHITE
                 ? Colors.white
                 : Colors.black,

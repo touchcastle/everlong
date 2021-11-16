@@ -211,8 +211,6 @@ class FireStore {
   /// 1. delete available member from room.
   /// 2. delete room(doc)
   Future closeRoom(String roomID) async {
-    await messageCol.doc(kFireStoreMessageDoc).delete();
-    await studentMessageCol.doc(kFireStoreMessageDoc).delete();
     WriteBatch _batch = FirebaseFirestore.instance.batch();
     await membersCol.get().then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
@@ -220,6 +218,8 @@ class FireStore {
       });
     });
     await _batch.commit();
+    await messageCol.doc(kFireStoreMessageDoc).delete();
+    await studentMessageCol.doc(kFireStoreMessageDoc).delete();
     await col.doc(roomID).delete();
   }
 

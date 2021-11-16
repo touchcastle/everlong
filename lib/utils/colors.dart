@@ -67,6 +67,9 @@ const List<Color> kOnlineBG = [kGreenMain, kGreen5];
 
 /// Background color gradient for session ended dialog.
 const List<Color> kSessionEndedBG = [kGreen2, kGreen2];
+
+///Virtual piano pressing key
+const Color kPressingKey = kRed1;
 //------------------------------------------------------------------------------
 
 ///LOCAL USAGE++++

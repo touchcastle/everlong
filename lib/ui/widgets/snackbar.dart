@@ -11,8 +11,13 @@ enum MessageType {
   info,
 }
 
+///Snackbar to display warning / error to user
+///Custom margin for both horizontal and vertical from screen edge.
+///Has parameter for display full width(still has 10px margin).
+///
+///Has logic to determine whether displaying text overflowed or not?
+///if overflowed, display as auto scroll text [ScrollingText]
 class Snackbar {
-  static double _dialogRatio() => Setting.isTablet() ? 0.2 : 0.1;
   static void show(
     BuildContext context, {
     required String text,
@@ -24,13 +29,14 @@ class Snackbar {
     bool fullWidth = false,
     Color? bgColor,
   }) {
-    double _verticalMargin() => verticalMargin ? 0.07 : 0.02;
+    double _hMargin() => Setting.isTablet() ? 0.2 : 0.1;
+    double _vMargin() => verticalMargin ? 0.07 : 0.02;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       elevation: 0,
       margin: EdgeInsets.symmetric(
-        horizontal: fullWidth ? 10 : Setting.deviceWidth * _dialogRatio(),
-        vertical: Setting.deviceHeight * _verticalMargin(),
+        horizontal: fullWidth ? 10 : Setting.deviceWidth * _hMargin(),
+        vertical: Setting.deviceHeight * _vMargin(),
       ),
       backgroundColor: bgColor != null
           ? bgColor
@@ -50,17 +56,52 @@ class Snackbar {
               : SizedBox.shrink(),
           SizedBox(width: 10),
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                text,
-                style: TextStyle(
-                    fontSize: 14,
-                    color: type == MessageType.error
-                        ? kErrorSnackBoxText
-                        : kTextColorDark),
-                overflow: TextOverflow.ellipsis,
-              ),
+            child: LayoutBuilder(
+              builder: (context, size) {
+                // Build the Textspan
+                var _span = TextSpan(
+                  text: text,
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: type == MessageType.error
+                          ? kErrorSnackBoxText
+                          : kTextColorDark),
+                );
+
+                // Use a Textpainter to determine if it will exceed max lines
+                var _tp = TextPainter(
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
+                  text: _span,
+                );
+
+                // trigger it to layout
+                _tp.layout(maxWidth: size.maxWidth);
+
+                // whether the text overflowed or not
+                var _exceeded = _tp.didExceedMaxLines;
+
+                if (_exceeded) {
+                  return ScrollingText(
+                      text: text,
+                      textStyle: TextStyle(
+                          fontSize: 12,
+                          color: type == MessageType.error
+                              ? kErrorSnackBoxText
+                              : kTextColorDark));
+                } else {
+                  return Text(
+                    text,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: type == MessageType.error
+                            ? kErrorSnackBoxText
+                            : kTextColorDark),
+                    overflow: TextOverflow.ellipsis,
+                  );
+                }
+              },
             ),
           ),
         ],

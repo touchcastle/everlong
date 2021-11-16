@@ -407,7 +407,6 @@ class Classroom extends ChangeNotifier {
   void resetDisplay({bool onlineRelease = false}) {
     Staff.resetDisplay();
     piano.resetDisplay();
-    // resetKeyLight();
     notifyListeners();
   }
 
