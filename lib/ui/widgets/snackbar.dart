@@ -122,5 +122,3 @@ class Snackbar {
     ));
   }
 }
-
-//Add 2

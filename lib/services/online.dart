@@ -679,5 +679,3 @@ class Online extends ChangeNotifier {
     if (user == null) throw (kErr1002);
   }
 }
-
-//Add 2
