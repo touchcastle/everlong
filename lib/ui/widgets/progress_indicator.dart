@@ -3,7 +3,6 @@ import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/ui/widgets/extends/custom_cupertino_indicator.dart';
 
-///TODO: Size in android
 Widget progressIndicator({bool animate = true, GestureTapCallback? onTap}) {
   return InkWell(
     child: CustomCupertinoActivityIndicator(
