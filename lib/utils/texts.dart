@@ -45,6 +45,7 @@ const String kDisconnectedText = 'Disconnected';
 const String kDisconnectingText = 'Disconnecting';
 const String kMaster = 'Master';
 const String kDevicesMng = 'Devices Manager';
+const String kUntitled = 'untitled';
 
 ///Button label
 const String kToHold = 'Hold';

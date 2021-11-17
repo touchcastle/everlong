@@ -70,7 +70,7 @@ class DeviceLabel extends StatelessWidget {
     }
   }
 
-  ///Display device name with left space [_hostIconAreaWidth]
+  ///Display device name with left space of [_hostIconAreaWidth]
   Row _name() => Row(
         children: [
           SizedBox(width: _hostIconAreaWidth),
@@ -79,9 +79,9 @@ class DeviceLabel extends StatelessWidget {
           Flexible(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Text(device.displayName, style: _nameStyle()),
+              child: Text(device.displayName == '' ? kUntitled : device.displayName, style: _nameStyle()),
             ),
-          )
+          ),
         ],
       );
 

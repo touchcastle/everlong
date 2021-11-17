@@ -75,13 +75,12 @@ class DeviceDatabase {
   ///
   /// If not found, return old same [name].
   String getStoredName({required String id, required String name}) {
-    int _nameIndex = -1;
     String _deviceName = name;
     if (databaseDeviceName != null) {
-      _nameIndex =
-          databaseDeviceName!.indexWhere((element) => element.id == id);
-      if (_nameIndex >= 0) {
-        _deviceName = databaseDeviceName![_nameIndex].deviceName;
+      int _i =
+          databaseDeviceName!.indexWhere((d) => d.id == id);
+      if (_i >= 0) {
+        _deviceName = databaseDeviceName![_i].deviceName;
       }
     }
     return _deviceName;
