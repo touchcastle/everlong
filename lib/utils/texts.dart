@@ -7,6 +7,7 @@ const String kNoChildMsg = 'Child\'s device not found.';
 const String kLightFreeze =
     'Experiencing key\'s light freeze?  Try increase MIDI latency.';
 const String kToSetting = 'SETTING';
+const String kGoogleError = 'Service is currently unavailable, please try again later';
 
 ///Online Lobby
 const String kJoinHeader = 'Join Online Session';

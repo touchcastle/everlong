@@ -136,7 +136,7 @@ class Online extends ChangeNotifier {
       print('$e');
       Snackbar.show(
         context,
-        text: '$kError: $e',
+        text: '$kError: $kGoogleError',
         icon: kBluetoothIconDisconnected,
         verticalMargin: false,
       );
@@ -364,19 +364,30 @@ class Online extends ChangeNotifier {
   /// To send out room command code (host's function).
   Future _roomCommand(String code, {bool initialize = false}) async {
     if (this.roomID != '') {
-      await _fireStore.addSessionMessageAndCtrl(
-          roomID: this.roomID,
-          type: 'CTRL',
-          value: code,
-          sender: _uid(),
-          initialize: initialize);
-      if (initialize) {
-        await _fireStore.addStudentMessage(
+      try {
+        await _fireStore.addSessionMessageAndCtrl(
             roomID: this.roomID,
             type: 'CTRL',
             value: code,
             sender: _uid(),
-            initialize: true);
+            initialize: initialize);
+        if (initialize) {
+          await _fireStore.addStudentMessage(
+              roomID: this.roomID,
+              type: 'CTRL',
+              value: code,
+              sender: _uid(),
+              initialize: true);
+      }
+      } catch (e) {
+        _showInProgress(false);
+        print('$e');
+        Snackbar.show(
+          Setting.currentContext!,
+          text: '$kError: $kGoogleError',
+          icon: kBluetoothIconDisconnected,
+          verticalMargin: false,
+        );
       }
     }
   }
