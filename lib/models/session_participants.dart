@@ -5,10 +5,10 @@ class SessionMember {
   final String id;
 
   ///Member's name
-  final String name;
+  String name;
 
   ///Room's host(teacher)
-  final bool isHost;
+  bool isHost;
 
   ///Timestamp from clock-in function updated periodically updated from
   ///firestore. Will use to check member connection status.

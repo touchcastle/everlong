@@ -566,6 +566,9 @@ class Online extends ChangeNotifier {
         int _avail = _preList.indexWhere((e) => e.id == membersList[_i].id);
         if (_avail >= 0) {
           membersList[_i].lastSeen = _preList[_avail].lastSeen;
+          membersList[_i].name = _preList[_avail].name;
+          membersList[_i].isHost = _preList[_avail].isHost;
+          membersList[_i].listenable = _preList[_avail].listenable;
         } else {
           membersList[_i].isSignedOut = true;
         }
