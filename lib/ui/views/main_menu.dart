@@ -3,6 +3,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/url_navigator.dart';
+import 'package:everlong/services/animation.dart';
+import 'package:everlong/ui/views/tutorial.dart';
+import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/ui/widgets/logo.dart';
 import 'package:everlong/ui/widgets/actions/main_menu_button.dart';
 import 'package:everlong/utils/colors.dart';
@@ -64,6 +67,15 @@ class _MainMenuState extends State<MainMenu> {
                 ),
               ),
               SizedBox(height: Setting.deviceHeight * 0.1),
+              TextButton(
+                child: Text('Tutorial'),
+                onPressed: () {
+                  Navigator.of(context).push(PageRouteBuilder(
+                      transitionDuration: kTransitionDur,
+                      transitionsBuilder: kPageTransition,
+                      pageBuilder: (_, __, ___) => Tutorial()));
+                },
+              ),
             ],
           ),
         ),

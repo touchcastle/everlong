@@ -59,6 +59,15 @@ class Classroom extends ChangeNotifier {
   /// Constructor
   Classroom(this._db, this._ui);
 
+  ///Init class parameter
+  void initClass() {
+    holdingKeys.clear();
+    isHolding = false;
+    piano.resetDisplay();
+    Staff.resetDisplay();
+  }
+
+  ///Check parameters and conditions before actual send MIDI bluetooth
   Future localMessageBroadcast(Uint8List data) async {
     bool _withSound = false;
     bool _withLight = false;
@@ -119,7 +128,8 @@ class Classroom extends ChangeNotifier {
       piano.addPressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
       notifyListeners();
-    } else if (data[kSwitchPos] == kNoteOff && !isHolding) {
+      // } else if (data[kSwitchPos] == kNoteOff && !isHolding) {
+    } else if (data[kSwitchPos] == kNoteOff) {
       piano.removePressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
       notifyListeners();
@@ -388,7 +398,7 @@ class Classroom extends ChangeNotifier {
     }
   }
 
-  Future cancelMasterDevice() async {
+  Future cancelAllMaster() async {
     for (BLEDevice _device
         in bluetoothDevices.where((d) => d.isConnected() && d.isMaster)) {
       await setMaster(_device);

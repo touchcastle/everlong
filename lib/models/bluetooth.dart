@@ -291,8 +291,7 @@ class BLEDevice extends ChangeNotifier {
           if (Setting.sessionMode == SessionMode.offline) {
             _classroom.localMessageBroadcast(_uintData);
           } else if (Setting.sessionMode == SessionMode.online) {
-            ///On student's screen, NOT show self playing notes on music staff.
-            if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
+            // if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
           }
         }

@@ -40,16 +40,7 @@ const double kIconWidth = 25;
 double kIconWidth3 = textSizeResp(ratio: 20);
 double kProgressWidth = textSizeResp(ratio: 45);
 const String kSliderThumbIcon =
-    '''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="45" height="45" viewBox="0 0 45 45">
-  <defs>
-    <filter id="Ellipse_11" x="0" y="0" width="45" height="45" filterUnits="userSpaceOnUse">
-      <feOffset dy="3" input="SourceAlpha"/>
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feFlood flood-opacity="0.161"/>
-      <feComposite operator="in" in2="blur"/>
-      <feComposite in="SourceGraphic"/>
-    </filter>
-  </defs>
+    '''<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45">
   <g id="MelodyBar" transform="translate(37 4.183)">
     <g transform="matrix(1, 0, 0, 1, -37, -4.18)" filter="url(#Ellipse_11)">
       <circle id="Ellipse_11-2" data-name="Ellipse 11" cx="13.5" cy="13.5" r="13.5" transform="translate(9 6)" fill="#133433"/>

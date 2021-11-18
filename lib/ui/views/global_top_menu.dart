@@ -29,12 +29,13 @@ class GlobalTopMenu extends StatelessWidget {
             await context
                 .read<Online>()
                 .roomExit(context.read<Online>().roomID);
+            context.read<Classroom>().initClass();
             Navigator.popUntil(context, ModalRoute.withName(kMainPageName));
           }),
         ),
       );
     } else {
-      await context.read<Classroom>().cancelMasterDevice();
+      await context.read<Classroom>().cancelAllMaster();
       Navigator.pop(context);
     }
   }

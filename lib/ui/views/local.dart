@@ -43,6 +43,7 @@ class _LocalPageState extends State<LocalPage> {
         .listen((result) => result ? setState(() {}) : setState(() {}));
     // .listen((result) => result ? setState(() {}) : null);
     Setting.currentContext = context;
+    context.read<Classroom>().initClass();
     Future.delayed(Duration(seconds: 1), () => _setMaster());
   }
 

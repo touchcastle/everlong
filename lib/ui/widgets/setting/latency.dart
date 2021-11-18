@@ -23,6 +23,7 @@ class _LatencySelectState extends State<LatencySelect> {
   ui.Image? thumbImage;
   DrawableRoot? svgRoot;
   final String rawSvg = kSliderThumbIcon;
+  bool _svgLoaded = false;
 
   @override
   void initState() {
@@ -40,6 +41,9 @@ class _LatencySelectState extends State<LatencySelect> {
 
   Future loadSVG() async {
     svgRoot = await svg.fromSvgString(rawSvg, rawSvg);
+    setState(() {
+      _svgLoaded = true;
+    });
   }
 
   Future getUiImage(String imageAssetPath, int height, int width) async {
@@ -84,7 +88,7 @@ class _LatencySelectState extends State<LatencySelect> {
             // trackShape: RectangularSliderTrackShape(),
             trackShape: RoundedRectSliderTrackShape(),
             // thumbShape: SliderThumbImage(thumbImage),
-            thumbShape: SliderThumbImage(svgRoot),
+            thumbShape: _svgLoaded ? SliderThumbImage(svgRoot) : null,
           ),
           child: Slider(
             value: Setting.noteDelayScale,

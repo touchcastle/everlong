@@ -333,6 +333,8 @@ class Online extends ChangeNotifier {
       if (this.isRoomHost) {
         //Broadcast from room host.
         if (!classroom.isHolding || _isNoteOnWhileHolding()) {
+          classroom.staffDisplay(raw);
+          if (classroom.isHolding) classroom.holdingKeys.add(raw[kKeyPos]);
           await _sendRoomMessage(_message);
         }
       } else {
@@ -378,7 +380,7 @@ class Online extends ChangeNotifier {
               value: code,
               sender: _uid(),
               initialize: true);
-      }
+        }
       } catch (e) {
         _showInProgress(false);
         print('$e');
