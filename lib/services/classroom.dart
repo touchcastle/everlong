@@ -125,12 +125,12 @@ class Classroom extends ChangeNotifier {
   /// Update staff display on screen.
   void staffDisplay(Uint8List data) async {
     if (data[kSwitchPos] == kNoteOn) {
-      piano.addPressing(data[kKeyPos]);
+      this.piano.addPressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
       notifyListeners();
       // } else if (data[kSwitchPos] == kNoteOff && !isHolding) {
     } else if (data[kSwitchPos] == kNoteOff) {
-      piano.removePressing(data[kKeyPos]);
+      this.piano.removePressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
       notifyListeners();
     }
@@ -405,21 +405,22 @@ class Classroom extends ChangeNotifier {
     }
   }
 
+  ///Close all expanding device list.
   void closeAllExpanding() {
-    print('close expanding');
     for (int i = 0; i < bluetoothDevices.length; i++) {
       bluetoothDevices[i].isExpanding = false;
     }
   }
 
   /// To reset notes on staff and virtual piano.
-  /// NotifyListeners for actual update screen.
   void resetDisplay({bool onlineRelease = false}) {
     Staff.resetDisplay();
     piano.resetDisplay();
     notifyListeners();
   }
 
+  ///To display correct setting's button color since there are other way
+  ///to enter setting screen beside of setting button itself.
   bool showingSetting = false;
   void toggleShowingSetting(bool show) {
     showingSetting = show;

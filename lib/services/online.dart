@@ -513,13 +513,21 @@ class Online extends ChangeNotifier {
     _fireStore.cancelClockIn();
     roomID = '';
     Setting.inOnlineClass = false;
-    isMute = false;
     if (isRoomHost) {
       await classroom.cancelDeviceSubscribe();
       _toggleRoomHost(false);
     } else {
       notifyListeners();
     }
+
+    // Refresh room parameters
+    isRoomHost = false;
+    imListenable = false;
+    lostConnection = false;
+    isMute = false;
+    isHold = false;
+    roomCreateTime = 0;
+    membersList.clear();
   }
 
   void _storeSubCancel() {
