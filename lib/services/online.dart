@@ -586,6 +586,9 @@ class Online extends ChangeNotifier {
         }
       }
 
+      ///Show host first
+      membersList.sort((a, b) => a.isHost ? -1 : 1);
+
       notifyListeners();
     });
   }
