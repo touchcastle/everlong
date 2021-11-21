@@ -6,7 +6,7 @@ const double kTabletMaxDynamicWidth = 1000.0;
 const int kListAnimateDuration = 200;
 const int kBeforeNextAnimate = 10;
 const int kMaxMember = 10;
-const int kSessionIdLength = 10;
+const int kSessionIdLength = 4;
 const double kButtonMinHeight = 45;
 
 ///Config
