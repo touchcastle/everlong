@@ -11,21 +11,26 @@ class Help extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 3.0,
-              ),
-            ],
-          ),
+          // decoration: BoxDecoration(
+          //   shape: BoxShape.circle,
+          //   boxShadow: [
+          //     BoxShadow(
+          //       color: Colors.black12,
+          //       blurRadius: 3.0,
+          //     ),
+          //   ],
+          // ),
           // color: Colors.green,
-          child: Icon(
-            Icons.help,
-            color: kYellowMain,
-            size: 25,
-          )),
+          child: svgIcon(
+        name: kHelpIcon,
+        width: 35,
+        color: kYellowMain,
+      )),
+      //   Icon(
+      //   Icons.help,
+      //   color: kYellowMain,
+      //   size: 25,
+      // )),
       onTap: () {
         Navigator.of(context).push(PageRouteBuilder(
             transitionDuration: kTransitionDur,

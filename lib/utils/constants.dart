@@ -8,6 +8,8 @@ const int kBeforeNextAnimate = 10;
 const int kMaxMember = 10;
 const int kSessionIdLength = 4;
 const double kButtonMinHeight = 45;
+const double kLogoTablet = 0.8;
+const double kLogoMobile = 0.9;
 
 ///Config
 // String kVersion = Platform.isIOS ? '1.0.2' : '1.0.4';

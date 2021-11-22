@@ -60,7 +60,8 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
-    double _logoRatio() => _screenWidth >= kTabletStartWidth ? 0.9 : 1;
+    double _logoRatio() =>
+        _screenWidth >= kTabletStartWidth ? kLogoTablet : kLogoMobile;
     return Scaffold(
       backgroundColor: kGreenMain,
       body: AnnotatedRegion<SystemUiOverlayStyle>(

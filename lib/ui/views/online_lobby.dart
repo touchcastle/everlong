@@ -113,7 +113,9 @@ class _OnlineLobbyState extends State<OnlineLobby> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: Setting.deviceHeight * 0.05),
                 logo(_logoRatio),
+                SizedBox(height: Setting.deviceHeight * 0.05),
                 Container(
                   decoration: kOnlineLobbyDialogDecor,
                   padding: kOnlineLobby,

@@ -43,7 +43,7 @@ class _MainMenuState extends State<MainMenu> {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
     double _dialogRatio() => Setting.isTablet() ? 0.45 : 0.7;
-    double _logoRatio() => Setting.isTablet() ? 0.8 : 1;
+    double _logoRatio() => Setting.isTablet() ? kLogoTablet : kLogoMobile;
     return Scaffold(
       backgroundColor: kGreenMain,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -53,7 +53,7 @@ class _MainMenuState extends State<MainMenu> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               logo(_logoRatio),
-              SizedBox(height: Setting.deviceHeight * 0.01),
+              // SizedBox(height: Setting.deviceHeight * 0.01),
               Text('$kVersionLabel $kVersion',
                   style: TextStyle(color: Colors.white)),
               SizedBox(height: Setting.deviceHeight * 0.1),
