@@ -105,78 +105,80 @@ class _OnlineLobbyState extends State<OnlineLobby> {
     Setting.deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: kGreenMain,
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: Setting.deviceHeight * 0.05),
-                logo(_logoRatio),
-                SizedBox(height: Setting.deviceHeight * 0.05),
-                Container(
-                  decoration: kOnlineLobbyDialogDecor,
-                  padding: kOnlineLobby,
-                  constraints: BoxConstraints(
-                    maxWidth: Setting.deviceWidth * _dialogRatio(),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      dialogHeaderBar(
-                        barColor: kDarkOnlineBG,
-                        exitIconAreaColor: kDarkOnlineBG,
-                        title: _header(),
-                        onExit: () async {
-                          Setting.sessionMode = SessionMode.none;
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(kMainPageName));
-                        },
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: Setting.deviceWidth * 0.07),
-                        child: Column(
-                          children: [
-                            SizedBox(height: Setting.deviceHeight * 0.01),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _usernameInput(context),
-                                widget.lobbyType == LobbyType.join
-                                    ? _sessionIdInput(context)
-                                    : SizedBox.shrink(),
-                              ],
-                            ),
-                            SizedBox(height: Setting.deviceHeight * 0.01),
-                          ],
+      body: SafeArea(
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: Setting.deviceHeight * 0.05),
+                  logo(_logoRatio),
+                  SizedBox(height: Setting.deviceHeight * 0.05),
+                  Container(
+                    decoration: kOnlineLobbyDialogDecor,
+                    padding: kOnlineLobby,
+                    constraints: BoxConstraints(
+                      maxWidth: Setting.deviceWidth * _dialogRatio(),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        dialogHeaderBar(
+                          barColor: kDarkOnlineBG,
+                          exitIconAreaColor: kDarkOnlineBG,
+                          title: _header(),
+                          onExit: () async {
+                            Setting.sessionMode = SessionMode.none;
+                            Navigator.popUntil(
+                                context, ModalRoute.withName(kMainPageName));
+                          },
                         ),
-                      ),
-                      ToOnlineRoom(
-                        inType: widget.lobbyType,
-                        onPressed: () async {
-                          if (await Setting.isConnectToInternet()) {
-                            await context.read<Online>().lobby(context,
-                                type: widget.lobbyType,
-                                name: _nameToJoin,
-                                room: _roomToJoin);
-                          } else {
-                            Snackbar.show(
-                              context,
-                              text: kNoInternetMsg,
-                              icon: kBluetoothIconDisconnected,
-                              verticalMargin: false,
-                            );
-                          }
-                        },
-                      ),
-                    ],
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Setting.deviceWidth * 0.07),
+                          child: Column(
+                            children: [
+                              SizedBox(height: Setting.deviceHeight * 0.01),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _usernameInput(context),
+                                  widget.lobbyType == LobbyType.join
+                                      ? _sessionIdInput(context)
+                                      : SizedBox.shrink(),
+                                ],
+                              ),
+                              SizedBox(height: Setting.deviceHeight * 0.01),
+                            ],
+                          ),
+                        ),
+                        ToOnlineRoom(
+                          inType: widget.lobbyType,
+                          onPressed: () async {
+                            if (await Setting.isConnectToInternet()) {
+                              await context.read<Online>().lobby(context,
+                                  type: widget.lobbyType,
+                                  name: _nameToJoin,
+                                  room: _roomToJoin);
+                            } else {
+                              Snackbar.show(
+                                context,
+                                text: kNoInternetMsg,
+                                icon: kBluetoothIconDisconnected,
+                                verticalMargin: false,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                // SizedBox(height: Setting.deviceHeight * 0.1),
-              ],
+                  // SizedBox(height: Setting.deviceHeight * 0.1),
+                ],
+              ),
             ),
           ),
         ),
