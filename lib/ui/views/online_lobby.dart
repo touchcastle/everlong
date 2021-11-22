@@ -33,7 +33,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   double _dialogRatio() => Setting.isTablet() ? 0.6 : 0.8;
 
   ///Logo width
-  double _logoRatio() => Setting.isTablet() ? 0.8 : 1;
+  double _logoRatio() => Setting.isTablet() ? kLogoTablet : kLogoMobile;
 
   ///Lobby header text
   String _header() =>
