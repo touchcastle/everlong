@@ -7,8 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:everlong/utils/constants.dart';
 
 Hero logo(double _logoRatio()) {
-  double _width() => Setting.deviceWidth * _logoRatio() > 650
-      ? 650
+  double _width() => Setting.deviceWidth * _logoRatio() > 700
+      ? 700
       : Setting.deviceWidth * _logoRatio();
 
   return Hero(

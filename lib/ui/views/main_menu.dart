@@ -8,8 +8,10 @@ import 'package:everlong/ui/views/tutorial.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/ui/widgets/logo.dart';
 import 'package:everlong/ui/widgets/actions/main_menu_button.dart';
+import 'package:everlong/ui/widgets/actions/help.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/constants.dart';
+import 'package:everlong/utils/texts.dart';
 
 class MainMenu extends StatefulWidget {
   static const id = kMainMenuId; //for route.
@@ -51,6 +53,10 @@ class _MainMenuState extends State<MainMenu> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               logo(_logoRatio),
+              SizedBox(height: Setting.deviceHeight * 0.01),
+              Text('$kVersionLabel $kVersion',
+                  style: TextStyle(color: Colors.white)),
+              SizedBox(height: Setting.deviceHeight * 0.1),
               Container(
                 constraints: BoxConstraints(
                     maxWidth: Setting.deviceWidth * _dialogRatio()),
@@ -66,16 +72,17 @@ class _MainMenuState extends State<MainMenu> {
                   ],
                 ),
               ),
-              SizedBox(height: Setting.deviceHeight * 0.1),
-              TextButton(
-                child: Text('Tutorial'),
-                onPressed: () {
-                  Navigator.of(context).push(PageRouteBuilder(
-                      transitionDuration: kTransitionDur,
-                      transitionsBuilder: kPageTransition,
-                      pageBuilder: (_, __, ___) => Tutorial()));
-                },
-              ),
+              SizedBox(height: Setting.deviceHeight * 0.03),
+              Help(),
+              // TextButton(
+              //   child: Text('Tutorial'),
+              //   onPressed: () {
+              //     Navigator.of(context).push(PageRouteBuilder(
+              //         transitionDuration: kTransitionDur,
+              //         transitionsBuilder: kPageTransition,
+              //         pageBuilder: (_, __, ___) => Tutorial()));
+              //   },
+              // ),
             ],
           ),
         ),

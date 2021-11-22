@@ -5,6 +5,7 @@ import 'package:everlong/ui/widgets/text_resp.dart';
 // const String kBluetoothIconConnected = 'assets/icons/bluetooth_connected.svg';
 const String kBluetoothIconDisconnected = 'assets/icons/disconnected.svg';
 const String kBluetoothIconConnected = 'assets/icons/connected.svg';
+const String kHelpIcon = 'assets/icons/help.svg';
 const String kHostIcon = 'assets/icons/host.svg';
 const String kHoldIcon = 'assets/icons/hold.svg';
 const String kReleaseIcon = 'assets/icons/release.svg';

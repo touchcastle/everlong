@@ -42,11 +42,12 @@ class _TutorialState extends State<Tutorial> {
         },
         itemCount: imagePaths.length,
         pagination: SwiperPagination(
-            builder: DotSwiperPaginationBuilder(
-
-                ///TODO: Finalize color
-                color: Colors.black26,
-                activeColor: Color(0XFFE57373))),
+          builder: DotSwiperPaginationBuilder(
+            space: 8,
+            color: Colors.white,
+            activeColor: kYellowMain,
+          ),
+        ),
         outer: true,
       ),
     );
@@ -60,16 +61,18 @@ class _TutorialState extends State<Tutorial> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: SafeArea(
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Exit(),
-                Expanded(
-                  child: _loaded ? _show() : SizedBox.shrink(),
-                ),
-              ],
-            ),
+          child: Stack(
+            children: [
+              Exit(bgColor: Color(0xff0A1A1A)),
+              _loaded
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Setting.deviceWidth * 0.08,
+                          vertical: Setting.deviceHeight * 0.01),
+                      child: _show(),
+                    )
+                  : SizedBox.shrink(),
+            ],
           ),
         ),
       ),

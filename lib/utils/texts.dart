@@ -1,3 +1,6 @@
+///Main manu
+const String kVersionLabel = 'Version';
+
 ///Error messages
 const String kError = 'Error';
 const String kNoInternetMsg = 'NO INTERNET CONNECTION';
@@ -7,7 +10,8 @@ const String kNoChildMsg = 'Child\'s device not found.';
 const String kLightFreeze =
     'Experiencing key\'s light freeze?  Try increase MIDI latency.';
 const String kToSetting = 'SETTING';
-const String kGoogleError = 'Service is currently unavailable, please try again later';
+const String kGoogleError =
+    'Service is currently unavailable, please try again later';
 
 ///Online Lobby
 const String kJoinHeader = 'Join Online Session';
@@ -83,7 +87,6 @@ const String kSettingModeOnTablet = 'Light & Sound\n(Higher Latency)';
 const String kSettingModeOnMute = 'Light Only (Default)';
 const String kSettingModeOnMuteTablet = 'Light Only\n(Default)';
 const String kSettingModeOnBlind = 'Sound Only';
-const String kVersionLabel = 'version';
 
 ///Rename Device Dialog
 const String kRenameHeader = 'Rename Midi Device';
