@@ -20,23 +20,14 @@ class LatencySelect extends StatefulWidget {
 }
 
 class _LatencySelectState extends State<LatencySelect> {
-  ui.Image? thumbImage;
   DrawableRoot? svgRoot;
   final String rawSvg = kSliderThumbIcon;
   bool _svgLoaded = false;
 
   @override
   void initState() {
-    loadImage(kSliderImage);
     loadSVG();
     super.initState();
-  }
-
-  Future loadImage(String path) async {
-    final data = await rootBundle.load(path);
-    final bytes = data.buffer.asUint8List();
-    final image = await decodeImageFromList(bytes);
-    setState(() => this.thumbImage = image);
   }
 
   Future loadSVG() async {
@@ -44,18 +35,6 @@ class _LatencySelectState extends State<LatencySelect> {
     setState(() {
       _svgLoaded = true;
     });
-  }
-
-  Future getUiImage(String imageAssetPath, int height, int width) async {
-    final ByteData assetImageByteData = await rootBundle.load(imageAssetPath);
-    image.Image? baseSizeImage =
-        image.decodeImage(assetImageByteData.buffer.asUint8List());
-    image.Image resizeImage =
-        image.copyResize(baseSizeImage!, height: height, width: width);
-    ui.Codec codec = await ui.instantiateImageCodec(
-        Uint8List.fromList(image.encodePng(resizeImage)));
-    ui.FrameInfo frameInfo = await codec.getNextFrame();
-    setState(() => this.thumbImage = frameInfo.image);
   }
 
   final EdgeInsets _latencyTextPadding =
@@ -179,30 +158,4 @@ class SliderThumbImage extends SliderComponentShape {
     image!.draw(canvas, Rect.zero);
     canvas.restore();
   }
-
-  // @override
-  // void paint(PaintingContext context, Offset center,
-  //     {required Animation<double> activationAnimation,
-  //     required Animation<double> enableAnimation,
-  //     required bool isDiscrete,
-  //     required TextPainter labelPainter,
-  //     required RenderBox parentBox,
-  //     required Size sizeWithOverflow,
-  //     required SliderThemeData sliderTheme,
-  //     required TextDirection textDirection,
-  //     required double textScaleFactor,
-  //     required double value}) {
-  //   final canvas = context.canvas;
-  //   final imageWidth = image!.width;
-  //   final imageHeight = image!.height;
-  //
-  //   Offset imageOffset = Offset(
-  //     center.dx - (imageWidth / 2),
-  //     center.dy - (imageHeight / 2),
-  //   );
-  //
-  //   Paint paint = Paint()..filterQuality = FilterQuality.high;
-  //
-  //   canvas.drawImage(image!, imageOffset, paint);
-  // }
 }

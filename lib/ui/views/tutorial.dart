@@ -22,7 +22,6 @@ class _TutorialState extends State<Tutorial> {
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
     imagePaths = manifestMap.keys
         .where((String key) => key.contains('assets/images/tutorial/$_type/'))
-        // .where((String key) => key.contains('.png'))
         .toList();
     setState(() => _loaded = true);
   }
@@ -49,8 +48,20 @@ class _TutorialState extends State<Tutorial> {
           ),
         ),
         outer: true,
+        scale: 0.9,
       ),
     );
+  }
+
+  ///Set flag when user swipe to change view mode.
+  void _swiper(DragEndDetails details) {
+    if (details.primaryVelocity! > 0) {
+      print('drag down');
+      Navigator.pop(context);
+    } else if (details.primaryVelocity! < 0) {
+      print('drag up');
+      // Navigator.pop(context);
+    }
   }
 
   @override
@@ -61,18 +72,21 @@ class _TutorialState extends State<Tutorial> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: SafeArea(
-          child: Stack(
-            children: [
-              Exit(bgColor: Color(0xff0A1A1A)),
-              _loaded
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Setting.deviceWidth * 0.08,
-                          vertical: Setting.deviceHeight * 0.01),
-                      child: _show(),
-                    )
-                  : SizedBox.shrink(),
-            ],
+          child: GestureDetector(
+            onVerticalDragEnd: _swiper,
+            child: Stack(
+              children: [
+                Exit(bgColor: Color(0xff0A1A1A)),
+                _loaded
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Setting.deviceWidth * 0.08,
+                            vertical: Setting.deviceHeight * 0.01),
+                        child: _show(),
+                      )
+                    : SizedBox.shrink(),
+              ],
+            ),
           ),
         ),
       ),

@@ -15,11 +15,8 @@ const double kLogoMobile = 0.9;
 // String kVersion = Platform.isIOS ? '1.0.2' : '1.0.4';
 String kVersion = Platform.isIOS ? '1.1.0' : '1.1.0';
 const String kHeroLogo = 'logo';
-// const Duration kClockInPeriod = Duration(milliseconds: 15000);
-// const int kClockInCheckPeriod = 20000; //in millisec.
-///TODO: change back
-const Duration kClockInPeriod = Duration(days: 15000);
-const int kClockInCheckPeriod = 200000000000; //in millisec.
+const Duration kClockInPeriod = Duration(milliseconds: 15000);
+const int kClockInCheckPeriod = 20000; //in millisec.
 
 ///Device's Shared Preferences
 const String kDelayPref = 'delay';
@@ -49,7 +46,7 @@ const String kAppStoreMinVer = '1.0.0';
 const String kAppStoreId = '1593845953';
 
 ///Main Menu
-const String kOr = '   -   ';
+const String kOr = '   Or   ';
 const String kMainPageName = '/main_menu_page';
 
 /// Database name and Table name.

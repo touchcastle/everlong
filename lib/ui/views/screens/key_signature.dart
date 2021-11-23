@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
 import 'package:everlong/ui/widgets/svg.dart';
-import 'package:everlong/utils/images.dart';
+import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/styles.dart';
 
 ///Key's signature image display.

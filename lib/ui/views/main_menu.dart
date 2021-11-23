@@ -55,7 +55,7 @@ class _MainMenuState extends State<MainMenu> {
               logo(_logoRatio),
               // SizedBox(height: Setting.deviceHeight * 0.01),
               Text('$kVersionLabel $kVersion',
-                  style: TextStyle(color: Colors.white)),
+                  style: TextStyle(color: Colors.white, fontSize: 11)),
               SizedBox(height: Setting.deviceHeight * 0.1),
               Container(
                 constraints: BoxConstraints(
