@@ -61,16 +61,15 @@ class Recorder extends ChangeNotifier {
       if (_play.events.isNotEmpty) {
         if (_play.events[0].time <= i) {
           print(i);
-          // classroom.sendLocal(_play.events[0].data,
-          //     withSound: true, withLight: true);
+          classroom.sendLocal(_play.events[0].data,
+              withSound: false, withLight: true);
           _play.events.removeAt(0);
         }
       }
-      if (i >= 3000){
+      if (i >= 3000) {
         t.cancel();
       }
       i = i + 10;
     });
   }
-
 }

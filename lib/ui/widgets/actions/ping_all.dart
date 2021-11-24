@@ -58,19 +58,19 @@ class _PingAllState extends State<PingAll> with SingleTickerProviderStateMixin {
             ),
             textAlign: TextAlign.center),
         onPressed: () async {
-          // if (!_isPingAll) {
-          //   if (context.read<Classroom>().anyConnected()) {
-          //     context.read<Classroom>().pingAllDevices();
-          //     for (int _i = 1; _i <= kNotifyTimes * 2; _i++) {
-          //       _animationController.status == AnimationStatus.completed
-          //           ? await _animationController.reverse()
-          //           : await _animationController.forward();
-          //     }
-          //   } else {
-          //     Snackbar.show(context, text: kNoConnectedMsg);
-          //   }
-          // }
-          context.read<Recorder>().play();
+          if (!_isPingAll) {
+            if (context.read<Classroom>().anyConnected()) {
+              context.read<Classroom>().pingAllDevices();
+              for (int _i = 1; _i <= kNotifyTimes * 2; _i++) {
+                _animationController.status == AnimationStatus.completed
+                    ? await _animationController.reverse()
+                    : await _animationController.forward();
+              }
+            } else {
+              Snackbar.show(context, text: kNoConnectedMsg);
+            }
+          }
+          // context.read<Recorder>().play();
         },
         // isTiled: true,
       ),
