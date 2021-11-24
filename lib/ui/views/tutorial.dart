@@ -17,7 +17,8 @@ class _TutorialState extends State<Tutorial> {
   var imagePaths;
 
   Future _initImages() async {
-    final String _type = Setting.isTablet() ? 'tablet' : 'mobile';
+    final String _type = Setting.isTablet() ? 'tablet' : 'tablet';
+    // final String _type = Setting.isTablet() ? 'tablet' : 'mobile';
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
     imagePaths = manifestMap.keys

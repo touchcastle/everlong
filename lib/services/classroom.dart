@@ -1,11 +1,9 @@
-import 'package:everlong/models/staff.dart';
 import 'package:flutter/material.dart';
 import 'package:everlong/services/piano.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/models/staff.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/staff.dart';
 import 'package:everlong/services/device_db.dart';
@@ -51,6 +49,7 @@ class Classroom extends ChangeNotifier {
   bool isClearing = false;
 
   bool showList = true;
+
   // bool showSetting = false;
 
   ///For pressing notes and chord(By master device or room host) on screen.
@@ -90,7 +89,7 @@ class Classroom extends ChangeNotifier {
     }
   }
 
-  /// Generate MIDI output message and send to out to child device with
+  /// Generate MIDI output message and send to out to connected device with
   /// condition depends on [Setting.appListenMode]
   /// and [_delay] between each device.
   /// for [ListenMode.off] -> send nothing.
@@ -103,20 +102,23 @@ class Classroom extends ChangeNotifier {
     required bool withLight,
     bool withDelay = false,
     bool withStaff = true,
+    bool withMaster = false,
   }) async {
     if (withStaff) staffDisplay(data);
     if ((!isHolding || (isHolding && data[kSwitchPos] == kNoteOn))) {
       if (isHolding) holdingKeys.add(data[kKeyPos]);
-      if (countChild() > 0) {
+      if (countChild() > 0 || withMaster) {
         int _delay = Setting.noteDelayMillisec ~/ countChild();
         for (BLEDevice _device
-            in bluetoothDevices.where((d) => d.isConnected() && !d.isMaster)) {
-          /// Send light.
-          if (withLight)
-            await _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
-          if (withDelay) await _wait(_delay);
-          if (withSound) await _device.write(message: data);
-          await _wait(_delay);
+            in bluetoothDevices.where((d) => d.isConnected())) {
+          if (!_device.isMaster || withMaster) {
+            /// Send light.
+            if (withLight)
+              await _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
+            if (withDelay) await _wait(_delay);
+            if (withSound) await _device.write(message: data);
+            await _wait(_delay);
+          }
         }
       }
     }
@@ -422,6 +424,7 @@ class Classroom extends ChangeNotifier {
   ///To display correct setting's button color since there are other way
   ///to enter setting screen beside of setting button itself.
   bool showingSetting = false;
+
   void toggleShowingSetting(bool show) {
     showingSetting = show;
     notifyListeners();

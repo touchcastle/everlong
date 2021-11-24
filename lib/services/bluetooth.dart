@@ -7,6 +7,7 @@ import 'package:everlong/models/bluetooth.dart';
 import 'package:everlong/services/device_db.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/animation.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/services/online.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class BluetoothControl extends ChangeNotifier {
   DeviceDatabase _db;
   ListAnimation _ui;
   Online _online;
+  Recorder _recorder;
 
   /// Flutter_blue
   FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -25,7 +27,7 @@ class BluetoothControl extends ChangeNotifier {
   bool isReScan = true;
 
   /// Constructor
-  BluetoothControl(this._classroom, this._online, this._db, this._ui);
+  BluetoothControl(this._classroom, this._online, this._recorder, this._db, this._ui);
 
   /// Scan bluetooth devices with timeout as [kScanDuration] and
   /// MIDI service as [kMIDIService].
@@ -69,7 +71,7 @@ class BluetoothControl extends ChangeNotifier {
         0) {
       String _displayName =
           _db.getStoredName(id: result.device.id.id, name: result.device.name);
-      BLEDevice _new = BLEDevice(_classroom, _online,
+      BLEDevice _new = BLEDevice(_classroom, _online, _recorder,
           device: result.device, displayName: _displayName);
       _new.initDevice();
       _classroom.bluetoothDevices.add(_new);

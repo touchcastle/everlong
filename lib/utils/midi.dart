@@ -22,7 +22,7 @@ const int kLightOff = 0;
 const int kLightOnRed = 1;
 const int kLightOnRedPopPiano = 17;
 // const int kLightOff = 00;
-// const int kLightOnRed = 01;x
+// const int kLightOnRed = 01;
 const int kLightOnBlue = 2;
 
 const int kMidCKey = 60;

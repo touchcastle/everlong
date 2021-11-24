@@ -7,8 +7,7 @@ import 'package:everlong/services/device_db.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/services/online.dart';
-import 'package:everlong/services/fire_store.dart';
-import 'package:everlong/services/analytics.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/views/landing.dart';
 import 'package:everlong/ui/views/local.dart';
 import 'package:everlong/ui/views/main_menu.dart';
@@ -29,7 +28,8 @@ void main() async {
   Classroom classroom = Classroom(db, ui);
   // Online online = Online(classroom, fireStore, analytic);
   Online online = Online(classroom);
-  BluetoothControl bluetooth = BluetoothControl(classroom, online, db, ui);
+  Recorder recorder = Recorder(classroom);
+  BluetoothControl bluetooth = BluetoothControl(classroom, online, recorder, db, ui);
 
   var provider = MultiProvider(
     providers: [
@@ -37,6 +37,7 @@ void main() async {
       Provider<DeviceDatabase>(create: (_) => db),
       Provider<ListAnimation>(create: (_) => ui),
       ListenableProvider<Online>(create: (_) => online),
+      ListenableProvider<Recorder>(create: (_) => recorder),
       ListenableProvider<Classroom>(create: (_) => classroom),
     ],
     child: Everlong(),

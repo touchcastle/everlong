@@ -53,7 +53,7 @@ class _MainMenuState extends State<MainMenu> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               logo(_logoRatio),
-              // SizedBox(height: Setting.deviceHeight * 0.01),
+              SizedBox(height: Setting.deviceHeight * 0.01),
               Text('$kVersionLabel $kVersion',
                   style: TextStyle(color: Colors.white, fontSize: 11)),
               SizedBox(height: Setting.deviceHeight * 0.1),

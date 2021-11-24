@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/online.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/services/piano.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/midi.dart';
@@ -18,6 +19,7 @@ enum ConnectionResult { success, failed, timeout }
 class BLEDevice extends ChangeNotifier {
   Classroom _classroom;
   Online _online;
+  Recorder _recorder;
 
   /// Main model for device.
   BluetoothDevice device;
@@ -70,7 +72,7 @@ class BLEDevice extends ChangeNotifier {
 
   Piano piano = Piano();
 
-  BLEDevice(this._classroom, this._online,
+  BLEDevice(this._classroom, this._online, this._recorder,
       {required this.device,
       this.isConnecting = false,
       this.isOnPing = false,
@@ -293,6 +295,9 @@ class BLEDevice extends ChangeNotifier {
           } else if (Setting.sessionMode == SessionMode.online) {
             // if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
+          }
+          if (Setting.isRecording){
+            _recorder.record(data: _uintData);
           }
         }
       });

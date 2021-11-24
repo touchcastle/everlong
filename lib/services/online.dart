@@ -31,6 +31,7 @@ class Online extends ChangeNotifier {
 
   ///Google FireStore
   FireStore _fireStore = FireStore();
+
   Classroom classroom;
 
   ///Authentication
