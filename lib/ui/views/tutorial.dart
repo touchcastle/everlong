@@ -76,7 +76,7 @@ class _TutorialState extends State<Tutorial> {
             onVerticalDragEnd: _swiper,
             child: Stack(
               children: [
-                Exit(bgColor: Color(0xff0A1A1A)),
+                Exit(color: kYellowMain),
                 _loaded
                     ? Padding(
                         padding: EdgeInsets.symmetric(
