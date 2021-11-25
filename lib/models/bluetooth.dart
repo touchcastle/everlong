@@ -296,8 +296,8 @@ class BLEDevice extends ChangeNotifier {
             // if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
           }
-          if (Setting.isRecording){
-            _recorder.record(data: _uintData);
+          if (Setting.isRecording) {
+            _recorder.record(raw: _data);
           }
         }
       });

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 class RecEvent {
   final int time;
-  final Uint8List data;
+  final List<int> data;
 
   RecEvent({
     required this.time,
@@ -16,7 +16,7 @@ class RecFile {
 
   RecFile({required this.totalTime, required this.events});
 
-  void clear(){
+  void clear() {
     totalTime = 0;
     events.clear();
   }

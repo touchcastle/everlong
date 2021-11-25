@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/bluetooth.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/widgets/progress_indicator.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/utils/constants.dart';
@@ -50,6 +51,7 @@ class Scan extends StatelessWidget {
           onPressed: () {
             onScanPressed;
             context.read<BluetoothControl>().doScan(timeout: kReScanDuration);
+            // context.read<Recorder>().stop();
           },
         );
       },

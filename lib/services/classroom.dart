@@ -108,7 +108,9 @@ class Classroom extends ChangeNotifier {
     if ((!isHolding || (isHolding && data[kSwitchPos] == kNoteOn))) {
       if (isHolding) holdingKeys.add(data[kKeyPos]);
       if (countChild() > 0 || withMaster) {
-        int _delay = Setting.noteDelayMillisec ~/ countChild();
+        int _delay = 1;
+        if (countChild() > 0)
+          _delay = Setting.noteDelayMillisec ~/ countChild();
         for (BLEDevice _device
             in bluetoothDevices.where((d) => d.isConnected())) {
           if (!_device.isMaster || withMaster) {

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/widgets/progress_indicator.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
@@ -82,6 +83,7 @@ class _HoldState extends State<Hold> with SingleTickerProviderStateMixin {
                 ? await _animationController.reverse()
                 : await _animationController.forward();
           } while (context.read<Classroom>().isHolding);
+          // context.read<Recorder>().start();
         },
       ),
     );
