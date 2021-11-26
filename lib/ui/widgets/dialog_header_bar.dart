@@ -18,7 +18,7 @@ Container dialogHeaderBar({
 }) {
   Color _defaultLabelColor = Colors.white;
   return Container(
-    height: kButtonMinHeight,
+    height: kButtonMinHeight - 3,
     decoration: BoxDecoration(borderRadius: kTop, color: barColor),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,

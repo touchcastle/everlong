@@ -93,21 +93,21 @@ const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 
 ///Dialog Text Style
 TextStyle dialogHeader({Color? color}) => TextStyle(
-    fontSize: 22, fontWeight: FontWeight.w500, color: color ?? Colors.white);
+    fontSize: textSizeResp(ratio: 20), fontWeight: FontWeight.w500, color: color ?? Colors.white);
 TextStyle dialogSubHeader({Color? color}) => TextStyle(
     fontSize: kDialogSubTextSize,
     fontWeight: FontWeight.w500,
     color: color ?? Colors.white);
 TextStyle dialogDetail({Color? color}) =>
-    TextStyle(fontSize: 14, color: color ?? Colors.white);
+    TextStyle(fontSize: textSizeResp(ratio: 30), color: color ?? Colors.white);
 
 ///TextFieldLabel
 TextStyle textFieldLabel({Color? color}) =>
-    TextStyle(fontSize: 16, color: color ?? Colors.white);
+    TextStyle(fontSize: textSizeResp(ratio: 26), color: color ?? Colors.white);
 TextStyle textFieldSubLabel({Color? color}) =>
-    TextStyle(fontSize: 12, color: color ?? Colors.white);
+    TextStyle(fontSize: textSizeResp(ratio: 32), color: color ?? Colors.white);
 TextStyle textFieldSubLabel2({Color? color}) =>
-    TextStyle(fontSize: 12, color: color ?? Colors.white);
+    TextStyle(fontSize: textSizeResp(ratio: 32), color: color ?? Colors.white);
 
 ///Padding
 const double kMenuVerticalPadding = 5;
