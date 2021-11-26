@@ -12,8 +12,7 @@ const double kLogoTablet = 0.8;
 const double kLogoMobile = 0.9;
 
 ///Config
-// String kVersion = Platform.isIOS ? '1.0.2' : '1.0.4';
-String kVersion = Platform.isIOS ? '1.1.0' : '1.1.0';
+String kVersion = Platform.isIOS ? '1.1.1' : '1.1.1';
 const String kHeroLogo = 'logo';
 const Duration kClockInPeriod = Duration(milliseconds: 15000);
 const int kClockInCheckPeriod = 20000; //in millisec.

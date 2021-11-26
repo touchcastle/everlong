@@ -62,6 +62,7 @@ class Online extends ChangeNotifier {
   late String myRoomName;
 
   bool roomClosed = false;
+  bool memberSorted = false;
 
   dynamic _memberSubscribe;
   List<SessionMember> membersList = [];
@@ -588,7 +589,10 @@ class Online extends ChangeNotifier {
       }
 
       ///Show host first
-      membersList.sort((a, b) => a.isHost ? -1 : 1);
+      if (!memberSorted) {
+        membersList.sort((a, b) => a.isHost ? -1 : 1);
+        memberSorted = true;
+      }
 
       notifyListeners();
     });
