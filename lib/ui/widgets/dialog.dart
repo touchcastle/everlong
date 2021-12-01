@@ -9,7 +9,7 @@ Widget dialogBox({
 }) {
   double _dialogRatio() => Setting.isTablet()
       ? smallerDialog
-          ? 0.5
+          ? 0.55
           : 0.6
       : smallerDialog
           ? 0.7

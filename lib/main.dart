@@ -16,6 +16,7 @@ import 'package:sizer/sizer.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:everlong/utils/easy_loading_config.dart';
+import 'package:everlong/utils/constants.dart';
 
 void main() async {
   /// Database initialization and query.
@@ -29,7 +30,8 @@ void main() async {
   // Online online = Online(classroom, fireStore, analytic);
   Online online = Online(classroom);
   Recorder recorder = Recorder(classroom);
-  BluetoothControl bluetooth = BluetoothControl(classroom, online, recorder, db, ui);
+  BluetoothControl bluetooth =
+      BluetoothControl(classroom, online, recorder, db, ui);
 
   var provider = MultiProvider(
     providers: [

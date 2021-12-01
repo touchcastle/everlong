@@ -12,10 +12,10 @@ const double kLogoTablet = 0.8;
 const double kLogoMobile = 0.9;
 
 ///Config
-String kVersion = Platform.isIOS ? '1.1.1' : '1.1.1';
+String kVersion = Platform.isIOS ? '1.1.2' : '1.1.2';
 const String kHeroLogo = 'logo';
 const Duration kClockInPeriod = Duration(milliseconds: 15000);
-const int kClockInCheckPeriod = 20000; //in millisec.
+const int kClockInCheckPeriod = 25000; //in millisec.
 
 ///Device's Shared Preferences
 const String kDelayPref = 'delay';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/services/online.dart';
 import 'package:everlong/ui/views/setting.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
@@ -81,7 +82,11 @@ class _ResetState extends State<Reset> with SingleTickerProviderStateMixin {
                     ));
           }
           _controller.repeat();
+          if (context.read<Online>().isRoomHost) {
+            context.read<Online>().toggleResetCommand();
+          }
           await context.read<Classroom>().resetKeyLight();
+          context.read<Classroom>().resetDisplay();
           _controller.reset();
         } else {
           Snackbar.show(context, text: kNoChildMsg);

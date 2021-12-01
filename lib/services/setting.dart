@@ -45,7 +45,7 @@ class Setting {
   static double deviceWidth = 600;
   static double deviceHeight = 600;
   static BuildContext? currentContext;
-  static int initScale = Platform.isIOS ? 20 : 60;
+  static int initScale = Platform.isIOS ? 40 : 80;
   static bool notRemindMaster = false;
   static bool isShowingDialog = false;
   static bool isRecording = false;

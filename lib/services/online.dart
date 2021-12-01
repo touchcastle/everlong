@@ -62,7 +62,7 @@ class Online extends ChangeNotifier {
   late String myRoomName;
 
   bool roomClosed = false;
-  bool memberSorted = false;
+  // bool memberSorted = false;
 
   dynamic _memberSubscribe;
   List<SessionMember> membersList = [];
@@ -299,8 +299,17 @@ class Online extends ChangeNotifier {
       value: classroom.isHolding,
       sender: _uid(),
     );
-    if (!classroom.isHolding) classroom.resetDisplay();
+    if (!classroom.isHolding) {
+      classroom.resetDisplay();
+      classroom.holdingKeys.clear();
+    }
     _showInProgress(false);
+  }
+
+  void toggleResetCommand() async {
+    // _showInProgress(true);
+    await _roomCommand('RESET');
+    // _showInProgress(false);
   }
 
   Future<bool> toggleRoomMute() async {
@@ -475,7 +484,10 @@ class Online extends ChangeNotifier {
         break;
       case 'HOLD_OFF':
         _setHold(false);
-
+        break;
+      case 'RESET':
+        classroom.resetKeyLight();
+        classroom.resetDisplay();
         break;
     }
   }
@@ -580,18 +592,22 @@ class Online extends ChangeNotifier {
       membersList.removeWhere((e) => e.isSignedOut);
 
       ///Append new member
-      for (int _i = 0; _i < _preList.length; _i++) {
-        int _new = membersList.indexWhere((e) => e.id == _preList[_i].id);
-        if (_new < 0) {
-          _preList[_i].initPiano();
-          membersList.add(_preList[_i]);
+      if (_preList.length > 0) {
+        for (int _i = 0; _i < _preList.length; _i++) {
+          int _new = membersList.indexWhere((e) => e.id == _preList[_i].id);
+          if (_new < 0) {
+            _preList[_i].initPiano();
+            membersList.add(_preList[_i]);
+          }
         }
       }
 
       ///Show host first
-      if (!memberSorted) {
+      ///Only re-order when first member in list is not host
+      // if (!memberSorted) {
+      if (membersList.length > 0 && membersList[0].isHost == false) {
         membersList.sort((a, b) => a.isHost ? -1 : 1);
-        memberSorted = true;
+        // memberSorted = true;
       }
 
       notifyListeners();
