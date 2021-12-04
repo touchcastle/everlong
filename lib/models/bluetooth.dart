@@ -250,11 +250,15 @@ class BLEDevice extends ChangeNotifier {
   int _queueEnd = DateTime.now().millisecondsSinceEpoch;
   int _lastPressed = DateTime.now().millisecondsSinceEpoch;
   int _inQueueCount = 0;
+
   Future listenTo() async {
     await this.characteristic!.setNotifyValue(true);
     this.isListening = true;
     this.inputSubscribe = this.characteristic!.value.listen((List<int> data) {
       print('Retrieve: $data from ${this.displayName}');
+
+      /// To record
+      if (Setting.isRecording) _recorder.record(raw: data);
 
       /// if (DateTime.now().millisecondsSinceEpoch >=
       ///     (_queueEnd + kNoteDelayMillisec)) {
@@ -295,9 +299,6 @@ class BLEDevice extends ChangeNotifier {
           } else if (Setting.sessionMode == SessionMode.online) {
             // if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
-          }
-          if (Setting.isRecording) {
-            _recorder.record(raw: _data);
           }
         }
       });
