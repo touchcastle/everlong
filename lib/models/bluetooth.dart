@@ -256,6 +256,9 @@ class BLEDevice extends ChangeNotifier {
     this.inputSubscribe = this.characteristic!.value.listen((List<int> data) {
       print('Retrieve: $data from ${this.displayName}');
 
+      ///To record
+      if (Setting.isRecording) _recorder.record(raw: data);
+
       /// if (DateTime.now().millisecondsSinceEpoch >=
       ///     (_queueEnd + kNoteDelayMillisec)) {
       int _extraDelay = 0;
@@ -295,9 +298,6 @@ class BLEDevice extends ChangeNotifier {
           } else if (Setting.sessionMode == SessionMode.online) {
             // if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
             _online.broadcastMessage(_uintData);
-          }
-          if (Setting.isRecording) {
-            _recorder.record(raw: _data);
           }
         }
       });
