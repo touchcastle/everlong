@@ -50,6 +50,8 @@ class Classroom extends ChangeNotifier {
 
   bool showList = true;
 
+  bool showRecorder = false;
+
   // bool showSetting = false;
 
   ///For pressing notes and chord(By master device or room host) on screen.
@@ -385,6 +387,12 @@ class Classroom extends ChangeNotifier {
       showList = !showList;
     }
 
+    notifyListeners();
+  }
+
+  void toggleRecorderDisplay() {
+    if (!showRecorder) toggleListDisplay(forceShow: true);
+    showRecorder = !showRecorder;
     notifyListeners();
   }
 

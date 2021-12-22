@@ -337,7 +337,8 @@ class Online extends ChangeNotifier {
   void broadcastMessage(Uint8List raw) async {
     // if (raw.isNotEmpty && this.isRoomHost) {
     if (raw.isNotEmpty) {
-      String _message = _messageEncryptor(raw: raw);
+      // String _message = _messageEncryptor(raw: raw);
+      String _message = Setting.messageEncryptor(raw: raw);
       bool _holdingDup() => classroom.holdingKeys.contains(raw[kKeyPos]);
       bool _isNoteOnWhileHolding() =>
           classroom.isHolding && (raw[kSwitchPos] == kNoteOn && !_holdingDup());
@@ -358,21 +359,21 @@ class Online extends ChangeNotifier {
     }
   }
 
-  /// Encrypt outgoing message from MIDI[Uint8List] to [double]
-  /// Key's pressure as decimal place. (99 maximum)
-  String _messageEncryptor({required Uint8List raw}) {
-    int _switch = raw[kSwitchPos];
-    int _note = raw[kKeyPos];
-    late double _out;
-    if (_switch == kNoteOn) {
-      double _pressure = raw[kPressurePos] / 1000;
-      _pressure >= 1 ? _pressure = 0.999 : _pressure = _pressure;
-      _out = _switch + _note + _pressure;
-    } else {
-      _out = _note.roundToDouble();
-    }
-    return _out.toString();
-  }
+  // /// Encrypt outgoing message from MIDI[Uint8List] to [double]
+  // /// Key's pressure as decimal place. (99 maximum)
+  // String _messageEncryptor({required Uint8List raw}) {
+  //   int _switch = raw[kSwitchPos];
+  //   int _note = raw[kKeyPos];
+  //   late double _out;
+  //   if (_switch == kNoteOn) {
+  //     double _pressure = raw[kPressurePos] / 1000;
+  //     _pressure >= 1 ? _pressure = 0.999 : _pressure = _pressure;
+  //     _out = _switch + _note + _pressure;
+  //   } else {
+  //     _out = _note.roundToDouble();
+  //   }
+  //   return _out.toString();
+  // }
 
   /// To send out room command code (host's function).
   Future _roomCommand(String code, {bool initialize = false}) async {
@@ -428,7 +429,8 @@ class Online extends ChangeNotifier {
         case 'message':
           if (data['sender'] != _uid()) {
             classroom.sendLocal(
-                _messageDecryptor(raw: double.parse(data['value'])),
+                Setting.messageDecryptor(raw: double.parse(data['value'])),
+                // _messageDecryptor(raw: double.parse(data['value'])),
                 withLight: true,
                 withSound: !this.isMute);
           }
@@ -440,29 +442,29 @@ class Online extends ChangeNotifier {
     });
   }
 
-  /// Decrypt incoming [double] message into MIDI([Uint8List])
-  /// If message is NoteOn, value will greater than [kNoteOn] with
-  /// key pressure as decimal place.
-  Uint8List _messageDecryptor({required double raw}) {
-    late int _switch;
-    late int _note;
-    late int _pressure;
-    if (raw < kNoteOn) {
-      //noteOff
-      _switch = kNoteOff;
-      _note = raw.floor();
-      _pressure = 0;
-    } else {
-      //noteOn
-      _switch = kNoteOn;
-      _note = (raw - kNoteOn).floor();
-      _pressure = ((raw - (raw.floor())) * 1000).floor();
-      print('raw is: ${raw.toString()}');
-      print('key is: ${_note.toString()}');
-      print('pressure is: ${_pressure.toString()}');
-    }
-    return Uint8List.fromList([k128, k128, _switch, _note, _pressure]);
-  }
+  // /// Decrypt incoming [double] message into MIDI([Uint8List])
+  // /// If message is NoteOn, value will greater than [kNoteOn] with
+  // /// key pressure as decimal place.
+  // Uint8List _messageDecryptor({required double raw}) {
+  //   late int _switch;
+  //   late int _note;
+  //   late int _pressure;
+  //   if (raw < kNoteOn) {
+  //     //noteOff
+  //     _switch = kNoteOff;
+  //     _note = raw.floor();
+  //     _pressure = 0;
+  //   } else {
+  //     //noteOn
+  //     _switch = kNoteOn;
+  //     _note = (raw - kNoteOn).floor();
+  //     _pressure = ((raw - (raw.floor())) * 1000).floor();
+  //     print('raw is: ${raw.toString()}');
+  //     print('key is: ${_note.toString()}');
+  //     print('pressure is: ${_pressure.toString()}');
+  //   }
+  //   return Uint8List.fromList([k128, k128, _switch, _note, _pressure]);
+  // }
 
   /// Receive room command function from cloud and do action.
   void _roomController(String value) {
@@ -666,7 +668,8 @@ class Online extends ChangeNotifier {
           int _i = membersList.indexWhere((d) => d.id == data['sender']);
           if (_i >= 0) {
             Uint8List _data =
-                _messageDecryptor(raw: double.parse(data['value']));
+                Setting.messageDecryptor(raw: double.parse(data['value']));
+            // _messageDecryptor(raw: double.parse(data['value']));
             if (_data[kSwitchPos] == kNoteOn) {
               membersList[_i].piano.addPressing(_data[kKeyPos]);
               notifyListeners();

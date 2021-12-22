@@ -5,6 +5,8 @@ import 'package:device_info/device_info.dart';
 import 'dart:io' show Platform;
 import 'package:wakelock/wakelock.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:everlong/utils/midi.dart';
+import 'dart:typed_data';
 
 ///Mode for local session.
 enum ListenMode {
@@ -148,4 +150,44 @@ class Setting {
   static isOnline() => Setting.sessionMode == SessionMode.online;
   static isOffline() => Setting.sessionMode == SessionMode.offline;
   static bool isTablet() => Setting.deviceWidth >= kTabletStartWidth;
+
+  /// Encrypt outgoing message from MIDI[Uint8List] to [double]
+  /// Key's pressure as decimal place. (99 maximum)
+  static String messageEncryptor({required List<int> raw}) {
+    int _switch = raw[kSwitchPos];
+    int _note = raw[kKeyPos];
+    late double _out;
+    if (_switch == kNoteOn) {
+      double _pressure = raw[kPressurePos] / 1000;
+      _pressure >= 1 ? _pressure = 0.999 : _pressure = _pressure;
+      _out = _switch + _note + _pressure;
+    } else {
+      _out = _note.roundToDouble();
+    }
+    return _out.toString();
+  }
+
+  /// Decrypt incoming [double] message into MIDI([Uint8List])
+  /// If message is NoteOn, value will greater than [kNoteOn] with
+  /// key pressure as decimal place.
+  static Uint8List messageDecryptor({required double raw}) {
+    late int _switch;
+    late int _note;
+    late int _pressure;
+    if (raw < kNoteOn) {
+      //noteOff
+      _switch = kNoteOff;
+      _note = raw.floor();
+      _pressure = 0;
+    } else {
+      //noteOn
+      _switch = kNoteOn;
+      _note = (raw - kNoteOn).floor();
+      _pressure = ((raw - (raw.floor())) * 1000).floor();
+      print('raw is: ${raw.toString()}');
+      print('key is: ${_note.toString()}');
+      print('pressure is: ${_pressure.toString()}');
+    }
+    return Uint8List.fromList([k128, k128, _switch, _note, _pressure]);
+  }
 }

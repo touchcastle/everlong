@@ -9,6 +9,7 @@ import 'package:everlong/ui/views/local_bottom_menu.dart';
 import 'package:everlong/ui/views/set_master_reminder.dart';
 import 'package:everlong/ui/views/device/devices_list.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
+import 'package:everlong/ui/views/local_recorder.dart';
 import 'package:everlong/ui/widgets/local_info_bar.dart';
 import 'package:everlong/ui/widgets/device/no_device.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
@@ -26,10 +27,13 @@ class _LocalPageState extends State<LocalPage> {
   ///For bluetooth scanning subscribe
   var _scanSub;
 
-  ///Padding
   Padding _deviceList() => Padding(
       padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0),
       child: DeviceAnimatedList());
+
+  Padding _recorder() => Padding(
+      padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 10),
+      child: LocalRecorder());
 
   ///Empty area
   SizedBox _empty = SizedBox.shrink();
@@ -70,20 +74,24 @@ class _LocalPageState extends State<LocalPage> {
 
   ///User can swipe in main area to switch between music notation view only
   ///and music notation and device's list view.
-  GestureDetector _mainArea(bool _showList, bool _hasDevice) {
+  GestureDetector _mainArea(bool showList, bool hasDevice, bool showRecorder) {
     return GestureDetector(
       onHorizontalDragEnd: _swiper,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Row(
           children: [
-            _showList && !Setting.isTablet()
+            showList && !Setting.isTablet()
                 ? _empty
                 : Expanded(flex: 1, child: Screen()),
-            _showList
+            showList
                 ? Expanded(
                     flex: 1,
-                    child: _hasDevice ? _deviceList() : NoDeviceDisplay(),
+                    child: Column(children: [
+                      Expanded(
+                          child: hasDevice ? _deviceList() : NoDeviceDisplay()),
+                      showRecorder ? _recorder() : _empty,
+                    ]),
                   )
                 : _empty,
           ],
@@ -107,8 +115,9 @@ class _LocalPageState extends State<LocalPage> {
     Setting.deviceHeight = MediaQuery.of(context).size.height;
     bool _showList = context.watch<Classroom>().showList;
     bool _hasDevice = context.watch<Classroom>().bluetoothDevices.isNotEmpty;
+    bool _showRecorder = context.watch<Classroom>().showRecorder;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: kLocalAccentColor,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -118,7 +127,7 @@ class _LocalPageState extends State<LocalPage> {
             child: Column(children: [
               GlobalTopMenu(),
               localInfoBar(context.watch<Classroom>().masterName),
-              Expanded(child: _mainArea(_showList, _hasDevice)),
+              Expanded(child: _mainArea(_showList, _hasDevice, _showRecorder)),
               // LocalBottomMenu(onScanPressed: () => setState(() {})),
               SizedBox(
                   // height: Setting.deviceHeight * 0.07,
