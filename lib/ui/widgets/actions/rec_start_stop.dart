@@ -27,23 +27,21 @@ class _RecordButtonState extends State<RecordButton> {
     return Button(
       isVertical: false,
       isActive: false,
+      width: 50,
+      height: 50,
       icon: svgIcon(
 
           ///TODO: unusable icon
           name: _isRecording ? kRecStopIcon : kRecStartIcon,
-          // color: _isShow
-          //     ? Colors.white
-          //     : Setting.isOnline()
-          //         ? kTextColorLight
-          //         : kLocalLabelColor,
-          width: kIconWidth),
+          color: _isRecording ? Colors.black : kRed2,
+          width: 50),
       onPressed: () {
         if (_isRecording) {
           print('stop rec');
-          context.read<Recorder>().stop();
+          context.read<Recorder>().stop(context);
         } else {
           print('start rec');
-          context.read<Recorder>().start();
+          context.read<Recorder>().start(context);
         }
       },
     );

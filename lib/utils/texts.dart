@@ -92,6 +92,10 @@ const String kSettingModeOnBlind = 'Sound Only';
 const String kRenameHeader = 'Rename Midi Device';
 const String kRenameBoxLabel = 'Device Name';
 
+///Rename Record Dialog
+const String kRecRenameHeader = 'Rename Midi Record';
+const String kRecRenameBoxLabel = 'Record Name';
+
 ///Set Master Reminder Dialog
 const String kSetMasterHeader = 'Select Master Device';
 const String kSetMasterInfo =

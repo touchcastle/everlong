@@ -117,7 +117,7 @@ class _LocalPageState extends State<LocalPage> {
     bool _hasDevice = context.watch<Classroom>().bluetoothDevices.isNotEmpty;
     bool _showRecorder = context.watch<Classroom>().showRecorder;
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       backgroundColor: kLocalAccentColor,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

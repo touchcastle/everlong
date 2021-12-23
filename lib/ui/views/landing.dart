@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/bluetooth.dart';
 import 'package:everlong/services/classroom.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/services/setting.dart';
@@ -38,6 +39,7 @@ class _LandingScreenState extends State<LandingScreen> {
           context.read<Classroom>().piano.generateKeysList();
       // UrlHandler.handleDynamicLink(context);
       await context.read<Online>().initFirebase();
+      context.read<Recorder>().init();
       Navigator.of(context).pushReplacement(PageRouteBuilder(
           settings: RouteSettings(name: kMainPageName),
           transitionDuration: kLandingTransitionDur,
@@ -60,7 +62,8 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
-    double _logoRatio() => _screenWidth >= kTabletStartWidth ? kLogoTablet : kLogoMobile;
+    double _logoRatio() =>
+        _screenWidth >= kTabletStartWidth ? kLogoTablet : kLogoMobile;
     return Scaffold(
       backgroundColor: kGreenMain,
       body: AnnotatedRegion<SystemUiOverlayStyle>(

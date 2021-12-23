@@ -18,7 +18,8 @@ import 'package:everlong/utils/colors.dart';
 /// Generate hold button.
 class RecordPlayOrStop extends StatefulWidget {
   final RecFile file;
-  RecordPlayOrStop({required this.file});
+  final Color? color;
+  RecordPlayOrStop({required this.file, this.color});
 
   @override
   State<RecordPlayOrStop> createState() => _RecordPlayOrStopState();
@@ -30,17 +31,14 @@ class _RecordPlayOrStopState extends State<RecordPlayOrStop> {
     bool _isPlaying = widget.file.isPlaying;
     return Button(
       width: 30,
+      height: 30,
       isVertical: false,
       isActive: false,
       icon: svgIcon(
 
           ///TODO: unusable icon
           name: _isPlaying ? kRecStopIcon : kRecPlayIcon,
-          // color: _isShow
-          //     ? Colors.white
-          //     : Setting.isOnline()
-          //         ? kTextColorLight
-          //         : kLocalLabelColor,
+          color: widget.color,
           width: kIconWidth),
       onPressed: () {
         if (_isPlaying) {

@@ -1,15 +1,18 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'dart:async';
+import 'package:nanoid/nanoid.dart';
 import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/ui/views/record_rename.dart';
+import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/midi.dart';
 
 class Recorder extends ChangeNotifier {
   Classroom classroom;
-  List<RecEvent> _events = [];
+  List<RecEvent> recordingEvents = [];
   RecFile? currentRecord;
   int startTime = 0;
   int totalTime = 0;
@@ -21,15 +24,30 @@ class Recorder extends ChangeNotifier {
   String recordCountDownText = kMaxRecordInSecText;
   var playBackTimer;
   int playBackingTime = 0;
-  String playbackCountDownText = '0:00';
+  // String playbackCountDownText = '0:00';
   var player;
+  List<RecFile> storedRecords = [];
   // bool isPlaying = false;
 
   Recorder(this.classroom);
 
-  Future start() async {
+  void init() {
+    _getFromPrefs();
+  }
+
+  void _getFromPrefs() {
+    storedRecords.clear();
+    if (Setting.prefsRecords != null && Setting.prefsRecords!.length > 0) {
+      for (int i = 0; i < Setting.prefsRecords!.length; i++) {
+        RecFile _append = _StringToFile(Setting.prefsRecords![i]);
+        storedRecords.add(_append);
+      }
+    }
+  }
+
+  Future start(BuildContext context) async {
     print('START');
-    if (_events.isEmpty) {
+    if (recordingEvents.isEmpty) {
       // New record
       _clearParams();
       startTime = DateTime.now().millisecondsSinceEpoch;
@@ -45,17 +63,17 @@ class Recorder extends ChangeNotifier {
       Setting.isRecording = true;
     }
     notifyListeners();
-    _recTimer();
+    _recTimer(context);
   }
 
-  void _recTimer() {
+  void _recTimer(BuildContext context) {
     recordTimer = Timer.periodic(Duration(seconds: 1), (t) async {
       recordingTime++;
       _recCountDownText();
       notifyListeners();
       print('record clock: $recordingTime');
       if (recordingTime == kMaxRecordInSec) {
-        stop();
+        stop(context);
       }
     });
   }
@@ -67,7 +85,7 @@ class Recorder extends ChangeNotifier {
   }
 
   void _clearParams() {
-    _events.clear();
+    recordingEvents.clear();
     currentRecord?.clear();
     startTime = 0;
     totalTime = 0;
@@ -77,28 +95,38 @@ class Recorder extends ChangeNotifier {
     // int _now = DateTime.now().millisecondsSinceEpoch;
     // int _deltaTime = (_now - startTime) ~/ milliSecDivide;
     int _deltaTime = (DateTime.now().millisecondsSinceEpoch - startTime);
-    _events.add(RecEvent(time: _deltaTime, data: raw));
+    recordingEvents.add(RecEvent(time: _deltaTime, data: raw));
   }
 
-  void stop() {
+  Future stop(BuildContext context) async {
     recordTimer?.cancel();
     recordingTime = 0;
     _recCountDownText();
     totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
     int _inSec = totalTime ~/ 1000;
-    playbackCountDownText = '0:${_inSec.toString().padLeft(2, '0')}';
-    currentRecord = RecFile(
+    String _timeText = '0:${_inSec.toString().padLeft(2, '0')}';
+    String _id = customAlphabet(kRecordIdAlphabet, kRecordIdLength);
+    List<RecEvent> _clone = List.from(recordingEvents);
+    currentRecord = new RecFile(
+      id: _id,
       totalTimeMilliSec: totalTime,
       totalTimeSec: _inSec,
-      totalTimeSecText: playbackCountDownText,
-      events: _events,
+      totalTimeSecText: _timeText,
+      events: _clone,
     );
     this.isRecording = false;
     Setting.isRecording = false;
-    print(
-        'TOTAL: ${currentRecord!.totalTimeMilliSec} / ${currentRecord!.events.length}');
+    // print(
+    //     'TOTAL: ${currentRecord!.totalTimeMilliSec} / ${currentRecord!.events.length}');
     // isRenaming = true;
     notifyListeners();
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => dialogBox(
+        context: context,
+        content: RecordRenameDialog(currentRecord!),
+      ),
+    );
   }
 
   void clear() {
@@ -107,13 +135,13 @@ class Recorder extends ChangeNotifier {
   }
 
   Future play_start(RecFile file) async {
-    List<RecEvent> _play = List.from(currentRecord!.events);
-
+    // List<RecEvent> _play = List.from(currentRecord!.events);
+    List<RecEvent> _play = List.from(file.events);
     int i = 0;
     player?.cancel;
     file.isPlaying = true;
     notifyListeners();
-    _playBackTimer();
+    _playBackTimer(file);
     player = Timer.periodic(Duration(milliseconds: milliSecDivide), (t) async {
       if (_play.isNotEmpty) {
         if (_play[0].time <= i) {
@@ -123,10 +151,11 @@ class Recorder extends ChangeNotifier {
           _play.removeAt(0);
         }
       }
-      if (i >= currentRecord!.totalTimeMilliSec) {
+      // if (i >= currentRecord!.totalTimeMilliSec) {
+      if (i >= file.totalTimeMilliSec) {
         t.cancel();
         file.isPlaying = false;
-        _resetPlaybackTimer();
+        _resetPlaybackTimer(file);
         classroom.resetDisplay();
         notifyListeners();
         print('FINISHED');
@@ -135,35 +164,42 @@ class Recorder extends ChangeNotifier {
     });
   }
 
-  void _playBackTimer() {
+  void _playBackTimer(RecFile file) {
     playBackTimer = Timer.periodic(Duration(seconds: 1), (t) async {
       playBackingTime++;
-      _playBackCountDownText();
+      _playBackCountDownText(file);
       notifyListeners();
-      if (recordingTime == currentRecord!.totalTimeMilliSec) {
+      if (playBackingTime == file.totalTimeSec) {
         t.cancel();
       }
     });
   }
 
-  void _playBackCountDownText() {
-    int _availSec = currentRecord!.totalTimeSec - playBackingTime;
+  void _playBackCountDownText(RecFile file) {
+    // int _availSec = currentRecord!.totalTimeSec - playBackingTime;
+    int _availSec = file.totalTimeSec - playBackingTime;
     if (_availSec < 0) _availSec = 0;
-    playbackCountDownText = '0:${_availSec.toString().padLeft(2, '0')}';
+    file.totalTimeSecText = '0:${_availSec.toString().padLeft(2, '0')}';
   }
 
-  void _resetPlaybackTimer() {
+  void _resetPlaybackTimer(RecFile file) {
     playBackTimer.cancel();
     playBackingTime = 0;
-    playbackCountDownText = currentRecord!.totalTimeSecText;
+    file.totalTimeSecText = '0:${file.totalTimeSec.toString().padLeft(2, '0')}';
+    // playbackCountDownText = currentRecord!.totalTimeSecText;
   }
 
   void play_stop(RecFile file) {
     print('stop');
     player?.cancel();
-    _resetPlaybackTimer();
+    _resetPlaybackTimer(file);
     file.isPlaying = false;
     classroom.resetDisplay();
+    notifyListeners();
+  }
+
+  void renameRecord(RecFile file, String newName) {
+    file.name = newName;
     notifyListeners();
   }
 
@@ -172,25 +208,118 @@ class Recorder extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future saveNewRecord() async {
+  String _activeNow = '';
+  void toggleActive(RecFile file) {
+    if (_activeNow != '' && file.id != _activeNow) {
+      //cancel old active
+      int i = storedRecords.indexWhere((item) => item.id == _activeNow);
+      if (i >= 0) storedRecords[i].isActive = false;
+    }
+    file.isActive = !file.isActive;
+    file.isActive ? _activeNow = file.id : _activeNow = '';
+
+    notifyListeners();
+  }
+
+  void saveNewRecord() {
+    //Append to in-app record list
+    RecFile _clone = currentRecord!.copyWith();
+    storedRecords.add(_clone);
+    // List<RecFile> _temp = storedRecords.toList();
+    // _temp.add(currentRecord!);
+    // storedRecords.clear();
+    // storedRecords = _temp.toList();
+    // _temp.clear();
+
     //Convert to string
-    String _new = _fileToString(currentRecord!);
-    print(_new);
-    //Save string to device
+    String _asString = _fileToString(currentRecord!);
+
+    //Append to in-app prefs list
+    Setting.prefsRecords?.add(_asString);
+    print('>> ${Setting.prefsRecords}');
+
+    //Update prefs
+    Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+
+    //Clear current record when save
+    clear();
+    notifyListeners();
+  }
+
+  void deleteRecord(String recordId) {
+    storedRecords.removeWhere((item) => item.id == recordId);
+    Setting.prefsRecords
+        ?.removeWhere((item) => item.substring(0, kRecordIdLength) == recordId);
+
+    //Update prefs
+    Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+
+    notifyListeners();
   }
 
   String _fileToString(RecFile file) {
     String _new = '';
-    _new += file.name + '||';
-    _new += file.totalTimeMilliSec.toString() + '||';
-    _new += file.totalTimeSec.toString() + '||';
-    _new += file.totalTimeSecText + '||';
+
+    //HEADER
+    //[0]
+    _new += file.id + kRecordHeaderDivider;
+
+    //[1]
+    _new += file.name + kRecordHeaderDivider;
+
+    //[2]
+    _new += file.totalTimeMilliSec.toString() + kRecordHeaderDivider;
+
+    //[3]
+    _new += file.totalTimeSec.toString() + kRecordHeaderDivider;
+
+    //[4]
+    _new += file.totalTimeSecText + kRecordHeaderDivider;
+
+    //ITEMS
+    //[5]
     for (int i = 0; i < file.events.length; i++) {
-      _new += file.events[i].time.toString() + '||';
+      _new += file.events[i].time.toString() + kRecordEventDivider;
       String _shortenMidi = Setting.messageEncryptor(raw: file.events[i].data);
-      _new += _shortenMidi + '||';
+      if (i < (file.events.length - 1)) {
+        _new += _shortenMidi + kRecordItemDivider;
+      } else if (i == (file.events.length - 1)) {
+        _new += _shortenMidi;
+      }
     }
+
     return _new;
+  }
+
+  RecFile _StringToFile(String string) {
+    print('incoming: $string');
+    List<RecEvent> _RecordEvents = [];
+
+    List<String> _header = string.split(kRecordHeaderDivider);
+    print('header: $_header');
+    List<String> _items = _header[5].split(kRecordItemDivider);
+    print('item: ${_items.length}');
+
+    for (int i = 0; i < _items.length; i++) {
+      if (_items[i].length > 0) {
+        List<String> _events = _items[i].split(kRecordEventDivider);
+        RecEvent _append = RecEvent(
+          time: int.parse(_events[0]),
+          data: Setting.messageDecryptor(raw: double.parse(_events[1])),
+        );
+        _RecordEvents.add(_append);
+      }
+    }
+    RecFile _out = RecFile(
+      id: _header[0],
+      name: _header[1],
+      totalTimeMilliSec: int.parse(_header[2]),
+      totalTimeSec: int.parse(_header[3]),
+      totalTimeSecText: _header[4],
+      events: _RecordEvents,
+      isEditingName: false,
+    );
+    return _out;
   }
 
   // /// Encrypt outgoing message from MIDI[Uint8List] to [double]

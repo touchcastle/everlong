@@ -22,6 +22,21 @@ const BoxDecoration kBoxDecor =
     BoxDecoration(color: kConnectedBoxColor, borderRadius: kAllBorderRadius);
 const BoxDecoration kDeviceFxDecor =
     BoxDecoration(color: kConnectedBoxColor, borderRadius: kAllBorderRadius);
+const BoxDecoration kStoredMidiDecor = BoxDecoration(
+  // color: kTextColorWhite,
+  borderRadius: kAllBorderRadius,
+  boxShadow: [
+    const BoxShadow(
+      color: Colors.black12,
+    ),
+    const BoxShadow(
+      color: kTextColorWhite,
+      spreadRadius: -1.0,
+      blurRadius: 4.0,
+      offset: Offset(3, 3),
+    ),
+  ],
+);
 BoxDecoration kDialogDecor = BoxDecoration(
   borderRadius: kAllBorderRadius,
   color: Setting.isOnline() ? kOnlineDialog : kLocalDialog,
@@ -93,7 +108,9 @@ const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 
 ///Dialog Text Style
 TextStyle dialogHeader({Color? color}) => TextStyle(
-    fontSize: textSizeResp(ratio: 20), fontWeight: FontWeight.w500, color: color ?? Colors.white);
+    fontSize: textSizeResp(ratio: 20),
+    fontWeight: FontWeight.w500,
+    color: color ?? Colors.white);
 TextStyle dialogSubHeader({Color? color}) => TextStyle(
     fontSize: kDialogSubTextSize,
     fontWeight: FontWeight.w500,

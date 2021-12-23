@@ -127,6 +127,7 @@ class _ScreenState extends State<Screen> {
   Widget build(BuildContext ct) {
     List<StaffStore> _playing = staffService.Staff.staffList;
     Size _size = MediaQuery.of(ct).size;
+    ScrollController _controller = new ScrollController();
     return Container(
       decoration:
           BoxDecoration(borderRadius: kAllBorderRadius, color: kStaffArea),
@@ -136,17 +137,16 @@ class _ScreenState extends State<Screen> {
           SizedBox(height: Setting.deviceHeight * 0.04),
           Expanded(
             child: Center(
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _musicNotationPainter(ct, _playing, _size,
-                          keySig: KeySig.g),
-                      _musicNotationPainter(ct, _playing, _size,
-                          keySig: KeySig.f),
-                    ],
-                  ),
+              child: SingleChildScrollView(
+                controller: _controller,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _musicNotationPainter(ct, _playing, _size,
+                        keySig: KeySig.g),
+                    _musicNotationPainter(ct, _playing, _size,
+                        keySig: KeySig.f),
+                  ],
                 ),
               ),
             ),

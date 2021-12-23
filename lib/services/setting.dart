@@ -51,6 +51,7 @@ class Setting {
   static bool notRemindMaster = false;
   static bool isShowingDialog = false;
   static bool isRecording = false;
+  static List<String>? prefsRecords = [];
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -70,6 +71,9 @@ class Setting {
 
     ///Name
     prefName = prefs.getString(kNamePref);
+
+    ///Records
+    prefsRecords = prefs.getStringList(kRecordsPref) ?? [];
 
     ///Remind Master Device Setting Dialog
     notRemindMaster = prefs.getBool(kMasterRemindPref) ?? false;
@@ -99,6 +103,11 @@ class Setting {
   static void saveBool(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool(key, value);
+  }
+
+  static void saveListString(String key, List<String> values) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList(key, values);
   }
 
   static void changeDelay(double scale) {

@@ -16,14 +16,20 @@ String kVersion = Platform.isIOS ? '1.2.0' : '1.2.0';
 const String kHeroLogo = 'logo';
 const Duration kClockInPeriod = Duration(milliseconds: 15000);
 const int kClockInCheckPeriod = 25000; //in millisec.
-const int kMaxRecordInSec = 10;
-const String kMaxRecordInSecText = '0:10';
+const int kMaxRecordInSec = 30;
+const String kMaxRecordInSecText = '0:30';
+const String kRecordHeaderDivider = '|';
+const String kRecordItemDivider = '<';
+const String kRecordEventDivider = '>';
+const int kRecordIdLength = 16;
+const String kRecordIdAlphabet = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 ///Device's Shared Preferences
 const String kDelayPref = 'delay';
 const String kModePref = 'mode';
 const String kNamePref = 'name';
 const String kMasterRemindPref = 'remind_master';
+const String kRecordsPref = 'records';
 
 ///PageID
 const String kLandingId = 'landing_screen';

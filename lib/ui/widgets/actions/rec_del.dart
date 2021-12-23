@@ -14,27 +14,37 @@ import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 
-/// Generate hold button.
+enum FileType {
+  recording,
+  stored,
+}
+
 class RecordDelete extends StatelessWidget {
+  final FileType fileType;
+  final String? id;
+  final Color? color;
+  RecordDelete({required this.fileType, this.id, this.color});
+
   @override
   Widget build(BuildContext context) {
     // bool _isRecording = context.watch<Recorder>().isRecording;
     return Button(
       width: 30,
+      height: 30,
       isVertical: false,
       isActive: false,
       icon: svgIcon(
 
           ///TODO: unusable icon
           name: kRecDelIcon,
-          // color: _isShow
-          //     ? Colors.white
-          //     : Setting.isOnline()
-          //         ? kTextColorLight
-          //         : kLocalLabelColor,
+          color: color,
           width: kIconWidth),
       onPressed: () {
-        context.read<Recorder>().clear();
+        if (fileType == FileType.recording) {
+          context.read<Recorder>().clear();
+        } else if (fileType == FileType.stored) {
+          context.read<Recorder>().deleteRecord(id!);
+        }
       },
     );
   }

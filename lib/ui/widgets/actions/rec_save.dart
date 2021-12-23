@@ -20,6 +20,7 @@ class RecordSave extends StatelessWidget {
     // bool _isRecording = context.watch<Recorder>().isRecording;
     return Button(
       width: 30,
+      height: 30,
       isVertical: false,
       isActive: false,
       icon: svgIcon(

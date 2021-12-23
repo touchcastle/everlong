@@ -5,6 +5,7 @@ class EditableText extends StatelessWidget {
   final bool isEdit;
   final Function(String) onSubmitted;
   final TextStyle? textStyle;
+  final TextAlign textAlign;
   final TextEditingController _textFieldController = TextEditingController();
   final FocusNode myFocusNode = FocusNode();
 
@@ -13,6 +14,7 @@ class EditableText extends StatelessWidget {
     required this.isEdit,
     required this.onSubmitted,
     this.textStyle,
+    this.textAlign = TextAlign.start,
   });
 
   InputDecoration _decoration() {
@@ -32,10 +34,10 @@ class EditableText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('build textfield');
     _textFieldController.text = text;
     if (isEdit) myFocusNode.requestFocus();
     return TextField(
+      textAlign: textAlign,
       controller: _textFieldController,
       focusNode: myFocusNode,
       enabled: isEdit,

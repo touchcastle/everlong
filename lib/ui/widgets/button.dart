@@ -21,6 +21,7 @@ class Button extends StatefulWidget {
     this.paddingHorizontal = 0,
     this.elevation,
     this.width,
+    this.height,
   });
 
   ///Icon to be display.
@@ -68,6 +69,9 @@ class Button extends StatefulWidget {
 
   ///Button's width
   final double? width;
+
+  ///Button's height
+  final double? height;
 }
 
 class _ButtonState extends State<Button> {
@@ -114,7 +118,10 @@ class _ButtonState extends State<Button> {
 
     Widget _cover({required Widget child}) =>
         (_width != null || widget.width != null)
-            ? SizedBox(width: widget.width ?? _width, child: child)
+            ? SizedBox(
+                width: widget.width ?? _width,
+                height: widget.height,
+                child: child)
             : widget.isExpanded
                 ? Expanded(flex: 1, child: child)
                 : Container(child: child);
