@@ -143,7 +143,7 @@ class ScrollingTextState extends State<ScrollingText>
     return LayoutBuilder(
       builder: (context, constraint) => _isOverflow(constraint)
           ? SizedBox(
-              height: 30,
+              height: 28,
               child: ListView(
                 key: _key,
                 scrollDirection: widget.scrollAxis,

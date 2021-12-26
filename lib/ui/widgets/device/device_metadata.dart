@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/utils/styles.dart';
+import 'package:everlong/ui/widgets/scroll_text.dart';
 
 class DeviceMetadata extends StatelessWidget {
   DeviceMetadata({required this.id, required this.name});
@@ -15,9 +16,11 @@ class DeviceMetadata extends StatelessWidget {
         children: [
           Text(this.name, style: kDeviceInfoName),
           SingleChildScrollView(
+            controller: new ScrollController(),
             scrollDirection: Axis.horizontal,
             child: Text(this.id, style: kDeviceInfoId),
           ),
+          // ScrollingText(text: this.id, textStyle: kDeviceInfoId),
         ],
       ),
     );

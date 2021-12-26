@@ -81,6 +81,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
   bool _showRecorder() =>
       context.watch<Classroom>().showRecorder &&
       context.watch<Online>().memberCount > 1;
+  // true;
 
   ///Set flag when user swipe to change view mode.
   void _swiper(DragEndDetails details) {
@@ -92,7 +93,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
   }
 
   Padding _recorder() => Padding(
-      padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 10),
+      padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 0),
       child: OnlineRecorder());
 
   ///User can swipe in main area to switch between music notation view only

@@ -135,7 +135,7 @@ class _ScreenState extends State<Screen> {
       alignment: Alignment.center,
       child: Column(
         children: [
-          HostFeedbackSelect(),
+          // HostFeedbackSelect(),
           SizedBox(height: Setting.deviceHeight * 0.04),
           Expanded(
             child: Center(
@@ -159,4 +159,3 @@ class _ScreenState extends State<Screen> {
     );
   }
 }
-

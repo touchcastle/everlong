@@ -4,6 +4,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'dart:typed_data';
+import 'package:everlong/models/piano.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/online.dart';
@@ -258,13 +259,9 @@ class BLEDevice extends ChangeNotifier {
     await this.characteristic!.setNotifyValue(true);
     this.isListening = true;
     this.inputSubscribe = this.characteristic!.value.listen((List<int> data) {
-      print('Retrieve: $data from ${this.displayName}');
-
       ///To record
       if (Setting.isRecording) _recorder.record(raw: data);
 
-      /// if (DateTime.now().millisecondsSinceEpoch >=
-      ///     (_queueEnd + kNoteDelayMillisec)) {
       int _extraDelay = 0;
       int _sinceLastPress =
           DateTime.now().millisecondsSinceEpoch - _lastPressed;
@@ -297,10 +294,9 @@ class BLEDevice extends ChangeNotifier {
         if (_data.length >= 5) {
           /// Listening function from host's key.
           final Uint8List _uintData = Uint8List.fromList(_data);
-          if (Setting.sessionMode == SessionMode.offline) {
+          if (Setting.isOffline()) {
             _classroom.localMessageBroadcast(_uintData);
-          } else if (Setting.sessionMode == SessionMode.online) {
-            // if (_online.isRoomHost) _classroom.staffDisplay(_uintData);
+          } else if (Setting.isOnline()) {
             _online.broadcastMessage(_uintData);
           }
         }
@@ -320,8 +316,7 @@ class BLEDevice extends ChangeNotifier {
   /// Write MIDI data to device.
   Future write({required Uint8List message}) async {
     if (this.characteristic != null) {
-      print('BLE write: ${message.toString()}');
-      await this.characteristic!.write(message, withoutResponse: true);
+      await this.characteristic?.write(message, withoutResponse: true);
     }
   }
 
@@ -333,18 +328,6 @@ class BLEDevice extends ChangeNotifier {
       this.device.name.contains('Pop Piano'));
 
   Future writeLightMessage(int key, noteSwitch) async {
-    // int _lightSwitch;
-    // Uint8List _out;
-    // if (noteSwitch == kNoteOn) {
-    //   _lightSwitch = lightOnMessage();
-    //   // _isPopPiano()
-    //   //     ? _lightSwitch = kLightOnRedPopPiano
-    //   //     : _lightSwitch = kLightOnRed;
-    //   // if (_classroom.isHolding) _classroom.holdingKeys.add(key);
-    // } else {
-    //   _lightSwitch = kLightOff;
-    // }
-    // _isPopPiano() ? _out = kLightMessagePopPiano : _out = kLightMessage;
     lightOnMessage() => _isPopPiano() ? kLightOnRedPopPiano : kLightOnRed;
     lightMessage() => _isPopPiano() ? kLightMessagePopPiano : kLightMessage;
     int _lightSwitch = noteSwitch == kNoteOn ? lightOnMessage() : kLightOff;
@@ -352,7 +335,16 @@ class BLEDevice extends ChangeNotifier {
     _out[kLightKeyIndex] = key;
     _out[kLightSwitchIndex] = _lightSwitch;
     if (this.characteristic != null)
-      await this.characteristic!.write(_out, withoutResponse: true);
+      this.characteristic!.write(_out, withoutResponse: true);
+
+    //modify light's monitor list
+    noteSwitch == kNoteOn
+        ? Setting
+            .lightMonitor[Setting.lightMonitor.indexWhere((e) => e.key == key)]
+            .isOn = true
+        : Setting
+            .lightMonitor[Setting.lightMonitor.indexWhere((e) => e.key == key)]
+            .isOn = false;
   }
 
   void togglePing() => this.isOnPing = !this.isOnPing;
@@ -371,5 +363,21 @@ class BLEDevice extends ChangeNotifier {
       await this.writeLightMessage(_key, kNoteOff);
       await Future.delayed(Duration(milliseconds: Setting.noteDelayMillisec));
     }
+  }
+
+  ///Alternate for [lightOffAllKeys()]
+  Future lightOffOnlyMonitoredOnKeys() async {
+    // for (int _key = kFirstKey; _key <= kLastKey; _key++) {
+    //   if (Setting
+    //       .lightMonitor[Setting.lightMonitor.indexWhere((e) => e.note == _key)]
+    //       .isOn) {
+    int _count = 0;
+    for (LightMonitor _key in Setting.lightMonitor.where((d) => d.isOn)) {
+      _count++;
+      await this.writeLightMessage(_key.key, kNoteOff);
+      await Future.delayed(Duration(milliseconds: Setting.noteDelayMillisec));
+    }
+    // }
+    print('turned light off for $_count keys');
   }
 }

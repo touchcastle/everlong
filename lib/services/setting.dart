@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:wakelock/wakelock.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:everlong/utils/midi.dart';
+import 'package:everlong/models/piano.dart';
 import 'dart:typed_data';
 
 ///Mode for local session.
@@ -53,6 +54,9 @@ class Setting {
   static bool isRecording = false;
   static List<String>? prefsRecords = [];
   static bool hostOnlineFeedback = false;
+  static List<LightMonitor> lightMonitor = [];
+  static double onlineRecorderHeight = 350;
+  static double localRecorderHeight = 200;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -81,6 +85,11 @@ class Setting {
 
     ///Prevent screen saver
     await Wakelock.enable();
+
+    ///Keyboards light monitor list
+    for (int i = kFirstKey; i <= kLastKey; i++) {
+      lightMonitor.add(LightMonitor(key: i));
+    }
   }
 
   static ListenMode _mode(String str) => (str == ListenMode.off.toString())
@@ -194,9 +203,9 @@ class Setting {
       _switch = kNoteOn;
       _note = (raw - kNoteOn).floor();
       _pressure = ((raw - (raw.floor())) * 1000).floor();
-      print('raw is: ${raw.toString()}');
-      print('key is: ${_note.toString()}');
-      print('pressure is: ${_pressure.toString()}');
+      // print('raw is: ${raw.toString()}');
+      // print('key is: ${_note.toString()}');
+      // print('pressure is: ${_pressure.toString()}');
     }
     return Uint8List.fromList([k128, k128, _switch, _note, _pressure]);
   }

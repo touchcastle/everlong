@@ -6,8 +6,8 @@ import 'package:everlong/utils/constants.dart';
 const Duration kTransitionDur = Duration(milliseconds: 500);
 const Duration kLandingTransitionDur = Duration(milliseconds: 1500);
 
-late AnimationController localRecorderController;
-late Animation<Offset> localRecorderOffset;
+// late AnimationController localRecorderController;
+// late Animation<Offset> localRecorderOffset;
 
 ///Page Transition
 RouteTransitionsBuilder kPageTransition =

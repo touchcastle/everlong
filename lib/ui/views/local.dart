@@ -34,7 +34,7 @@ class _LocalPageState extends State<LocalPage>
       child: DeviceAnimatedList());
 
   Padding _recorder() => Padding(
-        padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 10),
+        padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 0),
         child: LocalRecorder(),
       );
 

@@ -118,12 +118,20 @@ class Classroom extends ChangeNotifier {
         for (BLEDevice _device
             in bluetoothDevices.where((d) => d.isConnected())) {
           if (!_device.isMaster || withMaster) {
-            /// Send light.
+            //LIGHT
             if (withLight)
-              await _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
+              // await _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
+              _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
+
+            //Little delay for bluetooth stability
             if (withDelay) await _wait(_delay);
-            if (withSound) await _device.write(message: data);
-            await _wait(_delay);
+
+            //SOUND
+            if (withSound) _device.write(message: data);
+
+            ///TODO
+            if (withDelay) await _wait(_delay);
+            // await _wait(_delay);
           }
         }
       }
@@ -136,7 +144,6 @@ class Classroom extends ChangeNotifier {
       this.piano.addPressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
       notifyListeners();
-      // } else if (data[kSwitchPos] == kNoteOff && !isHolding) {
     } else if (data[kSwitchPos] == kNoteOff) {
       this.piano.removePressing(data[kKeyPos]);
       Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
@@ -191,7 +198,8 @@ class Classroom extends ChangeNotifier {
     Timer.periodic(kKeepAwakeDuration, (Timer t) async {
       for (BLEDevice _device
           in bluetoothDevices.where((d) => d.isConnected())) {
-        await _device.write(message: kAwakeMIDI);
+        _device.write(message: kAwakeMIDI);
+        // await _device.write(message: kAwakeMIDI);
         await _wait(1000);
       }
     });
@@ -206,9 +214,12 @@ class Classroom extends ChangeNotifier {
   /// Flickering light when ping device.
   void _beaconLight(BLEDevice device) async {
     for (int _lightKey in kIdentLight) {
-      await device.writeLightMessage(_lightKey, kNoteOn);
+      // await device.writeLightMessage(_lightKey, kNoteOn);
+      // await Future.delayed(kNotifyLightDuration); //Keep light on fo sometime
+      // await device.writeLightMessage(_lightKey, kNoteOff);
+      device.writeLightMessage(_lightKey, kNoteOn);
       await Future.delayed(kNotifyLightDuration); //Keep light on fo sometime
-      await device.writeLightMessage(_lightKey, kNoteOff);
+      device.writeLightMessage(_lightKey, kNoteOff);
     }
   }
 
@@ -220,7 +231,8 @@ class Classroom extends ChangeNotifier {
       notifyListeners();
       _beaconLight(device);
       for (int _i = 1; _i <= kNotifyTimes; _i++) {
-        await device.write(message: kMidCSound); //Play note
+        device.write(message: kMidCSound); //Play note
+        // await device.write(message: kMidCSound); //Play note
         await Future.delayed(kNotifyDuration);
       }
       device.togglePing();
@@ -351,18 +363,21 @@ class Classroom extends ChangeNotifier {
 
   /// Force turn off all key's light of every children devices 1 by 1
   /// with delay between each keys.
-  Future<bool> resetKeyLight() async {
-    bool _foundChild = false;
+  Future resetKeyLight() async {
+    // bool _foundChild = false;
     this.isResetting = true;
     notifyListeners();
     for (BLEDevice _d
         in bluetoothDevices.where((d) => d.isConnected() && !d.isMaster)) {
-      _foundChild = true;
-      await _d.lightOffAllKeys();
+      // _foundChild = true;
+
+      ///TODO: Check
+      await _d.lightOffOnlyMonitoredOnKeys();
+      // await _d.lightOffAllKeys();
     }
     this.isResetting = false;
     notifyListeners();
-    return _foundChild;
+    // return _foundChild;
   }
 
   /// To switch editable text field of device's name.
@@ -398,11 +413,11 @@ class Classroom extends ChangeNotifier {
   void toggleRecordManagerDisplay() {
     if (!showRecorder) toggleListDisplay(forceShow: true);
     showRecorder = !showRecorder;
-    if(showRecorder){
-      localRecorderController.forward();
-    }else{
-      localRecorderController.reverse();
-    }
+    // if (showRecorder) {
+    //   localRecorderController.forward();
+    // } else {
+    //   localRecorderController.reverse();
+    // }
     notifyListeners();
   }
 

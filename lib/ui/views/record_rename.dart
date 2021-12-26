@@ -113,9 +113,11 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
             Save(
               onPressed: () async {
                 try {
-                  context
-                      .read<Recorder>()
-                      .renameRecord(widget.file, _newName!, widget.fileType);
+                  if (_newName != null) {
+                    context
+                        .read<Recorder>()
+                        .renameRecord(widget.file, _newName!, widget.fileType);
+                  }
                   Navigator.pop(context);
                 } catch (e) {
                   Snackbar.show(

@@ -24,7 +24,7 @@ class Recorder extends ChangeNotifier {
   RecFile? currentRecord;
   int startTime = 0;
   int totalTime = 0;
-  final int milliSecDivide = 10;
+  final int milliSecDivide = 60;
   bool isRecording = false;
 
   // bool isRenaming = false;
@@ -177,14 +177,26 @@ class Recorder extends ChangeNotifier {
     file.isPlaying = true;
     notifyListeners();
     _playBackTimer(file);
-    player = Timer.periodic(Duration(milliseconds: milliSecDivide), (t) async {
+    bool _continue = false;
+    print('start playback with $milliSecDivide millisec');
+    player = Timer.periodic(Duration(milliseconds: milliSecDivide), (t) {
       if (_play.isNotEmpty) {
-        if (_play[0].time <= i) {
-          final Uint8List _uintData = Uint8List.fromList(_play[0].data);
-          classroom.sendLocal(_uintData,
-              withSound: true, withLight: true, withMaster: true);
-          _play.removeAt(0);
-        }
+        do {
+          if (_play.length > 0 && _play[0].time <= i) {
+            final Uint8List _uintData = Uint8List.fromList(_play[0].data);
+            classroom.sendLocal(
+              _uintData,
+              withSound: true,
+              withLight: true,
+              withMaster: true,
+            );
+            _play.removeAt(0);
+            // if (_continue) print('repeated within 1 period');
+            _continue = true;
+          } else {
+            _continue = false;
+          }
+        } while (_continue);
       }
       // if (i >= currentRecord!.totalTimeMilliSec) {
       if (i >= file.totalTimeMilliSec) {

@@ -21,3 +21,10 @@ class PianoModel {
     required this.signature,
   });
 }
+
+class LightMonitor {
+  final int key;
+  bool isOn;
+
+  LightMonitor({required this.key, this.isOn = false});
+}

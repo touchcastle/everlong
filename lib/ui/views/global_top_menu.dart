@@ -31,6 +31,7 @@ class GlobalTopMenu extends StatelessWidget {
                 .roomExit(context.read<Online>().roomID);
             context.read<Classroom>().resetClass();
             context.read<Classroom>().showRecorder = false;
+
             Navigator.popUntil(context, ModalRoute.withName(kMainPageName));
           }),
         ),

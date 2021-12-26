@@ -58,37 +58,41 @@ class _ResetState extends State<Reset> with SingleTickerProviderStateMixin {
         textAlign: TextAlign.center,
       ),
       onPressed: () async {
-        if (context.read<Classroom>().countChild() > 0) {
-          if (Setting.isOffline()) {
-            Future.delayed(
-                Duration(milliseconds: 500),
-                () => Snackbar.show(
-                      context,
-                      text: kLightFreeze,
-                      bgColor: kGreen4,
-                      actionLabel: kToSetting,
-                      action: () async {
-                        context.read<Classroom>().toggleShowingSetting(true);
-                        await showDialog(
-                          context: context,
-                          builder: (BuildContext context) => dialogBox(
+        if (!context.read<Classroom>().isHolding) {
+          if (context.read<Classroom>().countChild() > 0) {
+            if (Setting.isOffline()) {
+              Future.delayed(
+                  Duration(milliseconds: 500),
+                  () => Snackbar.show(
+                        context,
+                        text: kLightFreeze,
+                        bgColor: kGreen4,
+                        actionLabel: kToSetting,
+                        action: () async {
+                          context.read<Classroom>().toggleShowingSetting(true);
+                          await showDialog(
                             context: context,
-                            content: settingDialog(context),
-                          ),
-                        );
-                        context.read<Classroom>().toggleShowingSetting(false);
-                      },
-                    ));
+                            builder: (BuildContext context) => dialogBox(
+                              context: context,
+                              content: settingDialog(context),
+                            ),
+                          );
+                          context.read<Classroom>().toggleShowingSetting(false);
+                        },
+                      ));
+            }
+            _controller.repeat();
+            if (Setting.isOnline() && context.read<Online>().isRoomHost) {
+              context.read<Online>().toggleResetCommand();
+            }
+            await context.read<Classroom>().resetKeyLight();
+            context.read<Classroom>().resetDisplay();
+            _controller.reset();
+          } else {
+            Snackbar.show(context, text: kNoChildMsg);
           }
-          _controller.repeat();
-          if (context.read<Online>().isRoomHost) {
-            context.read<Online>().toggleResetCommand();
-          }
-          await context.read<Classroom>().resetKeyLight();
-          context.read<Classroom>().resetDisplay();
-          _controller.reset();
         } else {
-          Snackbar.show(context, text: kNoChildMsg);
+          Snackbar.show(context, text: kRelHoldMsg);
         }
       },
     );

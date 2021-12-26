@@ -58,26 +58,30 @@ class FireStore {
     required String sender,
     bool initialize = false,
   }) async {
-    if (await Setting.isConnectToInternet()) {
-      // await col
-      // .doc(roomID)
-      initialize
-          ? await messageCol.doc(kFireStoreMessageDoc).set(
-              {'type': type, 'value': value, 'sender': sender},
-              SetOptions(merge: true),
-            )
-          : await messageCol.doc(kFireStoreMessageDoc).update(
-              {'type': type, 'value': value, 'sender': sender},
-            );
-      await analytic.logSessionAnalytic(
-        event: type,
-        sessionID: roomID,
-        sender: sender,
-      );
-    }
+    // if (await Setting.isConnectToInternet()) {
+    // await col
+    // .doc(roomID)
+    initialize
+        ? await messageCol.doc(kFireStoreMessageDoc).set(
+            {'type': type, 'value': value, 'sender': sender},
+            SetOptions(merge: true),
+          )
+        : type == 'CTRL'
+            ? await messageCol.doc(kFireStoreMessageDoc).update(
+                {'type': type, 'value': value, 'sender': sender},
+              )
+            : messageCol.doc(kFireStoreMessageDoc).update(
+                {'type': type, 'value': value, 'sender': sender},
+              );
+    analytic.logSessionAnalytic(
+      event: type,
+      sessionID: roomID,
+      sender: sender,
+    );
+    // }
   }
 
-  /// For message and session control value.
+  /// For student send MIDI message
   Future addStudentMessage({
     required String roomID,
     required String type,
@@ -85,21 +89,21 @@ class FireStore {
     required String sender,
     bool initialize = false,
   }) async {
-    if (await Setting.isConnectToInternet()) {
-      initialize
-          ? await studentMessageCol.doc(kFireStoreMessageDoc).set(
-              {'type': type, 'value': value, 'sender': sender},
-              SetOptions(merge: true),
-            )
-          : await studentMessageCol.doc(kFireStoreMessageDoc).update(
-              {'type': type, 'value': value, 'sender': sender},
-            );
-      await analytic.logSessionAnalytic(
-        event: 'student_midi',
-        sessionID: roomID,
-        sender: sender,
-      );
-    }
+    // if (await Setting.isConnectToInternet()) {
+    initialize
+        ? studentMessageCol.doc(kFireStoreMessageDoc).set(
+            {'type': type, 'value': value, 'sender': sender},
+            SetOptions(merge: true),
+          )
+        : studentMessageCol.doc(kFireStoreMessageDoc).update(
+            {'type': type, 'value': value, 'sender': sender},
+          );
+    analytic.logSessionAnalytic(
+      event: 'student_midi',
+      sessionID: roomID,
+      sender: sender,
+    );
+    // }
   }
 
   /// For other custom value.
@@ -117,7 +121,7 @@ class FireStore {
           .set({fieldName: value}, SetOptions(merge: true))
           .then((value) => print("Message sent"))
           .catchError((error) => print("Failed to add message: $error"));
-      await analytic.logSessionAnalytic(
+      analytic.logSessionAnalytic(
         event: 'room_info_add',
         sessionID: roomID,
         sender: sender,
@@ -153,7 +157,7 @@ class FireStore {
           .then((value) => print("member added"))
           .onError((error, stackTrace) => print("on error"))
           .catchError((error) => print("Failed to add member: $error"));
-      await analytic.logSessionAnalytic(
+      analytic.logSessionAnalytic(
         event: 'member_add',
         sessionID: roomID,
         sender: memberID,
@@ -163,28 +167,31 @@ class FireStore {
 
   Future _clockInMember(
       String roomID, String memberID, String name, bool isHost) async {
-    if (await Setting.isConnectToInternet()) {
-      await membersCol
-          .doc(memberID)
-          .update({'lastSeen': DateTime.now().millisecondsSinceEpoch})
-          .then((value) => print("member clocked in"))
-          .onError((error, stackTrace) => print("on error"))
-          .catchError((error) => print("Failed to add member: $error"));
-      await analytic.logSessionAnalytic(
-        event: 'member_clock_in',
-        sessionID: roomID,
-        sender: memberID,
-      );
-    }
+    // if (await Setting.isConnectToInternet()) {
+    // await membersCol
+    membersCol
+        .doc(memberID)
+        .update({'lastSeen': DateTime.now().millisecondsSinceEpoch})
+        // .then((value) => print("member clocked in"))
+        .onError((error, stackTrace) => print("clock in error"))
+        .catchError((error) => print("Failed to add member: $error"));
+
+    analytic.logSessionAnalytic(
+      // await analytic.logSessionAnalytic(
+      event: 'member_clock_in',
+      sessionID: roomID,
+      sender: memberID,
+    );
+    // }
   }
 
   Future toggleMemberListenable({
     required String memberId,
     required bool listenable,
   }) async {
-    if (await Setting.isConnectToInternet()) {
-      await membersCol.doc(memberId).update({'listenable': listenable});
-    }
+    // if (await Setting.isConnectToInternet()) {
+    membersCol.doc(memberId).update({'listenable': listenable});
+    // }
   }
 
   Future<int> countMember(String roomID) async {

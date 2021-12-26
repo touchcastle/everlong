@@ -55,7 +55,7 @@ class Online extends ChangeNotifier {
   late UserCredential? user;
 
   ///Subscription to room message and command.
-  dynamic _roomMessageSubscribe;
+  dynamic _sessionMessageSubscribe;
   dynamic _studentMessageSubscribe;
   bool isRoomHost = false;
   bool imListenable = false;
@@ -305,7 +305,7 @@ class Online extends ChangeNotifier {
     if (isHold && !isRoomHost) _setHold(true);
 
     ///For children, listen to room messages and commands.
-    if (!isRoomHost) _roomListener(id: id);
+    if (!isRoomHost) _sessionMessageListener(id: id);
     if (isRoomHost) _studentMessageListener();
 
     classroom.resetDisplay();
@@ -365,6 +365,7 @@ class Online extends ChangeNotifier {
     // if (raw.isNotEmpty && this.isRoomHost) {
     if (raw.isNotEmpty) {
       // String _message = _messageEncryptor(raw: raw);
+      print('broadcast ${raw}');
       String _message = Setting.messageEncryptor(raw: raw);
       bool _holdingDup() => classroom.holdingKeys.contains(raw[kKeyPos]);
       bool _isNoteOnWhileHolding() =>
@@ -373,35 +374,21 @@ class Online extends ChangeNotifier {
         //Broadcast from room host.
         if (!classroom.isHolding || _isNoteOnWhileHolding()) {
           //check whether host want feedback from local or online
-          if (!Setting.hostOnlineFeedback) classroom.staffDisplay(raw);
+          if (!Setting.hostOnlineFeedback) {
+            classroom.staffDisplay(raw);
+          }
           if (classroom.isHolding) classroom.holdingKeys.add(raw[kKeyPos]);
-          await _sendRoomMessage(_message);
+          _sendRoomMessage(_message);
         }
       } else {
         // Broadcast from student.
         // Student will broadcast message only between C3 and B5
         if (raw[kKeyPos] >= 48 && raw[kKeyPos] <= 83) {
-          await _sendStudentMessage(_message);
+          _sendStudentMessage(_message);
         }
       }
     }
   }
-
-  // /// Encrypt outgoing message from MIDI[Uint8List] to [double]
-  // /// Key's pressure as decimal place. (99 maximum)
-  // String _messageEncryptor({required Uint8List raw}) {
-  //   int _switch = raw[kSwitchPos];
-  //   int _note = raw[kKeyPos];
-  //   late double _out;
-  //   if (_switch == kNoteOn) {
-  //     double _pressure = raw[kPressurePos] / 1000;
-  //     _pressure >= 1 ? _pressure = 0.999 : _pressure = _pressure;
-  //     _out = _switch + _note + _pressure;
-  //   } else {
-  //     _out = _note.roundToDouble();
-  //   }
-  //   return _out.toString();
-  // }
 
   /// To send out room command code (host's function).
   Future _roomCommand(String code, {bool initialize = false}) async {
@@ -436,32 +423,32 @@ class Online extends ChangeNotifier {
 
   /// send MIDI message
   Future _sendRoomMessage(dynamic value) async => roomID != ''
-      ? await _fireStore.addSessionMessageAndCtrl(
+      ? _fireStore.addSessionMessageAndCtrl(
           roomID: roomID, type: 'message', value: value, sender: _uid())
       : null;
 
   /// send MIDI message by student
   Future _sendStudentMessage(dynamic value) async => roomID != ''
-      ? await _fireStore.addStudentMessage(
+      ? _fireStore.addStudentMessage(
           roomID: roomID, type: 'message', value: value, sender: _uid())
       : null;
 
-  /// <Currently closed> All members will listen to all MIDI message and room control
-  /// but filter out own messages by checking sender = [myID].
-  void _roomListener({required String id, bool hostFeedback = false}) {
-    this._roomMessageSubscribe = _fireStore.messageCol
+  void _sessionMessageListener(
+      {required String id, bool hostFeedback = false}) {
+    this._sessionMessageSubscribe = _fireStore.messageCol
         .doc(kFireStoreMessageDoc)
         .snapshots()
         .listen((data) {
       switch (data['type']) {
         case 'message':
-          if (data['sender'] != _uid()) {
-            classroom.sendLocal(
-                Setting.messageDecryptor(raw: double.parse(data['value'])),
-                // _messageDecryptor(raw: double.parse(data['value'])),
-                withLight: true,
-                withSound: hostFeedback ? false : !this.isMute);
-          }
+          // if (data['sender'] != _uid()) {
+          print('GOT ${data['value']}');
+          classroom.sendLocal(
+            Setting.messageDecryptor(raw: double.parse(data['value'])),
+            withLight: true,
+            withSound: hostFeedback ? false : !this.isMute,
+          );
+          // }
           break;
         case 'CTRL':
           _roomController(data['value']);
@@ -469,30 +456,6 @@ class Online extends ChangeNotifier {
       }
     });
   }
-
-  // /// Decrypt incoming [double] message into MIDI([Uint8List])
-  // /// If message is NoteOn, value will greater than [kNoteOn] with
-  // /// key pressure as decimal place.
-  // Uint8List _messageDecryptor({required double raw}) {
-  //   late int _switch;
-  //   late int _note;
-  //   late int _pressure;
-  //   if (raw < kNoteOn) {
-  //     //noteOff
-  //     _switch = kNoteOff;
-  //     _note = raw.floor();
-  //     _pressure = 0;
-  //   } else {
-  //     //noteOn
-  //     _switch = kNoteOn;
-  //     _note = (raw - kNoteOn).floor();
-  //     _pressure = ((raw - (raw.floor())) * 1000).floor();
-  //     print('raw is: ${raw.toString()}');
-  //     print('key is: ${_note.toString()}');
-  //     print('pressure is: ${_pressure.toString()}');
-  //   }
-  //   return Uint8List.fromList([k128, k128, _switch, _note, _pressure]);
-  // }
 
   /// Receive room command function from cloud and do action.
   void _roomController(String value) {
@@ -587,21 +550,22 @@ class Online extends ChangeNotifier {
     roomCreateTime = 0;
     membersList.clear();
     recordsList.clear();
+    Setting.hostOnlineFeedback = false;
   }
 
   void _storeSubCancel() {
-    this._roomMessageSubscribe?.cancel();
+    this._sessionMessageSubscribe?.cancel();
     this._memberSubscribe?.cancel();
     this._studentMessageSubscribe?.cancel();
     this._recordSubscribe?.cancel();
   }
 
-  void toggleHostFeedback(){
+  void toggleHostFeedback() {
     Setting.hostOnlineFeedback = !Setting.hostOnlineFeedback;
-    if(Setting.hostOnlineFeedback){
-      _roomListener(id: roomID, hostFeedback: true);
-    }else{
-      this._roomMessageSubscribe?.cancel();
+    if (Setting.hostOnlineFeedback) {
+      _sessionMessageListener(id: roomID, hostFeedback: true);
+    } else {
+      this._sessionMessageSubscribe?.cancel();
     }
     notifyListeners();
   }

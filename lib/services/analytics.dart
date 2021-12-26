@@ -15,11 +15,10 @@ class Analytic {
         'by': sender ?? '',
       },
     );
-    print('analytics send');
   }
 
-  Future logShare() async => await analytics.logShare(
-      contentType: 'test share content type',
-      itemId: '12345',
-      method: 'method');
+  // Future logShare() async => await analytics.logShare(
+  //     contentType: 'test share content type',
+  //     itemId: '12345',
+  //     method: 'method');
 }

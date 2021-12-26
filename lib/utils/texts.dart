@@ -10,6 +10,7 @@ const String kRecordNoMidi =
     'No MIDI received during record. Make sure connected device was set as master.';
 const String kNoConnectedMsg = 'No connected device.';
 const String kNoChildMsg = 'Child\'s device not found.';
+const String kRelHoldMsg = 'Please release hold prior to reset key\'s light.';
 const String kLightFreeze =
     'Experiencing key\'s light freeze?  Try increase MIDI latency.';
 const String kToSetting = 'SETTING';
