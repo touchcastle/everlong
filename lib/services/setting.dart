@@ -52,6 +52,7 @@ class Setting {
   static bool isShowingDialog = false;
   static bool isRecording = false;
   static List<String>? prefsRecords = [];
+  static bool hostOnlineFeedback = false;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();

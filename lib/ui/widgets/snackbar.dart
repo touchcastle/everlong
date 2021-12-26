@@ -33,7 +33,7 @@ class Snackbar {
     /// Config
     double _hMargin() =>
         Setting.isTablet() ? kTabletDialogMargin : kMobileDialogMargin;
-    double _vMargin() => verticalMargin ? kBottomActionWidth : 5;
+    double _vMargin() => verticalMargin ? kBottomActionWidth + 5 : 5;
     // double _vMargin() => verticalMargin ? 0.08 : 0.02;
     Color _textColor() =>
         type == MessageType.error ? kErrorSnackBoxText : kTextColorDark;
@@ -46,7 +46,7 @@ class Snackbar {
       margin: EdgeInsets.symmetric(
         horizontal: dialogWidth
             ? Setting.deviceWidth * _hMargin()
-            : kMainAreaHorizontalPadding,
+              : kMainAreaHorizontalPadding,
         vertical: _vMargin(),
         // vertical: Setting.deviceHeight * _vMargin(),
       ),

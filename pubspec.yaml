@@ -36,6 +36,7 @@ dependencies:
   firebase_dynamic_links: ^2.0.10
   sizer: ^2.0.15
   flutter_swiper_null_safety: ^1.0.2
+  flutter_switch: ^0.3.2
 
 dev_dependencies:
   change_app_package_name: ^1.0.0

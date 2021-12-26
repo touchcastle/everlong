@@ -10,6 +10,7 @@ import 'package:everlong/ui/views/screens/playing_info.dart';
 import 'package:everlong/ui/views/screens/staffs.dart';
 import 'package:everlong/ui/views/screens/notes.dart';
 import 'package:everlong/ui/views/screens/key_signature.dart';
+import 'package:everlong/ui/widgets/actions/host_feedback_switch.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:everlong/utils/colors.dart';
@@ -134,6 +135,7 @@ class _ScreenState extends State<Screen> {
       alignment: Alignment.center,
       child: Column(
         children: [
+          HostFeedbackSelect(),
           SizedBox(height: Setting.deviceHeight * 0.04),
           Expanded(
             child: Center(
@@ -157,3 +159,4 @@ class _ScreenState extends State<Screen> {
     );
   }
 }
+

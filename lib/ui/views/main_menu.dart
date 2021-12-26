@@ -43,7 +43,7 @@ class _MainMenuState extends State<MainMenu> {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
     double _dialogRatio() =>
-        Setting.isTablet() ? kTabletMainMenuRatio : kMobileMainMenuRatio;
+        Setting.isTablet() ? kTabletMainMenuBtnRatio : kMobileMainMenuBtnRatio;
     double _logoRatio() => Setting.isTablet() ? kLogoTablet : kLogoMobile;
     return Scaffold(
       backgroundColor: kGreenMain,

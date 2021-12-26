@@ -6,6 +6,7 @@ import 'package:everlong/services/recorder.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/widgets/actions/save.dart';
 import 'package:everlong/ui/widgets/dialog_header_bar.dart';
+import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
@@ -14,6 +15,7 @@ import 'package:everlong/utils/texts.dart';
 class RecordRenameDialog extends StatefulWidget {
   final FileType fileType;
   final RecFile file;
+
   RecordRenameDialog({required this.fileType, required this.file});
 
   @override
@@ -110,14 +112,19 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
             _verticalSpace(0.02),
             Save(
               onPressed: () async {
-                // await context.read<Classroom>().updateDeviceDisplayName(
-                //     id: widget.device.id(), name: _newName!);
-                if (_newName != null) {
+                try {
                   context
                       .read<Recorder>()
                       .renameRecord(widget.file, _newName!, widget.fileType);
+                  Navigator.pop(context);
+                } catch (e) {
+                  Snackbar.show(
+                    context,
+                    text: e.toString(),
+                    icon: kErrorIcon,
+                    dialogWidth: true,
+                  );
                 }
-                Navigator.pop(context);
               },
             ),
           ],

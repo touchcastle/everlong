@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/constants.dart';
 
 Widget dialogBox({
   required BuildContext context,
@@ -10,10 +11,10 @@ Widget dialogBox({
   double _dialogRatio() => Setting.isTablet()
       ? smallerDialog
           ? 0.55
-          : 0.6
+          : kTabletDialogRatio
       : smallerDialog
           ? 0.7
-          : 0.8;
+          : kMobileDialogRatio;
 
   final BoxConstraints _constraints = BoxConstraints(
     maxWidth: Setting.deviceWidth * _dialogRatio(),

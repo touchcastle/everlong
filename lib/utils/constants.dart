@@ -16,8 +16,8 @@ const double kLogoTablet = 0.8;
 const double kLogoMobile = 0.9;
 
 //Main Menu Button
-const double kTabletMainMenuRatio = 0.45;
-const double kMobileMainMenuRatio = 0.7;
+const double kTabletMainMenuBtnRatio = 0.45;
+const double kMobileMainMenuBtnRatio = 0.7;
 
 //Dialog
 const double kTabletDialogRatio = 0.6;

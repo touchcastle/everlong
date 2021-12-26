@@ -24,7 +24,8 @@ class LocalPage extends StatefulWidget {
   _LocalPageState createState() => new _LocalPageState();
 }
 
-class _LocalPageState extends State<LocalPage> {
+class _LocalPageState extends State<LocalPage>
+    with SingleTickerProviderStateMixin {
   ///For bluetooth scanning subscribe
   var _scanSub;
 
@@ -33,8 +34,9 @@ class _LocalPageState extends State<LocalPage> {
       child: DeviceAnimatedList());
 
   Padding _recorder() => Padding(
-      padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 10),
-      child: LocalRecorder());
+        padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 10),
+        child: LocalRecorder(),
+      );
 
   ///Empty area
   SizedBox _empty = SizedBox.shrink();
@@ -88,6 +90,13 @@ class _LocalPageState extends State<LocalPage> {
             showList
                 ? Expanded(
                     flex: 1,
+                    // child: Stack(
+                    //   alignment: Alignment.bottomCenter,
+                    //   children: [
+                    //     hasDevice ? _deviceList() : NoDeviceDisplay(),
+                    //     _recorder(),
+                    //   ],
+                    // ),
                     child: Column(children: [
                       Expanded(
                           child: hasDevice ? _deviceList() : NoDeviceDisplay()),

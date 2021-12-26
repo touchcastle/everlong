@@ -26,15 +26,18 @@ class Recorder extends ChangeNotifier {
   int totalTime = 0;
   final int milliSecDivide = 10;
   bool isRecording = false;
+
   // bool isRenaming = false;
   var recordTimer;
   int recordingTime = 0;
   String recordCountDownText = kMaxRecordInSecText;
   var playBackTimer;
   int playBackingTime = 0;
+
   // String playbackCountDownText = '0:00';
   var player;
   List<RecFile> storedRecords = [];
+
   // bool isPlaying = false;
 
   Recorder(this.classroom);
@@ -231,26 +234,33 @@ class Recorder extends ChangeNotifier {
   }
 
   void renameRecord(RecFile file, String newName, FileType fileType) {
-    file.name = newName;
+    if (newName == '' ||
+        newName.contains('|') ||
+        newName.contains('<') ||
+        newName.contains('>')) {
+      throw kErr1008;
+    } else {
+      file.name = newName;
 
-    if (fileType == FileType.stored) {
-      //Get current index for further insert.
-      int _prefIndex = Setting.prefsRecords!
-          .indexWhere((item) => item.substring(0, kRecordIdLength) == file.id);
+      if (fileType == FileType.stored) {
+        //Get current index for further insert.
+        int _prefIndex = Setting.prefsRecords!.indexWhere(
+            (item) => item.substring(0, kRecordIdLength) == file.id);
 
-      //Delete in in-app pref
-      Setting.prefsRecords!.removeAt(_prefIndex);
+        //Delete in in-app pref
+        Setting.prefsRecords!.removeAt(_prefIndex);
 
-      //Convert new to string
-      String _asString = fileToString(file);
+        //Convert new to string
+        String _asString = fileToString(file);
 
-      //Insert new file(new name) at same index as before.
-      Setting.prefsRecords!.insert(_prefIndex, _asString);
+        //Insert new file(new name) at same index as before.
+        Setting.prefsRecords!.insert(_prefIndex, _asString);
 
-      //Update prefs
-      Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+        //Update prefs
+        Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+      }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void toggleRename(RecFile file) {
@@ -259,6 +269,7 @@ class Recorder extends ChangeNotifier {
   }
 
   String _activeNow = '';
+
   void toggleActive(RecFile file) {
     if (_activeNow != '' && file.id != _activeNow) {
       //cancel old active
@@ -366,21 +377,21 @@ class Recorder extends ChangeNotifier {
     return _out;
   }
 
-  // /// Encrypt outgoing message from MIDI[Uint8List] to [double]
-  // /// Key's pressure as decimal place. (99 maximum)
-  // String _messageEncryptor({required List<int> raw}) {
-  //   int _switch = raw[kSwitchPos];
-  //   int _note = raw[kKeyPos];
-  //   late double _out;
-  //   if (_switch == kNoteOn) {
-  //     double _pressure = raw[kPressurePos] / 1000;
-  //     _pressure >= 1 ? _pressure = 0.999 : _pressure = _pressure;
-  //     _out = _switch + _note + _pressure;
-  //   } else {
-  //     _out = _note.roundToDouble();
-  //   }
-  //   return _out.toString();
-  // }
+// /// Encrypt outgoing message from MIDI[Uint8List] to [double]
+// /// Key's pressure as decimal place. (99 maximum)
+// String _messageEncryptor({required List<int> raw}) {
+//   int _switch = raw[kSwitchPos];
+//   int _note = raw[kKeyPos];
+//   late double _out;
+//   if (_switch == kNoteOn) {
+//     double _pressure = raw[kPressurePos] / 1000;
+//     _pressure >= 1 ? _pressure = 0.999 : _pressure = _pressure;
+//     _out = _switch + _note + _pressure;
+//   } else {
+//     _out = _note.roundToDouble();
+//   }
+//   return _out.toString();
+// }
 }
 
 ///BACKUP

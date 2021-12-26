@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/recorder.dart';
+import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/ui/widgets/actions/rec_start_stop.dart';
@@ -33,6 +34,35 @@ class _LocalRecorderState extends State<LocalRecorder>
   @override
   void initState() {
     super.initState();
+
+    localRecorderController = AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 300),
+    );
+    localRecorderOffset = Tween<Offset>(begin: Offset(0.0, 1.5), end: Offset.zero)
+    .animate(localRecorderController);
+    // recorderController = AnimationController(
+    //   vsync: this,
+    //   duration: Duration(milliseconds: 200),
+    // );
+    // context.read<Classroom>().listenShow();
+    // recorderController.forward();
+    // recorderController.addListener(() {
+    //   setState(() {});
+    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('dispose');
+    // recorderController.reverse();
+    // recorderController.addListener(() {
+    //   setState(() {
+    //     print(recorderController.value);
+    //   });
+    // });
+    // recorderController.dispose();
   }
 
   @override
@@ -40,10 +70,12 @@ class _LocalRecorderState extends State<LocalRecorder>
     RecFile? _currentRecord = context.watch<Recorder>().currentRecord;
     ScrollController _controller = new ScrollController();
     return Container(
+      // height: 250 ,
       decoration: kLocalRecordBoxDecor,
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [

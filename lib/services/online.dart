@@ -372,7 +372,8 @@ class Online extends ChangeNotifier {
       if (this.isRoomHost) {
         //Broadcast from room host.
         if (!classroom.isHolding || _isNoteOnWhileHolding()) {
-          classroom.staffDisplay(raw);
+          //check whether host want feedback from local or online
+          if (!Setting.hostOnlineFeedback) classroom.staffDisplay(raw);
           if (classroom.isHolding) classroom.holdingKeys.add(raw[kKeyPos]);
           await _sendRoomMessage(_message);
         }
@@ -447,7 +448,7 @@ class Online extends ChangeNotifier {
 
   /// <Currently closed> All members will listen to all MIDI message and room control
   /// but filter out own messages by checking sender = [myID].
-  void _roomListener({required String id}) {
+  void _roomListener({required String id, bool hostFeedback = false}) {
     this._roomMessageSubscribe = _fireStore.messageCol
         .doc(kFireStoreMessageDoc)
         .snapshots()
@@ -459,7 +460,7 @@ class Online extends ChangeNotifier {
                 Setting.messageDecryptor(raw: double.parse(data['value'])),
                 // _messageDecryptor(raw: double.parse(data['value'])),
                 withLight: true,
-                withSound: !this.isMute);
+                withSound: hostFeedback ? false : !this.isMute);
           }
           break;
         case 'CTRL':
@@ -593,6 +594,16 @@ class Online extends ChangeNotifier {
     this._memberSubscribe?.cancel();
     this._studentMessageSubscribe?.cancel();
     this._recordSubscribe?.cancel();
+  }
+
+  void toggleHostFeedback(){
+    Setting.hostOnlineFeedback = !Setting.hostOnlineFeedback;
+    if(Setting.hostOnlineFeedback){
+      _roomListener(id: roomID, hostFeedback: true);
+    }else{
+      this._roomMessageSubscribe?.cancel();
+    }
+    notifyListeners();
   }
 
   ///Keep listen to change in members collection in firestore.

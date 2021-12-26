@@ -398,6 +398,11 @@ class Classroom extends ChangeNotifier {
   void toggleRecordManagerDisplay() {
     if (!showRecorder) toggleListDisplay(forceShow: true);
     showRecorder = !showRecorder;
+    if(showRecorder){
+      localRecorderController.forward();
+    }else{
+      localRecorderController.reverse();
+    }
     notifyListeners();
   }
 
