@@ -44,7 +44,7 @@ class _PingAllState extends State<PingAll> with SingleTickerProviderStateMixin {
               ? _colorTween.value
               : Setting.isOnline()
                   ? kTextColorLight
-                  : kLocalLabelColor,
+                  : kLocalInactiveLabel,
         ),
         text: Text(kIdentAll,
             style: buttonTextStyle(
@@ -54,7 +54,7 @@ class _PingAllState extends State<PingAll> with SingleTickerProviderStateMixin {
                   ? _colorTween.value
                   : Setting.isOnline()
                       ? kTextColorLight
-                      : kLocalLabelColor,
+                      : kLocalInactiveLabel,
             ),
             textAlign: TextAlign.center),
         onPressed: () async {

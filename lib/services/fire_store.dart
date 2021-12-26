@@ -18,6 +18,9 @@ class FireStore {
   /// Student's Message collection
   late CollectionReference studentMessageCol;
 
+  /// Room's files records
+  late CollectionReference recordsCol;
+
   /// Config collection
   // late CollectionReference configsCol;
 
@@ -43,6 +46,7 @@ class FireStore {
     messageCol = col.doc(roomID).collection(kFireStoreMessageCol);
     membersCol = col.doc(roomID).collection(kFireStoreMemberCol);
     studentMessageCol = col.doc(roomID).collection(kFireStoreStudentMessageCol);
+    recordsCol = col.doc(roomID).collection(kFireStoreRecordsCol);
     // configsCol = col.doc(roomID).collection('configs');
   }
 
@@ -211,16 +215,37 @@ class FireStore {
   /// 1. delete available member from room.
   /// 2. delete room(doc)
   Future closeRoom(String roomID) async {
+    //Room's message
+    await messageCol.doc(kFireStoreMessageDoc).delete();
+
+    //Student's message
+    await studentMessageCol.doc(kFireStoreMessageDoc).delete();
+
+    //Members
     WriteBatch _batch = FirebaseFirestore.instance.batch();
     await membersCol.get().then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
         _batch.delete(document.reference);
       });
     });
+
+    //Records
+    await recordsCol.get().then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        _batch.delete(document.reference);
+      });
+    });
     await _batch.commit();
-    await messageCol.doc(kFireStoreMessageDoc).delete();
-    await studentMessageCol.doc(kFireStoreMessageDoc).delete();
+
     await col.doc(roomID).delete();
+    // //Record delete
+    // WriteBatch _recBatch = FirebaseFirestore.instance.batch();
+    // await recordsCol.get().then((querySnapshot) {
+    //   querySnapshot.docs.forEach((document) {
+    //     _recBatch.delete(document.reference);
+    //   });
+    // });
+    // await _recBatch.commit();
   }
 
   /// To check is room ID is available.
@@ -231,8 +256,24 @@ class FireStore {
         if (value.data() == null) {
           print('Room not exist');
         } else {
-          print('Room $id is available');
+          print('Room $id is existed');
           print(value['create_by']);
+          _result = true;
+        }
+      });
+    }
+    return _result;
+  }
+
+  /// To check is record ID is available.
+  Future<bool> checkRecordAvail(String id) async {
+    bool _result = false;
+    if (await Setting.isConnectToInternet()) {
+      await recordsCol.doc(id).get().then((value) {
+        if (value.data() == null) {
+          print('Record not exist');
+        } else {
+          print('Record $id is existed');
           _result = true;
         }
       });
@@ -261,5 +302,53 @@ class FireStore {
       sender: sender,
     );
     return _result;
+  }
+
+  /// Share midi record to room.
+  Future addRecord(
+      {required String roomID,
+      required String memberID,
+      required String recordID,
+      required String recordName,
+      required String totalTimeSecText,
+      required String data}) async {
+    if (await Setting.isConnectToInternet()) {
+      print('Firebase write: upload record');
+      await recordsCol
+          .doc(recordID)
+          .set({
+            'name': recordName,
+            'id': recordID,
+            'by': memberID,
+            'totalTimeSecText': totalTimeSecText,
+            'data': data,
+          })
+          .then((value) => print("record added"))
+          .onError((error, stackTrace) => print("on error"))
+          .catchError((error) => print("Failed to add record: $error"));
+      await analytic.logSessionAnalytic(
+        event: 'record_add',
+        sessionID: roomID,
+        sender: memberID,
+      );
+    }
+  }
+
+  /// upload midi record's name.
+  Future renameRecord({required String recordID, required newName}) async {
+    await recordsCol
+        .doc(recordID)
+        .update({'name': newName})
+        .then((value) => print("record updated"))
+        .catchError((error) => print("Failed to update record: $error"));
+  }
+
+  /// delete midi record.
+  Future delRecord({required String recordID}) async {
+    await recordsCol
+        .doc(recordID)
+        .delete()
+        .then((value) => print("record deleted"))
+        .catchError((error) => print("Failed to delete record: $error"));
   }
 }

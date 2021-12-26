@@ -10,6 +10,7 @@ import 'package:everlong/services/device_db.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/midi.dart';
+import 'package:everlong/services/animation.dart';
 
 /// Type of reorder list and on-screen list.
 enum ReorderType {
@@ -52,7 +53,8 @@ class Classroom extends ChangeNotifier {
 
   bool showRecorder = false;
 
-  // bool showSetting = false;
+  /// Flag for first start local session before any set/reset master device.
+  bool freshStart = true;
 
   ///For pressing notes and chord(By master device or room host) on screen.
   Piano piano = Piano();
@@ -61,7 +63,7 @@ class Classroom extends ChangeNotifier {
   Classroom(this._db, this._ui);
 
   ///Init class parameter
-  void initClass() {
+  void resetClass() {
     holdingKeys.clear();
     isHolding = false;
     piano.resetDisplay();
@@ -245,6 +247,7 @@ class Classroom extends ChangeNotifier {
 
   /// Let [device] become master or cancel.
   Future setMaster(BLEDevice device) async {
+    freshStart = false;
     if (isHolding) triggerHold(false);
 
     if (this.masterID == device.id()) {
@@ -269,12 +272,14 @@ class Classroom extends ChangeNotifier {
   }
 
   void masterDisconnected() {
+    freshStart = false;
     this.masterID = kNoMaster;
     this.masterName = kNoMaster;
     notifyListeners();
   }
 
   void masterReconnected({required String id, required String name}) {
+    freshStart = false;
     this.masterID = id;
     this.masterName = name;
     notifyListeners();
@@ -390,7 +395,7 @@ class Classroom extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleRecorderDisplay() {
+  void toggleRecordManagerDisplay() {
     if (!showRecorder) toggleListDisplay(forceShow: true);
     showRecorder = !showRecorder;
     notifyListeners();

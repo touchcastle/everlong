@@ -35,10 +35,7 @@ const Color kRed2 = Color(0xFF9F1A1A);
 const Color kDarkOnlineBG = kGreen2;
 
 ///For Standing-by Button
-const Color kOnlineButton = kYellowMain;
-
-///For Active-by Button
-const Color kOnlineActiveButton = Colors.white;
+const Color kOnlineInactiveLabel = kYellowMain;
 
 ///For Room Info.Subject.
 const Color kOnlineRoomSubject = kTextColorLight;
@@ -54,7 +51,7 @@ const Color kMemberDetail = kTextColorDark;
 
 ///Color tween for button in online screen.
 final ColorTween kOnlineColorTween =
-    ColorTween(begin: kOnlineActiveButton, end: kOnlineButton);
+    ColorTween(begin: kActiveLabel, end: kOnlineInactiveLabel);
 
 /// Online screen accent color.
 const Color kOnlineAccentColor = kGreenMain;
@@ -77,6 +74,9 @@ const Color kPressingKey = kRed1;
 ///Connected device box.
 const Color kConnectedBoxColor = kYellow3;
 
+///For Standing-by Button
+const Color kLocalInactiveLabel = kOrange3;
+
 ///Expanding device box.
 const Color kExpandingBoxColor = kGreenMain;
 
@@ -91,10 +91,12 @@ const Color kDisconnectedTextColor = kOrange5;
 
 /// Color tween for specific device's ping.
 final ColorTween kDevicePingColorTween =
-    ColorTween(begin: Colors.white, end: kGreenMain);
+    ColorTween(begin: kActiveLabel, end: kGreenMain);
 
 /// Color tween for button in local screen.
-final ColorTween kLocalColorTween = ColorTween(begin: Colors.white, end: kRed2);
+final ColorTween kLocalColorTween =
+    ColorTween(begin: kActiveLabel, end: kLocalInactiveLabel);
+// ColorTween(begin: kActiveLabel, end: kLocalAccentColor);
 
 /// Local screen accent color.
 const Color kLocalAccentColor = kRed2;
@@ -111,24 +113,37 @@ const List<Color> kSettingBG = [kYellowMain, kOrangeMain];
 
 ///COMMON USAGE++++
 ///
+
+///For Active-by Button
+const Color kActiveLabel = Colors.white;
+
+///Text color
 const Color kTextColorDark = kGreenMain;
 const Color kTextColorLight = kYellowMain;
 const Color kTextColorWhite = kYellow4;
 const Color kTextColorRed = kRed2;
+
+///Snackbox color
 const Color kErrorSnackBoxBg = kOrange5;
 const Color kErrorSnackBoxText = kOrange4;
+
+///Music Notation
 const Color kStaffArea = kTextColorWhite;
 const Color kStaffColor = Colors.grey;
 const Color kNoteColor = Colors.red;
 
 ///Button's label color.
-Color kLocalLabelColor = kOrange3; //Color(0xffF68E04)
-Color buttonLabelColor({bool isActive = false, Color? color}) => color != null
-    ? color
-    : isActive
-        ? Colors.white
-        : Setting.isOnline()
-            ? kOnlineButton
-            : Setting.isOffline()
-                ? kLocalLabelColor
-                : Colors.white;
+Color buttonLabelColor(
+        {bool isActive = false, Color? color, Color? activeColor}) =>
+    color != null
+        ? color
+        : isActive
+            ? activeColor != null
+                ? activeColor
+                : kActiveLabel
+            : Setting.isOnline()
+                ? kOnlineInactiveLabel
+                : kLocalInactiveLabel;
+//          : Setting.isOffline()
+//              ? kLocalLabelColor
+//              : Colors.white;

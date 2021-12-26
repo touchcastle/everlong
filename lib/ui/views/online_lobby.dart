@@ -30,7 +30,8 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   TextEditingController? _nameInputCtrl;
 
   ///Lobby box width
-  double _dialogRatio() => Setting.isTablet() ? 0.6 : 0.8;
+  double _dialogRatio() =>
+      Setting.isTablet() ? kTabletDialogRatio : kMobileDialogRatio;
 
   ///Logo width
   double _logoRatio() => Setting.isTablet() ? kLogoTablet : kLogoMobile;
@@ -169,6 +170,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
                                 text: kNoInternetMsg,
                                 icon: kBluetoothIconDisconnected,
                                 verticalMargin: false,
+                                dialogWidth: true,
                               );
                             }
                           },

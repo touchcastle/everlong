@@ -40,38 +40,30 @@ class _HoldState extends State<Hold> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    Color _labelColor() => buttonLabelColor(
+        isActive: context.watch<Classroom>().isHolding,
+        activeColor: _colorTween.value);
+    bool _holding = context.watch<Classroom>().isHolding;
+    bool _clearing = context.watch<Classroom>().isClearing;
     return AnimatedBuilder(
       animation: _colorTween,
       builder: (context, child) => Button(
-        isActive: context.watch<Classroom>().isHolding,
-        icon: context.watch<Classroom>().isClearing
+        isActive: _holding,
+        icon: _clearing
             ? progressIndicator()
-            : svgIcon(
-                name: kHoldIcon,
-                color: context.watch<Classroom>().isHolding
-                    ? _colorTween.value
-                    : Setting.isOnline()
-                        ? kTextColorLight
-                        : kLocalLabelColor,
-                width: kIconWidth),
-        text: Text(context.watch<Classroom>().isHolding ? kToUnHold : kToHold,
+            : svgIcon(name: kHoldIcon, color: _labelColor(), width: kIconWidth),
+        text: Text(_holding ? kToUnHold : kToHold,
             style: buttonTextStyle(
-              isActive: context.watch<Classroom>().isHolding,
+              isActive: _holding,
               isVertical: true,
-              color: context.watch<Classroom>().isHolding
-                  ? _colorTween.value
-                  : Setting.isOnline()
-                      ? kTextColorLight
-                      : kLocalLabelColor,
+              color: _labelColor(),
             ),
             textAlign: TextAlign.center),
         onPressed: () async {
           if (Setting.sessionMode == SessionMode.offline) {
             if (context.read<Classroom>().masterID != kNoMaster &&
                 context.read<Classroom>().anyConnected()) {
-              context
-                  .read<Classroom>()
-                  .triggerHold(!context.read<Classroom>().isHolding);
+              context.read<Classroom>().triggerHold(!_holding);
             } else {
               Snackbar.show(context, text: kNoMasterMsg);
             }
@@ -83,7 +75,6 @@ class _HoldState extends State<Hold> with SingleTickerProviderStateMixin {
                 ? await _animationController.reverse()
                 : await _animationController.forward();
           } while (context.read<Classroom>().isHolding);
-          // context.read<Recorder>().start();
         },
       ),
     );

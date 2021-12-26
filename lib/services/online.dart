@@ -25,6 +25,22 @@ enum LobbyType {
   join,
 }
 
+class RoomRecords {
+  String id;
+  String name;
+  String by;
+  String totalTimeSecText;
+  String data;
+
+  RoomRecords({
+    required this.id,
+    required this.name,
+    required this.by,
+    required this.totalTimeSecText,
+    required this.data,
+  });
+}
+
 class Online extends ChangeNotifier {
   ///Room ID
   String roomID = '';
@@ -66,6 +82,11 @@ class Online extends ChangeNotifier {
 
   dynamic _memberSubscribe;
   List<SessionMember> membersList = [];
+
+  dynamic _recordSubscribe;
+  List<RoomRecords> recordsList = [];
+
+  int memberCount = 0;
 
   ///Constructor.
   Online(this.classroom);
@@ -136,11 +157,14 @@ class Online extends ChangeNotifier {
     } catch (e) {
       _showInProgress(false);
       print('$e');
+      String _msg() => e.toString() != '' ? e.toString() : kGoogleError;
       Snackbar.show(
         context,
-        text: '$kError: $kGoogleError',
+        text: '$kError: ${_msg()}',
         icon: kBluetoothIconDisconnected,
+        actionLabel: kOk,
         verticalMargin: false,
+        dialogWidth: true,
       );
     }
   }
@@ -260,6 +284,9 @@ class Online extends ChangeNotifier {
 
     ///Subscribe to members document.
     _membersListener(id);
+
+    ///Subscribe to records document.
+    _recordsListener(id);
 
     Setting.inOnlineClass = true;
     roomClosed = false;
@@ -510,22 +537,35 @@ class Online extends ChangeNotifier {
   /// If host exit from room, room will close after
   Future roomExit(String id) async {
     _showInProgress(true);
-    final int _members = membersList.length;
-    if (isRoomHost || _members == 1) {
+    if (isRoomHost) {
       await _roomCommand('CLOSE');
-    }
-    await _fireStore.delMember(id, _uid());
-    if (isRoomHost || _members == 1) {
       _storeSubCancel();
       await _fireStore.closeRoom(id);
+      _onRoomExited(withSubCancel: false);
+    } else {
+      await _fireStore.delMember(id, _uid());
+      _onRoomExited();
     }
-    _onRoomExited();
     _showInProgress(false);
+
+    //1.1.0 logic
+    // _showInProgress(true);
+    // final int _members = membersList.length;
+    // if (isRoomHost || _members == 1) {
+    //   await _roomCommand('CLOSE');
+    // }
+    // await _fireStore.delMember(id, _uid());
+    // if (isRoomHost || _members == 1) {
+    //   _storeSubCancel();
+    //   await _fireStore.closeRoom(id);
+    // }
+    // _onRoomExited();
+    // _showInProgress(false);
   }
 
   /// On exit event.
-  void _onRoomExited() async {
-    _storeSubCancel();
+  void _onRoomExited({bool withSubCancel = true}) async {
+    if (withSubCancel) _storeSubCancel();
     _fireStore.cancelClockIn();
     roomID = '';
     Setting.inOnlineClass = false;
@@ -533,6 +573,7 @@ class Online extends ChangeNotifier {
       await classroom.cancelDeviceSubscribe();
       _toggleRoomHost(false);
     } else {
+      await classroom.cancelDeviceSubscribe();
       notifyListeners();
     }
 
@@ -544,17 +585,19 @@ class Online extends ChangeNotifier {
     isHold = false;
     roomCreateTime = 0;
     membersList.clear();
+    recordsList.clear();
   }
 
   void _storeSubCancel() {
     this._roomMessageSubscribe?.cancel();
     this._memberSubscribe?.cancel();
     this._studentMessageSubscribe?.cancel();
+    this._recordSubscribe?.cancel();
   }
 
   ///Keep listen to change in members collection in firestore.
   ///Don't refresh all data but one-by-one compare instead to prevent
-  ///student virtual piano to be refreshed.
+  ///student virtual piano being refresh.
   ///
   ///When will this snapshots got update?
   ///- New member
@@ -610,6 +653,51 @@ class Online extends ChangeNotifier {
       if (membersList.length > 0 && membersList[0].isHost == false) {
         membersList.sort((a, b) => a.isHost ? -1 : 1);
         // memberSorted = true;
+      }
+
+      memberCount = membersList.length;
+
+      notifyListeners();
+    });
+  }
+
+  void _recordsListener(String sessionID) {
+    _recordSubscribe = _fireStore.recordsCol.snapshots().listen((data) {
+      print('listing records');
+      final records = data.docs.map((doc) => doc.data()).toList();
+      print('got ${records.length} records');
+      List<RoomRecords> _preList = [];
+      for (dynamic record in records) {
+        _preList.add(RoomRecords(
+          id: record['id'],
+          name: record['name'],
+          by: record['by'],
+          totalTimeSecText: record['totalTimeSecText'],
+          data: record['data'],
+        ));
+      }
+
+      ///Deleted
+      recordsList
+          .removeWhere((e) => _preList.indexWhere((p) => p.id == e.id) < 0);
+
+      ///Modify current member list
+      // Still no case
+      // for (int _i = 0; _i < recordsList.length; _i++) {
+      //   int _avail = _preList.indexWhere((e) => e.id == recordsList[_i].id);
+      //   if (_avail >= 0) {
+      //     //do nothing if already avail.
+      //   }
+      // }
+
+      ///Append new records
+      if (_preList.length > 0) {
+        for (int _i = 0; _i < _preList.length; _i++) {
+          int _new = recordsList.indexWhere((e) => e.id == _preList[_i].id);
+          if (_new < 0) {
+            recordsList.add(_preList[_i]);
+          }
+        }
       }
 
       notifyListeners();
@@ -728,5 +816,37 @@ class Online extends ChangeNotifier {
   Future _login() async {
     user = await _auth.anonymousSignIn();
     if (user == null) throw (kErr1002);
+  }
+
+  ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  ///SHARE RECORDS
+  ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Future uploadRecord(
+      {required String recordID,
+      required String recordName,
+      required String totalTimeSecText,
+      required String data}) async {
+    _showInProgress(true);
+
+    // check whether record already uploaded?
+    bool _existed = await _fireStore.checkRecordAvail(recordID);
+    if (!_existed) {
+      await _fireStore.addRecord(
+          roomID: roomID,
+          memberID: _uid(),
+          recordID: recordID,
+          recordName: recordName,
+          totalTimeSecText: totalTimeSecText,
+          data: data);
+    } else {
+      print('existed');
+    }
+    _showInProgress(false);
+  }
+
+  Future delRecord({required String recordID}) async {
+    _showInProgress(true);
+    await _fireStore.delRecord(recordID: recordID);
+    _showInProgress(false);
   }
 }

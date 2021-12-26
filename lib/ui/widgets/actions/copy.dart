@@ -13,7 +13,8 @@ class Copy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Button(
-        icon: svgIcon(name: kCopyIcon, width: kIconWidth, color: kOnlineButton),
+        icon: svgIcon(
+            name: kCopyIcon, width: kIconWidth, color: kOnlineInactiveLabel),
         onPressed: () async {
           await Clipboard.setData(
               ClipboardData(text: context.read<Online>().roomID));

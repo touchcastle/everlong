@@ -42,7 +42,8 @@ class _MainMenuState extends State<MainMenu> {
   Widget build(BuildContext context) {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
-    double _dialogRatio() => Setting.isTablet() ? 0.45 : 0.7;
+    double _dialogRatio() =>
+        Setting.isTablet() ? kTabletMainMenuRatio : kMobileMainMenuRatio;
     double _logoRatio() => Setting.isTablet() ? kLogoTablet : kLogoMobile;
     return Scaffold(
       backgroundColor: kGreenMain,

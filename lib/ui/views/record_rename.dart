@@ -12,8 +12,9 @@ import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/texts.dart';
 
 class RecordRenameDialog extends StatefulWidget {
+  final FileType fileType;
   final RecFile file;
-  RecordRenameDialog(this.file);
+  RecordRenameDialog({required this.fileType, required this.file});
 
   @override
   _RecordRenameDialogState createState() => new _RecordRenameDialogState();
@@ -111,7 +112,11 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
               onPressed: () async {
                 // await context.read<Classroom>().updateDeviceDisplayName(
                 //     id: widget.device.id(), name: _newName!);
-                context.read<Recorder>().renameRecord(widget.file, _newName!);
+                if (_newName != null) {
+                  context
+                      .read<Recorder>()
+                      .renameRecord(widget.file, _newName!, widget.fileType);
+                }
                 Navigator.pop(context);
               },
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/sizes.dart';
+import 'package:everlong/utils/constants.dart';
 import 'package:everlong/ui/widgets/text_resp.dart';
 
 ///Font Family
@@ -22,7 +23,11 @@ const BoxDecoration kBoxDecor =
     BoxDecoration(color: kConnectedBoxColor, borderRadius: kAllBorderRadius);
 const BoxDecoration kDeviceFxDecor =
     BoxDecoration(color: kConnectedBoxColor, borderRadius: kAllBorderRadius);
-const BoxDecoration kStoredMidiDecor = BoxDecoration(
+BoxDecoration kLocalRecordBoxDecor =
+    BoxDecoration(color: kConnectedBoxColor, borderRadius: kAllBorderRadius);
+BoxDecoration kOnlineRecordBoxDecor =
+    BoxDecoration(color: kGreenMain, borderRadius: kAllBorderRadius);
+const BoxDecoration kLocalStoredMidiDecor = BoxDecoration(
   // color: kTextColorWhite,
   borderRadius: kAllBorderRadius,
   boxShadow: [
@@ -31,6 +36,21 @@ const BoxDecoration kStoredMidiDecor = BoxDecoration(
     ),
     const BoxShadow(
       color: kTextColorWhite,
+      spreadRadius: -1.0,
+      blurRadius: 4.0,
+      offset: Offset(3, 3),
+    ),
+  ],
+);
+const BoxDecoration kOnlineStoredMidiDecor = BoxDecoration(
+  // color: kGreen2,
+  borderRadius: kAllBorderRadius,
+  boxShadow: [
+    const BoxShadow(
+      color: Colors.black38,
+    ),
+    const BoxShadow(
+      color: kGreen2,
       spreadRadius: -1.0,
       blurRadius: 4.0,
       offset: Offset(3, 3),
@@ -106,6 +126,12 @@ const TextStyle kMemberNameSmall =
     TextStyle(color: kMemberDetail, fontSize: 14);
 const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 
+///Recorder
+TextStyle RecorderCountdown() => TextStyle(
+    fontSize: textSizeResp(ratio: 12),
+    fontWeight: FontWeight.w500,
+    color: kRed2);
+
 ///Dialog Text Style
 TextStyle dialogHeader({Color? color}) => TextStyle(
     fontSize: textSizeResp(ratio: 20),
@@ -140,6 +166,10 @@ const EdgeInsets kTopPanePadding =
 const EdgeInsets kDeviceFunctionPadding =
     EdgeInsets.symmetric(horizontal: 10, vertical: 8);
 const EdgeInsets kOnlineLobby = EdgeInsets.only(bottom: 0);
+const EdgeInsets kMainArea = EdgeInsets.symmetric(
+  horizontal: kMainAreaHorizontalPadding,
+  vertical: kMainAreaVerticalPadding,
+);
 
 ///Color tween
 Animation kColorTween(AnimationController controller) => Setting.isOnline()

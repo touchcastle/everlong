@@ -1,6 +1,9 @@
 import 'dart:io' show Platform;
 
 ///LAYOUT & ANIMATION
+const double kBottomActionWidth = 75.0;
+const double kMainAreaHorizontalPadding = 10.0;
+const double kMainAreaVerticalPadding = 10.0;
 const double kTabletStartWidth = 600.0;
 const double kTabletMaxDynamicWidth = 1000.0;
 const int kListAnimateDuration = 200;
@@ -8,8 +11,19 @@ const int kBeforeNextAnimate = 10;
 const int kMaxMember = 10;
 const int kSessionIdLength = 4;
 const double kButtonMinHeight = 45;
+//Logo
 const double kLogoTablet = 0.8;
 const double kLogoMobile = 0.9;
+
+//Main Menu Button
+const double kTabletMainMenuRatio = 0.45;
+const double kMobileMainMenuRatio = 0.7;
+
+//Dialog
+const double kTabletDialogRatio = 0.6;
+const double kTabletDialogMargin = (1.0 - kTabletDialogRatio) / 2;
+const double kMobileDialogRatio = 0.8;
+const double kMobileDialogMargin = (1.0 - kMobileDialogRatio) / 2;
 
 ///Config
 String kVersion = Platform.isIOS ? '1.2.0' : '1.2.0';
@@ -39,12 +53,13 @@ const String kOnlineLobbyId = 'online_lobby';
 const String kOnlineRoomId = 'online_room';
 
 ///Google and Room config.
-///CHECK FIRESTORE RULES WHEN UPDATE !!
+///CHECK FIRESTORE RULES WHEN UPDATE!!
 const String kFireStoreCollection = 'notero_mirror';
 const String kFireStoreMessageCol = 'messages';
 const String kFireStoreMessageDoc = 'message';
 const String kFireStoreMemberCol = 'members';
 const String kFireStoreStudentMessageCol = 'student_messages';
+const String kFireStoreRecordsCol = 'records';
 const String kPrefix = 'https://noteromirror.page.link';
 const String kDisplayUrl = 'https://notero.app';
 const String kBundle = 'co.notero.everlong';

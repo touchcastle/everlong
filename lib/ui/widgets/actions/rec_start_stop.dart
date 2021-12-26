@@ -37,11 +37,14 @@ class _RecordButtonState extends State<RecordButton> {
           width: 50),
       onPressed: () {
         if (_isRecording) {
-          print('stop rec');
           context.read<Recorder>().stop(context);
         } else {
-          print('start rec');
-          context.read<Recorder>().start(context);
+          if (context.read<Classroom>().masterID != kNoMaster &&
+              context.read<Classroom>().anyConnected()) {
+            context.read<Recorder>().start(context);
+          } else {
+            Snackbar.show(context, text: kRecordNoMasterMsg, actionLabel: kOk);
+          }
         }
       },
     );

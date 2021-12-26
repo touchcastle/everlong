@@ -130,7 +130,11 @@ class BLEDevice extends ChangeNotifier {
     // if (Platform.isAndroid) this._requestMTU();
     await this._getMIDIService();
     await this._getMIDICharacteristic();
-    if (Setting.sessionMode == SessionMode.offline && this.isMaster) {
+
+    // For fresh start, first connected device will automatically become master.
+    if (Setting.isOffline() && _classroom.freshStart) this.isMaster = true;
+
+    if (Setting.isOffline() && this.isMaster) {
       _classroom.masterReconnected(id: this.id(), name: this.displayName);
     }
 

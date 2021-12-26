@@ -112,6 +112,26 @@ class ScrollingTextState extends State<ScrollingText>
     }
   }
 
+  /// To see if text will overflow?
+  bool _isOverflow(BoxConstraints constraint) {
+    print(constraint.maxWidth);
+    print(widget.text);
+    // Build the Text span
+    TextSpan _span = TextSpan(text: widget.text, style: widget.textStyle);
+    // Use a Text painter to determine if it will exceed max lines
+    TextPainter _tp = TextPainter(
+      maxLines: 1,
+      textAlign: TextAlign.left,
+      textDirection: TextDirection.ltr,
+      text: _span,
+    );
+    // trigger it to layout
+    _tp.layout(maxWidth: constraint.maxWidth);
+    print(_tp.didExceedMaxLines);
+    // whether the text overflowed or not
+    return _tp.didExceedMaxLines;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -120,19 +140,23 @@ class ScrollingTextState extends State<ScrollingText>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 30,
-      child: ListView(
-        key: _key,
-        scrollDirection: widget.scrollAxis,
-        controller: scrollController,
-        physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          getBothEndsChild(),
-          getCenterChild(),
-          getBothEndsChild(),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraint) => _isOverflow(constraint)
+          ? SizedBox(
+              height: 30,
+              child: ListView(
+                key: _key,
+                scrollDirection: widget.scrollAxis,
+                controller: scrollController,
+                physics: NeverScrollableScrollPhysics(),
+                children: <Widget>[
+                  getBothEndsChild(),
+                  getCenterChild(),
+                  getBothEndsChild(),
+                ],
+              ),
+            )
+          : Text(widget.text, style: widget.textStyle),
     );
   }
 }

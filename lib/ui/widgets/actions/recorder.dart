@@ -15,12 +15,19 @@ import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 
 /// Generate hold button.
-class RecorderMenu extends StatefulWidget {
+// enum Type {
+//   Local,
+//   Online,
+// }
+
+class RecordManager extends StatefulWidget {
+  // final Type type;
+  // RecorderMenu({required this.type});
   @override
-  _RecorderMenuState createState() => _RecorderMenuState();
+  _RecordManagerState createState() => _RecordManagerState();
 }
 
-class _RecorderMenuState extends State<RecorderMenu> {
+class _RecordManagerState extends State<RecordManager> {
   @override
   Widget build(BuildContext context) {
     bool _isShow = context.watch<Classroom>().showRecorder;
@@ -30,21 +37,22 @@ class _RecorderMenuState extends State<RecorderMenu> {
 
           ///TODO: unusable icon
           // name: kRecordIcon,
-          name: kHoldIcon,
+          // name: widget.type == Type.Local ? kRecStartIcon : kShareIcon,
+          name: Setting.isOffline() ? kRecStartIcon : kShareIcon,
           color: _isShow
               ? Colors.white
               : Setting.isOnline()
-                  ? kTextColorLight
-                  : kLocalLabelColor,
-          width: kIconWidth),
-      text: Text('Record',
+                  ? kOnlineInactiveLabel
+                  : kLocalInactiveLabel,
+          width: Setting.isOffline() ? kIconWidth : kIconWidth + 10),
+      text: Text(Setting.isOffline() ? 'Record' : 'Share',
           style: buttonTextStyle(
             isActive: _isShow,
             isVertical: true,
             // color: Setting.isOnline() ? kTextColorLight : kLocalLabelColor,
           ),
           textAlign: TextAlign.center),
-      onPressed: () => context.read<Classroom>().toggleRecorderDisplay(),
+      onPressed: () => context.read<Classroom>().toggleRecordManagerDisplay(),
     );
   }
 }

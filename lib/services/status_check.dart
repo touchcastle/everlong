@@ -5,6 +5,10 @@ import 'package:everlong/ui/widgets/snackbar.dart';
 class Check {
   static void internet(BuildContext context) async =>
       await Setting.isConnectToInternet() == false
-          ? Snackbar.show(context, text: 'NO INTERNET CONNECTION')
+          ? Snackbar.show(
+              context,
+              text: 'NO INTERNET CONNECTION',
+              dialogWidth: true,
+            )
           : null;
 }

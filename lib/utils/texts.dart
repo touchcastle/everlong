@@ -5,6 +5,9 @@ const String kVersionLabel = 'Version';
 const String kError = 'Error';
 const String kNoInternetMsg = 'NO INTERNET CONNECTION';
 const String kNoMasterMsg = 'Please set master device.';
+const String kRecordNoMasterMsg = 'Please set master device prior to record.';
+const String kRecordNoMidi =
+    'No MIDI received during record. Make sure connected device was set as master.';
 const String kNoConnectedMsg = 'No connected device.';
 const String kNoChildMsg = 'Child\'s device not found.';
 const String kLightFreeze =

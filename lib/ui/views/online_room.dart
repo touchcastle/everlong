@@ -12,6 +12,7 @@ import 'package:everlong/ui/views/global_top_menu.dart';
 import 'package:everlong/ui/views/online_bottom_menu.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
 import 'package:everlong/ui/views/online_members.dart';
+import 'package:everlong/ui/views/online_recorder.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/ui/widgets/online/session_ended_dialog.dart';
 import 'package:everlong/ui/widgets/online/online_info_bar.dart';
@@ -67,10 +68,6 @@ class _OnlineRoomState extends State<OnlineRoom> {
     super.dispose();
   }
 
-  ///Main area padding
-  EdgeInsetsGeometry _mainAreaPad =
-      EdgeInsets.only(left: 8, right: 8, bottom: 15, top: 8);
-
   ///Empty area
   SizedBox _empty = SizedBox.shrink();
 
@@ -81,6 +78,10 @@ class _OnlineRoomState extends State<OnlineRoom> {
 
   bool _showList() => context.watch<Classroom>().showList;
 
+  bool _showRecorder() =>
+      context.watch<Classroom>().showRecorder &&
+      context.watch<Online>().memberCount > 1;
+
   ///Set flag when user swipe to change view mode.
   void _swiper(DragEndDetails details) {
     if (details.primaryVelocity! > 0) {
@@ -90,17 +91,30 @@ class _OnlineRoomState extends State<OnlineRoom> {
     }
   }
 
+  Padding _recorder() => Padding(
+      padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 10),
+      child: OnlineRecorder());
+
   ///User can swipe in main area to switch between music notation view only
   ///and music notation and member's list view.
   GestureDetector _mainArea(BuildContext context) {
     return GestureDetector(
       onHorizontalDragEnd: _swiper,
       child: Padding(
-        padding: _mainAreaPad,
+        padding: kMainArea,
         child: Row(
           children: [
             _showNotation() ? Expanded(flex: 1, child: Screen()) : _empty,
-            _showList() ? Expanded(flex: 1, child: OnlineMemberList()) : _empty,
+            _showList()
+                ? Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Expanded(child: OnlineMemberList()),
+                        _showRecorder() ? _recorder() : _empty,
+                      ],
+                    ))
+                : _empty,
           ],
         ),
       ),
@@ -112,6 +126,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
     Setting.deviceWidth = MediaQuery.of(context).size.width;
     Setting.deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: kOnlineAccentColor,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -124,7 +139,8 @@ class _OnlineRoomState extends State<OnlineRoom> {
                       onPressed: () => Navigator.popUntil(
                           context, ModalRoute.withName(kMainPageName)))
                   : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         GlobalTopMenu(),
                         onlineInfoBar(),

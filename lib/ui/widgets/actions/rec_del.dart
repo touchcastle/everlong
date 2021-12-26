@@ -14,11 +14,6 @@ import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 
-enum FileType {
-  recording,
-  stored,
-}
-
 class RecordDelete extends StatelessWidget {
   final FileType fileType;
   final String? id;

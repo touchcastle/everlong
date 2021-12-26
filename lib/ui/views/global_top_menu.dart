@@ -15,7 +15,7 @@ import 'package:everlong/utils/constants.dart';
 
 class GlobalTopMenu extends StatelessWidget {
   ///Empty area
-  SizedBox _empty = SizedBox.shrink();
+  final SizedBox _empty = SizedBox.shrink();
 
   ///Handle when user press exit button from Local / Online session.
   void _onExit(BuildContext context) async {
@@ -29,13 +29,15 @@ class GlobalTopMenu extends StatelessWidget {
             await context
                 .read<Online>()
                 .roomExit(context.read<Online>().roomID);
-            context.read<Classroom>().initClass();
+            context.read<Classroom>().resetClass();
+            context.read<Classroom>().showRecorder = false;
             Navigator.popUntil(context, ModalRoute.withName(kMainPageName));
           }),
         ),
       );
     } else {
       await context.read<Classroom>().cancelAllMaster();
+      context.read<Classroom>().showRecorder = false;
       Navigator.pop(context);
     }
   }

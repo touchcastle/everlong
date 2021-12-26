@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/bluetooth.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/services/animation.dart';
 import 'package:everlong/ui/views/global_top_menu.dart';
 import 'package:everlong/ui/views/local_bottom_menu.dart';
 import 'package:everlong/ui/views/set_master_reminder.dart';
@@ -47,7 +48,7 @@ class _LocalPageState extends State<LocalPage> {
         .listen((result) => result ? setState(() {}) : setState(() {}));
     // .listen((result) => result ? setState(() {}) : null);
     Setting.currentContext = context;
-    context.read<Classroom>().initClass();
+    context.read<Classroom>().resetClass();
     Future.delayed(Duration(seconds: 1), () => _setMaster());
   }
 
@@ -78,7 +79,7 @@ class _LocalPageState extends State<LocalPage> {
     return GestureDetector(
       onHorizontalDragEnd: _swiper,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: kMainArea,
         child: Row(
           children: [
             showList && !Setting.isTablet()
@@ -124,15 +125,17 @@ class _LocalPageState extends State<LocalPage> {
         child: SafeArea(
           child: Container(
             decoration: BoxDecoration(gradient: kBGGradient(kLocalBG)),
-            child: Column(children: [
-              GlobalTopMenu(),
-              localInfoBar(context.watch<Classroom>().masterName),
-              Expanded(child: _mainArea(_showList, _hasDevice, _showRecorder)),
-              // LocalBottomMenu(onScanPressed: () => setState(() {})),
-              SizedBox(
-                  // height: Setting.deviceHeight * 0.07,
-                  child: Center(child: LocalBottomMenu())),
-            ]),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                GlobalTopMenu(),
+                localInfoBar(context.watch<Classroom>().masterName),
+                Expanded(
+                    child: _mainArea(_showList, _hasDevice, _showRecorder)),
+                // LocalBottomMenu(onScanPressed: () => setState(() {})),
+                LocalBottomMenu(),
+              ],
+            ),
           ),
         ),
       ),

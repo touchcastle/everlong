@@ -65,7 +65,6 @@ class _ResetState extends State<Reset> with SingleTickerProviderStateMixin {
                 () => Snackbar.show(
                       context,
                       text: kLightFreeze,
-                      fullWidth: true,
                       bgColor: kGreen4,
                       actionLabel: kToSetting,
                       action: () async {

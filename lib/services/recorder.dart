@@ -7,8 +7,16 @@ import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/views/record_rename.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
+import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/constants.dart';
-import 'package:everlong/utils/midi.dart';
+import 'package:everlong/utils/errors.dart';
+import 'package:everlong/utils/icons.dart';
+import 'package:everlong/utils/texts.dart';
+
+enum FileType {
+  recording,
+  stored,
+}
 
 class Recorder extends ChangeNotifier {
   Classroom classroom;
@@ -39,9 +47,21 @@ class Recorder extends ChangeNotifier {
     storedRecords.clear();
     if (Setting.prefsRecords != null && Setting.prefsRecords!.length > 0) {
       for (int i = 0; i < Setting.prefsRecords!.length; i++) {
-        RecFile _append = _StringToFile(Setting.prefsRecords![i]);
+        RecFile _append = StringToFile(Setting.prefsRecords![i]);
         storedRecords.add(_append);
       }
+    }
+  }
+
+  String downloadSharedRecord(String data) {
+    RecFile _new = StringToFile(data);
+
+    //add only new
+    if (storedRecords.indexWhere((e) => e.id == _new.id) < 0) {
+      saveRecord(_new);
+      return 'record ${_new.name} saved.';
+    } else {
+      return 'record ${_new.name} is already stored';
     }
   }
 
@@ -92,8 +112,6 @@ class Recorder extends ChangeNotifier {
   }
 
   void record({required List<int> raw}) {
-    // int _now = DateTime.now().millisecondsSinceEpoch;
-    // int _deltaTime = (_now - startTime) ~/ milliSecDivide;
     int _deltaTime = (DateTime.now().millisecondsSinceEpoch - startTime);
     recordingEvents.add(RecEvent(time: _deltaTime, data: raw));
   }
@@ -102,31 +120,45 @@ class Recorder extends ChangeNotifier {
     recordTimer?.cancel();
     recordingTime = 0;
     _recCountDownText();
-    totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
-    int _inSec = totalTime ~/ 1000;
-    String _timeText = '0:${_inSec.toString().padLeft(2, '0')}';
-    String _id = customAlphabet(kRecordIdAlphabet, kRecordIdLength);
-    List<RecEvent> _clone = List.from(recordingEvents);
-    currentRecord = new RecFile(
-      id: _id,
-      totalTimeMilliSec: totalTime,
-      totalTimeSec: _inSec,
-      totalTimeSecText: _timeText,
-      events: _clone,
-    );
+    if (recordingEvents.length > 0) {
+      totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
+      int _inSec = totalTime ~/ 1000;
+      String _timeText = '0:${_inSec.toString().padLeft(2, '0')}';
+      String _id = customAlphabet(kRecordIdAlphabet, kRecordIdLength);
+      List<RecEvent> _clone = List.from(recordingEvents);
+      currentRecord = new RecFile(
+        id: _id,
+        totalTimeMilliSec: totalTime,
+        totalTimeSec: _inSec,
+        totalTimeSecText: _timeText,
+        events: _clone,
+      );
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => dialogBox(
+          context: context,
+          content: RecordRenameDialog(
+              fileType: FileType.recording, file: currentRecord!),
+        ),
+      );
+    } else {
+      Snackbar.show(
+        Setting.currentContext!,
+        text: '$kError: $kRecordNoMidi',
+        icon: kBluetoothIconDisconnected,
+        actionLabel: kOk,
+      );
+    }
     this.isRecording = false;
     Setting.isRecording = false;
-    // print(
-    //     'TOTAL: ${currentRecord!.totalTimeMilliSec} / ${currentRecord!.events.length}');
-    // isRenaming = true;
     notifyListeners();
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) => dialogBox(
-        context: context,
-        content: RecordRenameDialog(currentRecord!),
-      ),
-    );
+    // await showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) => dialogBox(
+    //     context: context,
+    //     content: RecordRenameDialog(file: currentRecord!),
+    //   ),
+    // );
   }
 
   void clear() {
@@ -134,7 +166,7 @@ class Recorder extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future play_start(RecFile file) async {
+  Future playback_start(RecFile file) async {
     // List<RecEvent> _play = List.from(currentRecord!.events);
     List<RecEvent> _play = List.from(file.events);
     int i = 0;
@@ -189,7 +221,7 @@ class Recorder extends ChangeNotifier {
     // playbackCountDownText = currentRecord!.totalTimeSecText;
   }
 
-  void play_stop(RecFile file) {
+  void playback_stop(RecFile file) {
     print('stop');
     player?.cancel();
     _resetPlaybackTimer(file);
@@ -198,8 +230,26 @@ class Recorder extends ChangeNotifier {
     notifyListeners();
   }
 
-  void renameRecord(RecFile file, String newName) {
+  void renameRecord(RecFile file, String newName, FileType fileType) {
     file.name = newName;
+
+    if (fileType == FileType.stored) {
+      //Get current index for further insert.
+      int _prefIndex = Setting.prefsRecords!
+          .indexWhere((item) => item.substring(0, kRecordIdLength) == file.id);
+
+      //Delete in in-app pref
+      Setting.prefsRecords!.removeAt(_prefIndex);
+
+      //Convert new to string
+      String _asString = fileToString(file);
+
+      //Insert new file(new name) at same index as before.
+      Setting.prefsRecords!.insert(_prefIndex, _asString);
+
+      //Update prefs
+      Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+    }
     notifyListeners();
   }
 
@@ -221,27 +271,21 @@ class Recorder extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveNewRecord() {
+  void saveRecord(RecFile file) {
     //Append to in-app record list
-    RecFile _clone = currentRecord!.copyWith();
+    RecFile _clone = file.copyWith();
     storedRecords.add(_clone);
-    // List<RecFile> _temp = storedRecords.toList();
-    // _temp.add(currentRecord!);
-    // storedRecords.clear();
-    // storedRecords = _temp.toList();
-    // _temp.clear();
 
     //Convert to string
-    String _asString = _fileToString(currentRecord!);
+    String _asString = fileToString(file);
 
     //Append to in-app prefs list
     Setting.prefsRecords?.add(_asString);
-    print('>> ${Setting.prefsRecords}');
 
     //Update prefs
     Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
 
-    //Clear current record when save
+    //Clear current record after saved
     clear();
     notifyListeners();
   }
@@ -257,7 +301,7 @@ class Recorder extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _fileToString(RecFile file) {
+  String fileToString(RecFile file) {
     String _new = '';
 
     //HEADER
@@ -291,7 +335,7 @@ class Recorder extends ChangeNotifier {
     return _new;
   }
 
-  RecFile _StringToFile(String string) {
+  RecFile StringToFile(String string) {
     print('incoming: $string');
     List<RecEvent> _RecordEvents = [];
 

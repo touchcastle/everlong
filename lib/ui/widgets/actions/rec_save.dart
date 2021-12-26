@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
@@ -15,6 +16,9 @@ import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 
 class RecordSave extends StatelessWidget {
+  final RecFile file;
+  RecordSave({required this.file});
+
   @override
   Widget build(BuildContext context) {
     // bool _isRecording = context.watch<Recorder>().isRecording;
@@ -34,7 +38,7 @@ class RecordSave extends StatelessWidget {
           //         : kLocalLabelColor,
           width: kIconWidth),
       onPressed: () {
-        context.read<Recorder>().saveNewRecord();
+        context.read<Recorder>().saveRecord(file);
       },
     );
   }
