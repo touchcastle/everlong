@@ -44,7 +44,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   void initState() {
     super.initState();
     // ///Initialize online session variables and parameters.
-    context.read<Online>().prepare();
+    context.read<Online>().init();
     if (widget.roomID != null) {
       _roomToJoin = widget.roomID!;
       _roomIdInputCtrl = TextEditingController(text: _roomToJoin);

@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
-import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
-import 'package:everlong/services/recorder.dart';
-import 'package:everlong/ui/widgets/progress_indicator.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
-import 'package:everlong/ui/widgets/snackbar.dart';
-import 'package:everlong/utils/constants.dart';
-import 'package:everlong/utils/texts.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/colors.dart';
 
-/// Generate hold button.
-// enum Type {
-//   Local,
-//   Online,
-// }
-
-class RecordManager extends StatefulWidget {
-  // final Type type;
-  // RecorderMenu({required this.type});
+class ShowRecord extends StatefulWidget {
   @override
-  _RecordManagerState createState() => _RecordManagerState();
+  _ShowRecordState createState() => _ShowRecordState();
 }
 
-class _RecordManagerState extends State<RecordManager> {
+class _ShowRecordState extends State<ShowRecord> {
   @override
   Widget build(BuildContext context) {
     bool _isShow = context.watch<Classroom>().showRecorder;
@@ -46,11 +32,7 @@ class _RecordManagerState extends State<RecordManager> {
                   : kLocalInactiveLabel,
           width: Setting.isOffline() ? kIconWidth : kIconWidth + 10),
       text: Text(Setting.isOffline() ? 'Record' : 'Share',
-          style: buttonTextStyle(
-            isActive: _isShow,
-            isVertical: true,
-            // color: Setting.isOnline() ? kTextColorLight : kLocalLabelColor,
-          ),
+          style: buttonTextStyle(isActive: _isShow, isVertical: true),
           textAlign: TextAlign.center),
       onPressed: () => context.read<Classroom>().toggleRecordManagerDisplay(),
     );

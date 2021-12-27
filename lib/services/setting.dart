@@ -203,9 +203,6 @@ class Setting {
       _switch = kNoteOn;
       _note = (raw - kNoteOn).floor();
       _pressure = ((raw - (raw.floor())) * 1000).floor();
-      // print('raw is: ${raw.toString()}');
-      // print('key is: ${_note.toString()}');
-      // print('pressure is: ${_pressure.toString()}');
     }
     return Uint8List.fromList([k128, k128, _switch, _note, _pressure]);
   }

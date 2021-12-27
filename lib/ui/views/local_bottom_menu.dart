@@ -3,7 +3,7 @@ import 'package:everlong/ui/widgets/actions/hold.dart';
 import 'package:everlong/ui/widgets/actions/reset.dart';
 import 'package:everlong/ui/widgets/actions/scan.dart';
 import 'package:everlong/ui/widgets/actions/ping_all.dart';
-import 'package:everlong/ui/widgets/actions/recorder.dart';
+import 'package:everlong/ui/widgets/actions/show_record.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
@@ -30,7 +30,7 @@ class LocalBottomMenu extends StatelessWidget {
                 Reset(),
                 Scan(isVertical: true, onScanPressed: onScanPressed),
                 PingAll(),
-                RecordManager(),
+                ShowRecord(),
                 // RecorderMenu(type: Type.Local),
               ],
             ),

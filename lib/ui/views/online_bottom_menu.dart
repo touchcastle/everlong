@@ -6,7 +6,7 @@ import 'package:everlong/ui/widgets/actions/hold.dart';
 import 'package:everlong/ui/widgets/actions/reset.dart';
 import 'package:everlong/ui/widgets/actions/device_manager.dart';
 import 'package:everlong/ui/widgets/actions/mute.dart';
-import 'package:everlong/ui/widgets/actions/recorder.dart';
+import 'package:everlong/ui/widgets/actions/show_record.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
@@ -34,7 +34,7 @@ class OnlineBottomMenu extends StatelessWidget {
               DeviceManager(),
               isRoomHost ? Mute() : SizedBox.shrink(),
               context.watch<Online>().memberCount > 1
-                  ? RecordManager()
+                  ? ShowRecord()
                   : SizedBox.shrink(),
             ],
           ),

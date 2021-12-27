@@ -27,13 +27,6 @@ class OnlineRecordView extends StatefulWidget {
 }
 
 class _OnlineRecordViewState extends State<OnlineRecordView> {
-  //Constant height
-  final double _bottomPadding = 10;
-  final double _handleHeight = 15;
-  final double _labelHeight = 25;
-  final double _divider = 5;
-  final double _divider2 = 15;
-
   //Height variable for drag-able widget calculation.
   double _initHeight = Setting.onlineRecorderHeight;
   double _start = 0;
@@ -43,7 +36,7 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
   GestureDetector resizeHandle(
       BuildContext context, double _minHeight, double _maxHeight) {
     return GestureDetector(
-      child: DragHandle(height: _handleHeight),
+      child: DragHandle(height: 15),
       onVerticalDragStart: (details) {
         _start = MediaQuery.of(context).size.height - details.globalPosition.dy;
       },
@@ -67,7 +60,7 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
   SizedBox fileSourceLabel(
       {required String icon, required double iconWidth, required String text}) {
     return SizedBox(
-      height: _labelHeight,
+      height: 25,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -92,19 +85,19 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
     return RecordContainer(
       decoration: kOnlineRecordBoxDecor,
       height: Setting.onlineRecorderHeight,
-      bottomPadding: _bottomPadding,
+      // bottomPadding: _bottomPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           resizeHandle(context, _minHeight, _maxHeight),
-          SizedBox(height: _divider2),
+          SizedBox(height: 15),
 
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           //Cloud records
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           fileSourceLabel(
               icon: kCloudIcon, iconWidth: 30, text: 'Cloud Records'),
-          SizedBox(height: _divider),
+          SizedBox(height: 5),
           RecordListContainer(
             decoration: kOnlineStoredMidiDecor,
             controller: _controller,
@@ -126,13 +119,15 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
               },
             ),
           ),
-          SizedBox(height: _divider2),
+
+          //Separator
+          SizedBox(height: 15),
 
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           //Local records
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           fileSourceLabel(icon: kBookIcon, iconWidth: 25, text: 'My Records'),
-          SizedBox(height: _divider),
+          SizedBox(height: 5),
           RecordListContainer(
             decoration: kOnlineStoredMidiDecor,
             controller: _controller2,

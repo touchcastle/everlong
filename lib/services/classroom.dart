@@ -10,7 +10,6 @@ import 'package:everlong/services/device_db.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/utils/constants.dart';
 import 'package:everlong/utils/midi.dart';
-import 'package:everlong/services/animation.dart';
 
 /// Type of reorder list and on-screen list.
 enum ReorderType {
@@ -49,11 +48,14 @@ class Classroom extends ChangeNotifier {
   /// Set to true when clear holding keys for display progress indicator.
   bool isClearing = false;
 
+  /// To switch between music notation or Device/Member list on mobile device.
   bool showList = true;
 
+  /// To switch recorder / share view display.
   bool showRecorder = false;
 
   /// Flag for first start local session before any set/reset master device.
+  /// In case of fresh start, first connected device will become master.
   bool freshStart = true;
 
   ///For pressing notes and chord(By master device or room host) on screen.
@@ -71,19 +73,35 @@ class Classroom extends ChangeNotifier {
   }
 
   ///Check parameters and conditions before actual send MIDI bluetooth
-  Future localMessageBroadcast(Uint8List data) async {
+  ///
+  ///Called from master bluetooth device model.
+  Future prepareBeforeLocalBroadcast(Uint8List data) async {
     bool _withSound = false;
     bool _withLight = false;
     bool _withDelay = false;
+
+    //Whether to send any signal or not.
     bool _isListening() => Setting.appListenMode != ListenMode.off;
+
+    //To send both light and sound.
     bool _isListenAll() => Setting.appListenMode == ListenMode.on;
+
+    //To send only sound.
     bool _isBlind() => Setting.appListenMode == ListenMode.onBlind;
+
+    //To send only light
     bool _isMute() => Setting.appListenMode == ListenMode.onMute;
+
+    //Is this key already on holding? Don't need to send it again.
     bool _holdingDup() => holdingKeys.contains(data[kKeyPos]);
+
     if (_isListening() && !_holdingDup()) {
+      //Prepare parameters.
       if (!_isBlind()) _withLight = true;
       if (!_isMute()) _withSound = true;
       if (_isListenAll()) _withDelay = true;
+
+      //Send midi to target bluetooth device(s).
       sendLocal(
         data,
         withSound: _withSound,
@@ -100,6 +118,11 @@ class Classroom extends ChangeNotifier {
   /// for [ListenMode.on] -> send both sound and light.
   /// for [ListenMode.onMute] -> send light only.
   /// for [ListenMode.onBlind] -> send sound only.
+  ///
+  /// Called from:
+  /// 1. master bluetooth device model(via [prepareBeforeLocalBroadcast()])
+  /// 2. Online session message listener.
+  /// 3. Record file playback.
   Future sendLocal(
     Uint8List data, {
     required bool withSound,
@@ -108,52 +131,62 @@ class Classroom extends ChangeNotifier {
     bool withStaff = true,
     bool withMaster = false,
   }) async {
+    //To display note on staff
     if (withStaff) staffDisplay(data);
+
+    //Only in normal mode or only note on in holding mode
     if ((!isHolding || (isHolding && data[kSwitchPos] == kNoteOn))) {
+      //If in holding mode, store holding key in list for release later.
       if (isHolding) holdingKeys.add(data[kKeyPos]);
+
+      //Send sound/light if there is child device or force send to master also.
       if (countChild() > 0 || withMaster) {
         int _delay = 1;
+
+        // If there is several child devices, add delay between each device send
         if (countChild() > 0)
           _delay = Setting.noteDelayMillisec ~/ countChild();
+
+        // Send light/sound to target device(s).
         for (BLEDevice _device
             in bluetoothDevices.where((d) => d.isConnected())) {
           if (!_device.isMaster || withMaster) {
             //LIGHT
             if (withLight)
-              // await _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
               _device.writeLightMessage(data[kKeyPos], data[kSwitchPos]);
 
-            //Little delay for bluetooth stability
+            //Little delay between light and sound for bluetooth stability
             if (withDelay) await _wait(_delay);
 
             //SOUND
             if (withSound) _device.write(message: data);
 
-            ///TODO
-            if (withDelay) await _wait(_delay);
-            // await _wait(_delay);
+            //Delay between each device.
+            await _wait(_delay);
           }
         }
       }
     }
   }
 
-  /// Update staff display on screen.
+  /// Update staff display and playing notes/chord.
   void staffDisplay(Uint8List data) async {
+    //For playing notes and chord.
     if (data[kSwitchPos] == kNoteOn) {
       this.piano.addPressing(data[kKeyPos]);
-      Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
-      notifyListeners();
     } else if (data[kSwitchPos] == kNoteOff) {
       this.piano.removePressing(data[kKeyPos]);
-      Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
-      notifyListeners();
     }
+
+    //For staff display (music notation).
+    Staff.updateStaff(data[kKeyPos], data[kSwitchPos]);
+
+    notifyListeners();
   }
 
   /// Delay
-  Future _wait(int millisec) async =>
-      await Future.delayed(Duration(milliseconds: millisec));
+  Future _wait(int milliseconds) async =>
+      await Future.delayed(Duration(milliseconds: milliseconds));
 
   /// To count connected children devices.
   int countChild() => bluetoothDevices
@@ -180,7 +213,6 @@ class Classroom extends ChangeNotifier {
     notifyListeners();
     for (BLEDevice _device in bluetoothDevices.where((d) => d.isConnected())) {
       for (int _key in holdingKeys) {
-        // await _device.write(message: lightMIDI(_key, kLightOff));
         await _device.writeLightMessage(_key, kLightOff);
         await Future.delayed(Duration(milliseconds: kNoteDelayMillisec));
       }
@@ -211,18 +243,6 @@ class Classroom extends ChangeNotifier {
           ? true
           : false;
 
-  /// Flickering light when ping device.
-  void _beaconLight(BLEDevice device) async {
-    for (int _lightKey in kIdentLight) {
-      // await device.writeLightMessage(_lightKey, kNoteOn);
-      // await Future.delayed(kNotifyLightDuration); //Keep light on fo sometime
-      // await device.writeLightMessage(_lightKey, kNoteOff);
-      device.writeLightMessage(_lightKey, kNoteOn);
-      await Future.delayed(kNotifyLightDuration); //Keep light on fo sometime
-      device.writeLightMessage(_lightKey, kNoteOff);
-    }
-  }
-
   /// For device ping. app will display beacon lights and play
   /// [kMidCSound] for [kNotifyTimes] times on target device .
   Future pingDevice(BLEDevice device) async {
@@ -232,11 +252,19 @@ class Classroom extends ChangeNotifier {
       _beaconLight(device);
       for (int _i = 1; _i <= kNotifyTimes; _i++) {
         device.write(message: kMidCSound); //Play note
-        // await device.write(message: kMidCSound); //Play note
         await Future.delayed(kNotifyDuration);
       }
       device.togglePing();
       notifyListeners();
+    }
+  }
+
+  /// Light beacon sender.
+  void _beaconLight(BLEDevice device) async {
+    for (int _lightKey in kIdentLight) {
+      device.writeLightMessage(_lightKey, kNoteOn);
+      await Future.delayed(kNotifyLightDuration); //Keep light on fo sometime
+      device.writeLightMessage(_lightKey, kNoteOff);
     }
   }
 
@@ -270,11 +298,9 @@ class Classroom extends ChangeNotifier {
       notifyListeners();
     } else {
       /// Cancel old master device first.
-      // int _i = bluetoothDevices.indexWhere((d) => d.id() == this.masterID);
       int _i = bluetoothDevices.indexWhere((d) => d.isMaster);
-      if (_i >= 0) {
-        await bluetoothDevices[_i].toggleMaster(false);
-      }
+      if (_i >= 0) await bluetoothDevices[_i].toggleMaster(false);
+
       await device.toggleMaster(true);
       this.masterID = device.id();
       this.masterName = device.displayName;

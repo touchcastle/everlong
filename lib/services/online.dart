@@ -96,12 +96,13 @@ class Online extends ChangeNotifier {
     myDeviceName = await Setting.getName();
   }
 
-  Future prepare() async {
+  Future init() async {
     _auth.initAuth();
     _fireStore.col = _fireStore.getCollection();
     await _login();
   }
 
+  ///User ID (device uuid).
   String _uid() => user!.user!.uid;
 
   ///Set connection state boolean
@@ -487,15 +488,7 @@ class Online extends ChangeNotifier {
 
   void _setHold(bool hold) {
     this.isHold = hold;
-
-    // ///When children got command from host to release hold. Reset all displaying
-    // ///notes.(Staff, Piano, Light)
-
-    //trigger [classroom.triggerHold(hold);] when got hold/release command also
-    //work. but may have an issue if children got some [ON]music message before
-    //got hold command which that music message will not stored in [holdingKeys]
     classroom.triggerHold(hold);
-    // if (!hold) classroom.resetDisplay();
   }
 
   /// If host exit from room, room will close after
@@ -657,7 +650,7 @@ class Online extends ChangeNotifier {
           .removeWhere((e) => _preList.indexWhere((p) => p.id == e.id) < 0);
 
       ///Modify current member list
-      // Still no case
+      ///Still no case
       // for (int _i = 0; _i < recordsList.length; _i++) {
       //   int _avail = _preList.indexWhere((e) => e.id == recordsList[_i].id);
       //   if (_avail >= 0) {
@@ -796,6 +789,8 @@ class Online extends ChangeNotifier {
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///SHARE RECORDS
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  ///
+  ///Upload record to firestore as [String]
   Future uploadRecord(
       {required String recordID,
       required String recordName,
@@ -819,6 +814,7 @@ class Online extends ChangeNotifier {
     _showInProgress(false);
   }
 
+  ///Delete record in firestore.
   Future delRecord({required String recordID}) async {
     _showInProgress(true);
     await _fireStore.delRecord(recordID: recordID);

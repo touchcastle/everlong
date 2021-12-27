@@ -24,11 +24,6 @@ class LocalRecordView extends StatefulWidget {
 }
 
 class _LocalRecordViewState extends State<LocalRecordView> {
-  //Constant height
-  final double _bottomPadding = 10;
-  final double _handleHeight = 15;
-  final double _recorderAreaHeight = 70;
-  final double _divider = 5;
 
   //Height variable for drag-able widget calculation.
   double _initHeight = Setting.localRecorderHeight;
@@ -39,7 +34,7 @@ class _LocalRecordViewState extends State<LocalRecordView> {
   GestureDetector resizeHandle(
       BuildContext context, double _minHeight, double _maxHeight) {
     return GestureDetector(
-      child: DragHandle(height: _handleHeight),
+      child: DragHandle(height: 15),
       onVerticalDragStart: (details) {
         _start = MediaQuery.of(context).size.height - details.globalPosition.dy;
       },
@@ -67,16 +62,13 @@ class _LocalRecordViewState extends State<LocalRecordView> {
     double _maxHeight = MediaQuery.of(context).size.height * 0.45;
     return RecordContainer(
       decoration: kLocalRecordBoxDecor,
-      // maxHeight: _maxHeight,
-      // minHeight: _minHeight,
       height: Setting.localRecorderHeight,
-      bottomPadding: _bottomPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           resizeHandle(context, _minHeight, _maxHeight),
-          RecordingPanel(height: _recorderAreaHeight),
-          SizedBox(height: _divider),
+          RecordingPanel(),
+          SizedBox(height: 5),
           RecordListContainer(
             decoration: kLocalStoredMidiDecor,
             controller: _controller,
@@ -109,31 +101,33 @@ class _LocalRecordViewState extends State<LocalRecordView> {
 ///Recording panel widget.
 ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class RecordingPanel extends StatelessWidget {
-  final double height;
-  RecordingPanel({required this.height});
-
-  //Countdown timer while recording
+  //Countdown timer display during recording
   Center timer(String _timer) =>
       Center(child: Text(_timer, style: kRecorderCountdown));
 
   @override
   Widget build(BuildContext context) {
     RecFile? _currentRecord = context.watch<Recorder>().currentRecord;
-    String _timer = context.watch<Recorder>().recordingTimerText;
+    String _recordingDuration = context.watch<Recorder>().recordingTimerText;
+
+    //True when has recorded file pending for save.
+    bool _hasRecorded() =>
+        _currentRecord != null &&
+        _currentRecord.events.length > 0 &&
+        !context.watch<Recorder>().isRecording;
+
     return Row(
       children: [
         Expanded(flex: 2, child: RecordButton()),
         Expanded(
           flex: 3,
           child: SizedBox(
-            height: height,
-            child: _currentRecord != null &&
-                    _currentRecord.events.length > 0 &&
-                    !context.watch<Recorder>().isRecording
+            height: 70,
+            child: _hasRecorded()
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(_currentRecord.name),
+                      Text(_currentRecord!.name),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -148,7 +142,7 @@ class RecordingPanel extends StatelessWidget {
                       ),
                     ],
                   )
-                : timer(_timer),
+                : timer(_recordingDuration),
           ),
         ),
       ],

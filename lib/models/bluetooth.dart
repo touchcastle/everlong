@@ -295,7 +295,7 @@ class BLEDevice extends ChangeNotifier {
           /// Listening function from host's key.
           final Uint8List _uintData = Uint8List.fromList(_data);
           if (Setting.isOffline()) {
-            _classroom.localMessageBroadcast(_uintData);
+            _classroom.prepareBeforeLocalBroadcast(_uintData);
           } else if (Setting.isOnline()) {
             _online.broadcastMessage(_uintData);
           }
