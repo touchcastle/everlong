@@ -364,20 +364,15 @@ class Classroom extends ChangeNotifier {
   /// Force turn off all key's light of every children devices 1 by 1
   /// with delay between each keys.
   Future resetKeyLight() async {
-    // bool _foundChild = false;
     this.isResetting = true;
     notifyListeners();
     for (BLEDevice _d
         in bluetoothDevices.where((d) => d.isConnected() && !d.isMaster)) {
-      // _foundChild = true;
-
-      ///TODO: Check
-      await _d.lightOffOnlyMonitoredOnKeys();
-      // await _d.lightOffAllKeys();
+      // await _d.lightOffOnlyMonitoredOnKeys();
+      await _d.lightOffAllKeys();
     }
     this.isResetting = false;
     notifyListeners();
-    // return _foundChild;
   }
 
   /// To switch editable text field of device's name.

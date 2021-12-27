@@ -37,7 +37,6 @@ class RecordRename extends StatelessWidget {
           color: color,
           width: kIconWidth),
       onPressed: () async {
-        // context.read<Recorder>().toggleRename(file);
         await showDialog(
           context: context,
           builder: (BuildContext context) => dialogBox(

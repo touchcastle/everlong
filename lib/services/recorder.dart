@@ -28,9 +28,9 @@ class Recorder extends ChangeNotifier {
   bool isRecording = false;
 
   // bool isRenaming = false;
-  var recordTimer;
+  var recordingTimer;
   int recordingTime = 0;
-  String recordCountDownText = kMaxRecordInSecText;
+  String recordingTimerText = kMaxRecordInSecText;
   var playBackTimer;
   int playBackingTime = 0;
 
@@ -90,7 +90,7 @@ class Recorder extends ChangeNotifier {
   }
 
   void _recTimer(BuildContext context) {
-    recordTimer = Timer.periodic(Duration(seconds: 1), (t) async {
+    recordingTimer = Timer.periodic(Duration(seconds: 1), (t) async {
       recordingTime++;
       _recCountDownText();
       notifyListeners();
@@ -104,7 +104,7 @@ class Recorder extends ChangeNotifier {
   void _recCountDownText() {
     int _availSec = kMaxRecordInSec - recordingTime;
     if (_availSec < 0) _availSec = 0;
-    recordCountDownText = '0:${_availSec.toString().padLeft(2, '0')}';
+    recordingTimerText = '0:${_availSec.toString().padLeft(2, '0')}';
   }
 
   void _clearParams() {
@@ -120,7 +120,7 @@ class Recorder extends ChangeNotifier {
   }
 
   Future stop(BuildContext context) async {
-    recordTimer?.cancel();
+    recordingTimer?.cancel();
     recordingTime = 0;
     _recCountDownText();
     if (recordingEvents.length > 0) {

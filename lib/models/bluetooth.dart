@@ -367,17 +367,12 @@ class BLEDevice extends ChangeNotifier {
 
   ///Alternate for [lightOffAllKeys()]
   Future lightOffOnlyMonitoredOnKeys() async {
-    // for (int _key = kFirstKey; _key <= kLastKey; _key++) {
-    //   if (Setting
-    //       .lightMonitor[Setting.lightMonitor.indexWhere((e) => e.note == _key)]
-    //       .isOn) {
     int _count = 0;
     for (LightMonitor _key in Setting.lightMonitor.where((d) => d.isOn)) {
       _count++;
       await this.writeLightMessage(_key.key, kNoteOff);
       await Future.delayed(Duration(milliseconds: Setting.noteDelayMillisec));
     }
-    // }
     print('turned light off for $_count keys');
   }
 }

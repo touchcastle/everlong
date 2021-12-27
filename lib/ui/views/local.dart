@@ -10,7 +10,7 @@ import 'package:everlong/ui/views/local_bottom_menu.dart';
 import 'package:everlong/ui/views/set_master_reminder.dart';
 import 'package:everlong/ui/views/device/devices_list.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
-import 'package:everlong/ui/views/local_recorder.dart';
+import 'package:everlong/ui/views/local_record_view.dart';
 import 'package:everlong/ui/widgets/local_info_bar.dart';
 import 'package:everlong/ui/widgets/device/no_device.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
@@ -35,7 +35,7 @@ class _LocalPageState extends State<LocalPage>
 
   Padding _recorder() => Padding(
         padding: EdgeInsets.only(left: Setting.isTablet() ? 10 : 0, top: 0),
-        child: LocalRecorder(),
+        child: LocalRecordView(),
       );
 
   ///Empty area

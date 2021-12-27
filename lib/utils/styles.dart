@@ -127,7 +127,7 @@ const TextStyle kMemberNameSmall =
 const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 
 ///Recorder
-TextStyle RecorderCountdown() => TextStyle(
+TextStyle kRecorderCountdown = TextStyle(
     fontSize: textSizeResp(ratio: 12),
     fontWeight: FontWeight.w500,
     color: kRed2);
