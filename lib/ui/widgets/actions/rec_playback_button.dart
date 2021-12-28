@@ -36,13 +36,13 @@ class _RecordPlayOrStopState extends State<RecordPlayOrStop> {
           width: kIconWidth),
       onPressed: () {
         if (_isPlaying) {
-          context.read<Recorder>().playback_stop(widget.file);
+          context.read<Recorder>().playbackStop(widget.file);
           context.read<Classroom>().resetDisplay();
         } else {
           if (!context.read<Classroom>().anyConnected()) {
             Snackbar.show(context, text: kNoConnectedMsg);
           }
-          context.read<Recorder>().playback_start(widget.file);
+          context.read<Recorder>().playbackStart(widget.file);
         }
       },
     );

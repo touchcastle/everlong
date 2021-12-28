@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/classroom.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/views/online/confirm_exit.dart';
 import 'package:everlong/ui/views/online/online_room_detail.dart';
 import 'package:everlong/ui/widgets/actions/exit.dart';
@@ -32,12 +33,14 @@ class GlobalTopMenu extends StatelessWidget {
             context.read<Classroom>().resetClass();
             context.read<Classroom>().showRecorder = false;
 
+            //Pop back to main menu page.
             Navigator.popUntil(context, ModalRoute.withName(kMainPageName));
           }),
         ),
       );
     } else {
       await context.read<Classroom>().cancelAllMaster();
+      context.read<Recorder>().playbackStopAll();
       context.read<Classroom>().showRecorder = false;
       Navigator.pop(context);
     }
@@ -70,34 +73,6 @@ class GlobalTopMenu extends StatelessWidget {
         children: [
           Row(
             children: [
-              // Setting.isOnline()
-              //     ? Exit(onPressed: () async {
-              //         await showDialog(
-              //           context: context,
-              //           builder: (BuildContext context) => dialogBox(
-              //             smallerDialog: true,
-              //             context: context,
-              //             content: confirmExitDialog(context, onExit: () async {
-              //               await context
-              //                   .read<Online>()
-              //                   .roomExit(context.read<Online>().roomID);
-              //               Navigator.popUntil(
-              //                   context, ModalRoute.withName(kMainPageName));
-              //             }),
-              //           ),
-              //         );
-              //       })
-              //     // ? Exit(onPressed: () async {
-              //     //     await context
-              //     //         .read<Online>()
-              //     //         .roomExit(context.read<Online>().roomID);
-              //     //     Navigator.popUntil(
-              //     //         context, ModalRoute.withName(kMainPageName));
-              //     //   })
-              //     : Exit(onPressed: () async {
-              //         await context.read<Classroom>().cancelMasterDevice();
-              //         Navigator.pop(context);
-              //       }),
               Exit(onPressed: () => _onExit(context)),
               Setting.isOnline() ? _empty : SettingButton.Setting(),
               ShowList()

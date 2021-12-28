@@ -216,12 +216,12 @@ class Recorder extends ChangeNotifier {
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///
   ///Start playback for [file]
-  Future playback_start(RecFile file) async {
+  Future playbackStart(RecFile file) async {
     List<RecEvent> _play = List.from(file.events);
     int _timeCursor = 0;
 
     //Cancel if any playing.
-    player?.cancel;
+    playbackStopAll();
 
     file.isPlaying = true;
     notifyListeners();
@@ -291,13 +291,25 @@ class Recorder extends ChangeNotifier {
   }
 
   ///Stop current playback.
-  void playback_stop(RecFile file) {
+  void playbackStop(RecFile file) {
     print('stop');
     player?.cancel();
     _resetPlaybackTimer(file);
     file.isPlaying = false;
     classroom.resetDisplay();
     notifyListeners();
+  }
+
+  ///Stop any playing file
+  void playbackStopAll() {
+    //Stored
+    for (RecFile file in storedRecords.where((e) => e.isPlaying)) {
+      playbackStop(file);
+    }
+
+    //Recorded
+    if (currentRecord != null && currentRecord!.isPlaying)
+      playbackStop(currentRecord!);
   }
 
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -343,7 +355,6 @@ class Recorder extends ChangeNotifier {
   ///Since user needs to click on specific record prior to do anything with that
   ///record. App will need to mark flag for active record for display purpose.
   void toggleActive(RecFile file) {
-
     //Check "before toggle" status. for any currently active record that needs
     //to be canceled first.
     if (file.isActive) {
