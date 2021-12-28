@@ -148,23 +148,12 @@ class BLEDevice extends ChangeNotifier {
     if (_isLocalMaster() || _isOnlineSpeaker()) this.listenTo();
 
     _classroom.sortList(ReorderType.connected, this.id());
+
+    //Handshake for Pop Piano.
     if (_isPopPiano()) {
-      // await Future.delayed(Duration(milliseconds: 200));
-      // this.write(message: kStart1);
-      // await Future.delayed(Duration(milliseconds: 200));
       this.write(message: kStart2);
       await Future.delayed(Duration(milliseconds: 200));
       this.write(message: kStart3);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // this.write(message: kStart2_2);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // this.write(message: kStart2_2);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // this.write(message: kStart4);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // this.write(message: kStart5);
-      // await Future.delayed(Duration(milliseconds: 200));
-      // this.write(message: kStart4);
     }
   }
 
@@ -366,7 +355,7 @@ class BLEDevice extends ChangeNotifier {
   }
 
   ///Alternate for [lightOffAllKeys()]
-  Future lightOffOnlyMonitoredOnKeys() async {
+  Future lightOffOnlyMonitoredKeys() async {
     int _count = 0;
     for (LightMonitor _key in Setting.lightMonitor.where((d) => d.isOn)) {
       _count++;

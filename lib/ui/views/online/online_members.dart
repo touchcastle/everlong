@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/models/session_participants.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/ui/views/piano/virtual_piano.dart';
-import 'package:everlong/ui/widgets/online/connecting_text.dart';
+import 'package:everlong/ui/widgets/connecting_text.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/icons.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/classroom.dart';
-import 'package:everlong/ui/widgets/setting/mode.dart';
+import 'package:everlong/ui/views/setting/mode.dart';
 
 class ModeSelect extends StatefulWidget {
   @override

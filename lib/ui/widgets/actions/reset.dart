@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/online.dart';
-import 'package:everlong/ui/views/setting.dart';
+import 'package:everlong/ui/views/setting/setting.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';

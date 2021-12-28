@@ -12,7 +12,7 @@ import 'package:everlong/services/authentication.dart';
 import 'package:everlong/services/fire_store.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
-import 'package:everlong/ui/views/online_room.dart';
+import 'package:everlong/ui/views/online/online_room.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/icons.dart';
 import 'package:everlong/utils/constants.dart';

@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:everlong/ui/widgets/online/clock.dart';
-import 'package:everlong/ui/widgets/online/online_member_counter.dart';
+import 'package:everlong/ui/widgets/clock.dart';
+import 'package:everlong/ui/views/online/online_member_counter.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/sizes.dart';
 import 'package:everlong/utils/texts.dart';
 
-Widget onlineInfoBar() {
+Widget onlineInfoBar({int? createSecondAgo}) {
   final TextStyle _style = TextStyle(
       color: kTextColorLight,
       fontSize: kInfoBarTextSize,
@@ -30,7 +30,7 @@ Widget onlineInfoBar() {
           Row(
             children: [
               Text(kTime, style: _style),
-              Clock(),
+              Clock(startFrom: createSecondAgo ?? 0),
             ],
           ),
         ],

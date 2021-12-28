@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:everlong/models/bluetooth.dart';
 import 'package:everlong/services/setting.dart';
-import 'package:everlong/ui/widgets/device/device_label.dart';
+import 'package:everlong/ui/views/device/device_label.dart';
 import 'package:everlong/ui/widgets/actions/connection.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/colors.dart';

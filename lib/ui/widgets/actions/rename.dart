@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/ui/views/rename.dart';
+import 'package:everlong/ui/views/device/rename.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/dialog.dart';

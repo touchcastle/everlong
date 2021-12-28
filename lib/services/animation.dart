@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/ui/widgets/device/device_box.dart';
+import 'package:everlong/ui/views/device/device_box.dart';
 import 'package:everlong/utils/constants.dart';
 
 const Duration kTransitionDur = Duration(milliseconds: 500);
 const Duration kLandingTransitionDur = Duration(milliseconds: 1500);
-
-// late AnimationController localRecorderController;
-// late Animation<Offset> localRecorderOffset;
 
 ///Page Transition
 RouteTransitionsBuilder kPageTransition =

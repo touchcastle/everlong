@@ -4,7 +4,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/animation.dart';
-import 'package:everlong/ui/views/online_lobby.dart';
+import 'package:everlong/ui/views/online/online_lobby.dart';
 import 'package:everlong/utils/constants.dart';
 
 class UrlHandler {

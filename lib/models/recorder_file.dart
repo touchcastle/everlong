@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+///Which note at what time = 1 event.
+///Many events to chord / music.
 class RecEvent {
   final int time;
   final List<int> data;
@@ -10,15 +12,31 @@ class RecEvent {
   });
 }
 
+///Recorded file.
 class RecFile extends ChangeNotifier {
+
+  ///UUID for each file
   String id;
+
+  ///Record's name
   String name;
+
+  ///Record's duration in millisecond
   int totalTimeMilliSec;
+
+  ///Record's duration in second
   int totalTimeSec;
+
+  ///Record's duration in String (M:SS)
   String totalTimeSecText;
+
+  ///Is this file currently playing
   bool isPlaying;
-  bool isEditingName;
+
+  ///Is active for do any action via local/online session
   bool isActive;
+
+  ///Events(simulate MIDI events)
   List<RecEvent> events;
 
   RecFile({
@@ -28,11 +46,11 @@ class RecFile extends ChangeNotifier {
     required this.totalTimeSecText,
     required this.events,
     this.isPlaying = false,
-    this.isEditingName = false,
     this.isActive = false,
     this.name = 'New Record',
   });
 
+  //To clone.
   RecFile copyWith({
     String? id,
     String? name,
@@ -40,7 +58,6 @@ class RecFile extends ChangeNotifier {
     int? totalTimeSec,
     String? totalTimeSecText,
     bool? isPlaying,
-    bool? isEditingName,
     bool? isActive,
     List<RecEvent>? events,
   }) {
@@ -51,12 +68,12 @@ class RecFile extends ChangeNotifier {
       totalTimeSec: totalTimeSec ?? this.totalTimeSec,
       totalTimeSecText: totalTimeSecText ?? this.totalTimeSecText,
       isPlaying: isPlaying ?? this.isPlaying,
-      isEditingName: isEditingName ?? this.isEditingName,
       isActive: isActive ?? this.isActive,
       events: events ?? List.from(this.events),
     );
   }
 
+  ///Clear recording.
   void clear() {
     totalTimeMilliSec = 0;
     events.clear();

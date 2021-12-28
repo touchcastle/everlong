@@ -9,13 +9,13 @@ import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/views/global_top_menu.dart';
-import 'package:everlong/ui/views/online_bottom_menu.dart';
+import 'package:everlong/ui/views/online/online_bottom_menu.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
-import 'package:everlong/ui/views/online_members.dart';
-import 'package:everlong/ui/views/online_record_view.dart';
+import 'package:everlong/ui/views/online/online_members.dart';
+import 'package:everlong/ui/views/online/online_record_view.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
-import 'package:everlong/ui/widgets/online/session_ended_dialog.dart';
-import 'package:everlong/ui/widgets/online/online_info_bar.dart';
+import 'package:everlong/ui/views/online/session_ended_dialog.dart';
+import 'package:everlong/ui/views/online/online_info_bar.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/constants.dart';
@@ -40,6 +40,13 @@ class _OnlineRoomState extends State<OnlineRoom> {
     super.initState();
     Setting.currentContext = context;
     _myConnectivity();
+  }
+
+  ///When someone join created room, show session's clock since it was build.
+  int _getElapsed() {
+    DateTime _createTime = DateTime.fromMicrosecondsSinceEpoch(
+        context.read<Online>().roomCreateTime * 1000);
+    return DateTime.now().difference(_createTime).inSeconds;
   }
 
   ///Function to handle when lost internet connection during class.
@@ -79,9 +86,8 @@ class _OnlineRoomState extends State<OnlineRoom> {
   bool _showList() => context.watch<Classroom>().showList;
 
   bool _showRecorder() =>
-      // context.watch<Classroom>().showRecorder &&
-      // context.watch<Online>().memberCount > 1;
-      true;
+      context.watch<Classroom>().showRecorder &&
+      context.watch<Online>().memberCount > 1;
 
   ///Set flag when user swipe to change view mode.
   void _swiper(DragEndDetails details) {
@@ -144,7 +150,7 @@ class _OnlineRoomState extends State<OnlineRoom> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         GlobalTopMenu(),
-                        onlineInfoBar(),
+                        onlineInfoBar(createSecondAgo: _getElapsed()),
                         Expanded(
                           child: SizedBox.expand(child: _mainArea(context)),
                         ),

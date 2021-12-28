@@ -5,7 +5,7 @@ import 'package:nanoid/nanoid.dart';
 import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
-import 'package:everlong/ui/views/record_rename.dart';
+import 'package:everlong/ui/views/record/record_rename.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
 import 'package:everlong/ui/widgets/snackbar.dart';
 import 'package:everlong/utils/constants.dart';
@@ -475,7 +475,6 @@ class Recorder extends ChangeNotifier {
       totalTimeSec: int.parse(_header[3]),
       totalTimeSecText: _header[4],
       events: _RecordEvents,
-      isEditingName: false,
     );
     return _out;
   }

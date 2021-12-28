@@ -22,7 +22,6 @@ class RecordDelete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // bool _isRecording = context.watch<Recorder>().isRecording;
     return Button(
       width: 30,
       height: 30,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:everlong/ui/views/setting.dart';
+import 'package:everlong/ui/views/setting/setting.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/dialog.dart';

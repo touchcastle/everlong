@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/ui/widgets/device/device_metadata.dart';
+import 'package:everlong/ui/views/device/device_metadata.dart';
 import 'package:everlong/ui/widgets/actions/rename.dart';
 import 'package:everlong/ui/widgets/actions/host.dart';
 import 'package:everlong/ui/widgets/actions/ping.dart';

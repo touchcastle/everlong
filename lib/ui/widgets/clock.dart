@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:everlong/services/online.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/sizes.dart';
 import 'package:everlong/utils/styles.dart';
 
 class Clock extends StatefulWidget {
+  final int startFrom;
+
+  Clock({required this.startFrom});
+
   @override
   _ClockState createState() => new _ClockState();
 }
@@ -14,25 +16,18 @@ class Clock extends StatefulWidget {
 class _ClockState extends State<Clock> {
   String _clockString = '00:00:00';
   late Timer _timer;
-  late int _elapsed;
+  late int _startFrom;
 
   @override
   void initState() {
-    _getElapsed();
+    _startFrom = widget.startFrom;
     _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _clockText());
     super.initState();
   }
 
-  //
-  void _getElapsed() {
-    DateTime _createTime = DateTime.fromMicrosecondsSinceEpoch(
-        context.read<Online>().roomCreateTime * 1000);
-    _elapsed = DateTime.now().difference(_createTime).inSeconds;
-  }
-
   void _clockText() {
-    _elapsed++;
-    final _clock = Duration(seconds: _elapsed);
+    _startFrom++;
+    final _clock = Duration(seconds: _startFrom);
     setState(() => _clockString = _printDuration(_clock));
   }
 
@@ -51,10 +46,12 @@ class _ClockState extends State<Clock> {
   }
 
   @override
-  Widget build(BuildContext context) => Text(_clockString,
-      style: TextStyle(
-        color: kOnlineRoomDetail,
-        fontFamily: kSecondaryFontFamily,
-        fontSize: kInfoBarTextSize,
-      ));
+  Widget build(BuildContext context) => Text(
+        _clockString,
+        style: TextStyle(
+          color: kOnlineRoomDetail,
+          fontFamily: kSecondaryFontFamily,
+          fontSize: kInfoBarTextSize,
+        ),
+      );
 }

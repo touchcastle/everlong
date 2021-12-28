@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/models/bluetooth.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/animation.dart';
-import 'package:everlong/ui/widgets/device/device_box.dart';
+import 'package:everlong/ui/views/device/device_box.dart';
 import 'package:everlong/utils/styles.dart';
 
 class DeviceAnimatedList extends StatefulWidget {

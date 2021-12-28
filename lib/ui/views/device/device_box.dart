@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:everlong/models/bluetooth.dart';
-import 'package:everlong/ui/widgets/device/device_title.dart';
-import 'package:everlong/ui/widgets/device/device_detail.dart';
-import 'package:everlong/ui/widgets/extends/custom_expansion_tile.dart';
+import 'package:everlong/ui/views/device/device_title.dart';
+import 'package:everlong/ui/views/device/device_detail.dart';
+import 'package:everlong/ui/widgets/extended/custom_expansion_tile.dart';
 import 'package:everlong/utils/styles.dart';
 
 class DeviceBox extends StatefulWidget {

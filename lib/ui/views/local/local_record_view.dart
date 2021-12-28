@@ -11,9 +11,9 @@ import 'package:everlong/ui/widgets/actions/rec_playback_button.dart';
 import 'package:everlong/ui/widgets/actions/rec_del.dart';
 import 'package:everlong/ui/widgets/actions/rec_rename.dart';
 import 'package:everlong/ui/widgets/actions/rec_save.dart';
-import 'package:everlong/ui/widgets/records/record_container.dart';
-import 'package:everlong/ui/widgets/records/record_list_container.dart';
-import 'package:everlong/ui/widgets/records/record_file.dart';
+import 'package:everlong/ui/views/record/record_container.dart';
+import 'package:everlong/ui/views/record/record_list_container.dart';
+import 'package:everlong/ui/views/record/record_file.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 

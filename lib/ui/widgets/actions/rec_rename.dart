@@ -6,7 +6,7 @@ import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/widgets/progress_indicator.dart';
-import 'package:everlong/ui/views/record_rename.dart';
+import 'package:everlong/ui/views/record/record_rename.dart';
 import 'package:everlong/ui/widgets/button.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
