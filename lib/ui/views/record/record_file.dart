@@ -17,7 +17,7 @@ enum FileSource {
 class RecordFile extends StatelessWidget {
   final double height = 28.0;
   final RecFile? file;
-  final Function? onTap;
+  final Function()? onTap;
   final RoomRecords? cloud;
   final Color activeLabelColor;
   final Color inactiveLabelColor;
@@ -59,10 +59,12 @@ class RecordFile extends StatelessWidget {
             : inactiveLabelColor
         : activeLabelColor;
     return GestureDetector(
-      onTap: () => isLocalFile() ? onTap : null,
+      // onTap: () => isLocalFile() ? onTap : null,
+      onTap: onTap,
       child: Container(
         height: height,
         color: _active ? activeBgColor : Colors.transparent,
+        // color: Colors.red,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Row(
