@@ -625,6 +625,9 @@ class Online extends ChangeNotifier {
 
       memberCount = membersList.length;
 
+      ///Close record's view when member less than 2
+      if (classroom.showRecorder) classroom.toggleRecordManagerDisplay();
+
       notifyListeners();
     });
   }

@@ -16,6 +16,7 @@ import 'package:everlong/ui/views/record/record_list_container.dart';
 import 'package:everlong/ui/views/record/record_file.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/sizes.dart';
 
 ///View for display recorder and list of record file on local session.
 class LocalRecordView extends StatefulWidget {
@@ -24,7 +25,6 @@ class LocalRecordView extends StatefulWidget {
 }
 
 class _LocalRecordViewState extends State<LocalRecordView> {
-
   //Height variable for drag-able widget calculation.
   double _initHeight = Setting.localRecorderHeight;
   double _start = 0;
@@ -58,7 +58,7 @@ class _LocalRecordViewState extends State<LocalRecordView> {
   @override
   Widget build(BuildContext context) {
     ScrollController _controller = new ScrollController();
-    double _minHeight = 200;
+    double _minHeight = MediaQuery.of(context).size.height * 0.2;
     double _maxHeight = MediaQuery.of(context).size.height * 0.45;
     return RecordContainer(
       decoration: kLocalRecordBoxDecor,
@@ -72,23 +72,56 @@ class _LocalRecordViewState extends State<LocalRecordView> {
           RecordListContainer(
             decoration: kLocalStoredMidiDecor,
             controller: _controller,
-            child: ListView.builder(
-              controller: _controller,
-              itemCount: context.watch<Recorder>().storedRecords.length,
-              itemBuilder: (BuildContext context, int _index) {
-                RecFile _file = context.watch<Recorder>().storedRecords[_index];
-                return RecordFile(
-                  file: _file,
-                  onTap: () => context.read<Recorder>().toggleActive(_file),
-                  activeLabelColor: kYellow4,
-                  inactiveLabelColor: kRed2,
-                  activeBgColor: kRed2,
-                  fileSource: FileSource.local,
-                  showPlay: true,
-                  showRename: true,
-                  showDelete: true,
-                );
-              },
+            child: Theme(
+              data: ThemeData(canvasColor: kOrange5),
+              child: ReorderableListView(
+                scrollController: _controller,
+                padding: EdgeInsets.all(0),
+                itemExtent: 28,
+                children: context
+                    .watch<Recorder>()
+                    .storedRecords
+                    .map((RecFile _file) => ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.all(0),
+                          visualDensity:
+                              VisualDensity(horizontal: 0, vertical: -4),
+                          key: GlobalKey(),
+                          title: RecordFile(
+                            file: _file,
+                            onTap: () =>
+                                context.read<Recorder>().toggleActive(_file),
+                            activeLabelColor: kYellow4,
+                            inactiveLabelColor: kRed2,
+                            activeBgColor: kRed2,
+                            fileSource: FileSource.local,
+                            showPlay: true,
+                            showRename: true,
+                            showDelete: true,
+                          ),
+                        ))
+                    .toList(),
+                onReorder: (oldIndex, newIndex) {
+                  context.read<Recorder>().reorderRecord(oldIndex, newIndex);
+                },
+                // child: ListView.builder(
+                // controller: _controller,
+                // itemCount: context.watch<Recorder>().storedRecords.length,
+                // itemBuilder: (BuildContext context, int _index) {
+                //   RecFile _file = context.watch<Recorder>().storedRecords[_index];
+                //   return RecordFile(
+                //     file: _file,
+                //     onTap: () => context.read<Recorder>().toggleActive(_file),
+                //     activeLabelColor: kYellow4,
+                //     inactiveLabelColor: kRed2,
+                //     activeBgColor: kRed2,
+                //     fileSource: FileSource.local,
+                //     showPlay: true,
+                //     showRename: true,
+                //     showDelete: true,
+                //   );
+                // },
+              ),
             ),
           ),
         ],
@@ -107,14 +140,14 @@ class RecordingPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RecFile? _currentRecord = context.watch<Recorder>().currentRecord;
+    // RecFile? _currentRecord = context.watch<Recorder>().currentRecord;
     String _recordingDuration = context.watch<Recorder>().recordingTimerText;
 
     //True when has recorded file pending for save.
-    bool _hasRecorded() =>
-        _currentRecord != null &&
-        _currentRecord.events.length > 0 &&
-        !context.watch<Recorder>().isRecording;
+    // bool _hasRecorded() =>
+    //     _currentRecord != null &&
+    //     _currentRecord.events.length > 0 &&
+    //     !context.watch<Recorder>().isRecording;
 
     return Row(
       children: [
@@ -123,26 +156,28 @@ class RecordingPanel extends StatelessWidget {
           flex: 3,
           child: SizedBox(
             height: 70,
-            child: _hasRecorded()
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(_currentRecord!.name),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          RecordPlayOrStop(file: _currentRecord),
-                          RecordDelete(fileType: FileType.recording),
-                          RecordRename(
-                              fileType: FileType.recording,
-                              file: _currentRecord),
-                          RecordSave(file: _currentRecord),
-                          recordTimer(timer: _currentRecord.totalTimeSecText),
-                        ],
-                      ),
-                    ],
-                  )
-                : timer(_recordingDuration),
+            child:
+                // _hasRecorded()
+                // ? Column(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Text(_currentRecord!.name),
+                //       Row(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           RecordPlayOrStop(file: _currentRecord),
+                //           RecordDelete(fileType: FileType.recording),
+                //           RecordRename(
+                //               fileType: FileType.recording,
+                //               file: _currentRecord),
+                //           RecordSave(file: _currentRecord),
+                //           recordTimer(timer: _currentRecord.totalTimeSecText),
+                //         ],
+                //       ),
+                //     ],
+                //   )
+                // :
+                timer(_recordingDuration),
           ),
         ),
       ],

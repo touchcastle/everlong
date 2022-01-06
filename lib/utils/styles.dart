@@ -128,8 +128,10 @@ const TextStyle kMemberInfo = TextStyle(color: kMemberDetail, fontSize: 14);
 
 ///Recorder
 TextStyle kRecorderCountdown = TextStyle(
-    fontSize: textSizeResp(ratio: 12),
-    fontWeight: FontWeight.w500,
+    // fontSize: textSizeResp(ratio: 12),
+    fontSize: kRecordingTimer,
+    fontFamily: kSecondaryFontFamily,
+    fontWeight: FontWeight.w800,
     color: kRed2);
 
 ///Dialog Text Style
@@ -142,7 +144,7 @@ TextStyle dialogSubHeader({Color? color}) => TextStyle(
     fontWeight: FontWeight.w500,
     color: color ?? Colors.white);
 TextStyle dialogDetail({Color? color}) =>
-    TextStyle(fontSize: textSizeResp(ratio: 30), color: color ?? Colors.white);
+    TextStyle(fontSize: textSizeResp(ratio: 35), color: color ?? Colors.white);
 
 ///TextFieldLabel
 TextStyle textFieldLabel({Color? color}) =>

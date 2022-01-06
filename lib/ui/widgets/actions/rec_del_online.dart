@@ -27,12 +27,7 @@ class RecordDeleteOnline extends StatelessWidget {
       height: 30,
       isVertical: false,
       isActive: false,
-      icon: svgIcon(
-
-          ///TODO: unusable icon
-          name: kRecDelIcon,
-          color: color,
-          width: kIconWidth),
+      icon: svgIcon(name: kRecDelIcon, color: color, width: kIconWidth),
       onPressed: () {
         context.read<Online>().delRecord(recordID: id);
       },

@@ -56,7 +56,7 @@ class Setting {
   static bool hostOnlineFeedback = false;
   static List<LightMonitor> lightMonitor = [];
   static double onlineRecorderHeight = 350;
-  static double localRecorderHeight = 200;
+  static double localRecorderHeight = 250;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -169,6 +169,7 @@ class Setting {
   static isOnline() => Setting.sessionMode == SessionMode.online;
   static isOffline() => Setting.sessionMode == SessionMode.offline;
   static bool isTablet() => Setting.deviceWidth >= kTabletStartWidth;
+  static bool isMobile() => Setting.deviceWidth < kTabletStartWidth;
 
   /// Encrypt outgoing message from MIDI[Uint8List] to [double]
   /// Key's pressure as decimal place. (99 maximum)

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:everlong/services/online.dart';
+// import 'package:provider/provider.dart';
+// import 'package:everlong/services/online.dart';
 import 'package:everlong/ui/widgets/actions/hold.dart';
 import 'package:everlong/ui/widgets/actions/reset.dart';
 import 'package:everlong/ui/widgets/actions/device_manager.dart';
@@ -33,9 +33,10 @@ class OnlineBottomMenu extends StatelessWidget {
               Reset(),
               DeviceManager(),
               isRoomHost ? Mute() : SizedBox.shrink(),
-              context.watch<Online>().memberCount > 1
-                  ? ShowRecord()
-                  : SizedBox.shrink(),
+              ShowRecord(),
+              // context.watch<Online>().memberCount > 1
+              //     ? ShowRecord()
+              //     : SizedBox.shrink(),
             ],
           ),
         ),

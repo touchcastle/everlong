@@ -36,7 +36,8 @@ class Snackbar {
     double _vMargin() => verticalMargin ? kBottomActionWidth + 5 : 5;
     // double _vMargin() => verticalMargin ? 0.08 : 0.02;
     Color _textColor() =>
-        type == MessageType.error ? kErrorSnackBoxText : kTextColorDark;
+        // type == MessageType.error ? kErrorSnackBoxText : kTextColorDark;
+        type == MessageType.error ? kErrorSnackBoxText : kErrorSnackBoxText;
     TextStyle _style() => TextStyle(fontSize: 13, color: _textColor());
 
     //BUILDER
@@ -46,7 +47,7 @@ class Snackbar {
       margin: EdgeInsets.symmetric(
         horizontal: dialogWidth
             ? Setting.deviceWidth * _hMargin()
-              : kMainAreaHorizontalPadding,
+            : kMainAreaHorizontalPadding,
         vertical: _vMargin(),
         // vertical: Setting.deviceHeight * _vMargin(),
       ),
@@ -54,7 +55,8 @@ class Snackbar {
           ? bgColor
           : type == MessageType.error
               ? kErrorSnackBoxBg
-              : kTextColorWhite,
+              : kErrorSnackBoxBg,
+      // : kErrorSnackBoxBg,
       shape: RoundedRectangleBorder(borderRadius: kAllBorderRadius),
       content: Row(
         children: [

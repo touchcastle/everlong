@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'dart:async';
 import 'package:nanoid/nanoid.dart';
+import 'package:intl/intl.dart';
 import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/setting.dart';
@@ -30,7 +31,7 @@ class Recorder extends ChangeNotifier {
   List<RecEvent> recordingEvents = [];
 
   ///New recorded file.
-  RecFile? currentRecord;
+  // RecFile? currentRecord;
 
   ///Temp variable for record event timestamp.
   int startTime = 0;
@@ -62,6 +63,11 @@ class Recorder extends ChangeNotifier {
   ///Initialize recorder
   void init() {
     _getFromPrefs();
+  }
+
+  void stopAllActivities() {
+    _playbackStopAll();
+    if (isRecording) stop(forceStop: true);
   }
 
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -124,7 +130,7 @@ class Recorder extends ChangeNotifier {
 
   void _clearRecording() {
     recordingEvents.clear();
-    currentRecord?.clear();
+    // currentRecord?.clear();
     startTime = 0;
     totalTime = 0;
   }
@@ -135,7 +141,7 @@ class Recorder extends ChangeNotifier {
       recordingTime++;
       _recCountDownText();
       notifyListeners();
-      if (recordingTime == kMaxRecordInSec) stop(context);
+      if (recordingTime == kMaxRecordInSec) stop(context: context);
     });
   }
 
@@ -158,7 +164,7 @@ class Recorder extends ChangeNotifier {
   ///then prompt dialog for set name.
   ///
   ///Will only allow if at least 1 event(MIDI note) was found.
-  Future stop(BuildContext context) async {
+  Future stop({BuildContext? context, bool forceStop = false}) async {
     recordingTimer?.cancel();
     recordingTime = 0;
 
@@ -175,23 +181,34 @@ class Recorder extends ChangeNotifier {
       String _id = customAlphabet(kRecordIdAlphabet, kRecordIdLength);
 
       List<RecEvent> _clone = List.from(recordingEvents);
-      currentRecord = new RecFile(
+
+      final DateTime now = DateTime.now();
+      final DateFormat formatter = DateFormat('yyMMddHHmmss');
+      final String formatted = formatter.format(now);
+
+      RecFile _new = new RecFile(
         id: _id,
         totalTimeMilliSec: totalTime,
         totalTimeSec: _inSec,
         totalTimeSecText: _timeText,
         events: _clone,
+        isActive: true,
+        name: formatted,
       );
 
-      //Prompt dialog for set name.
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) => dialogBox(
-          context: context,
-          content: RecordRenameDialog(
-              fileType: FileType.recording, file: currentRecord!),
-        ),
-      );
+      if (!forceStop) {
+        await showDialog(
+          context: context!,
+          builder: (BuildContext context) => dialogBox(
+            context: context,
+            content:
+                RecordRenameDialog(fileType: FileType.recording, file: _new),
+          ),
+        );
+      }
+
+      _cancelActive();
+      saveRecord(_new);
     } else {
       Snackbar.show(
         Setting.currentContext!,
@@ -221,7 +238,7 @@ class Recorder extends ChangeNotifier {
     int _timeCursor = 0;
 
     //Cancel if any playing.
-    playbackStopAll();
+    _playbackStopAll();
 
     file.isPlaying = true;
     notifyListeners();
@@ -301,15 +318,15 @@ class Recorder extends ChangeNotifier {
   }
 
   ///Stop any playing file
-  void playbackStopAll() {
+  void _playbackStopAll() {
     //Stored
     for (RecFile file in storedRecords.where((e) => e.isPlaying)) {
       playbackStop(file);
     }
 
-    //Recorded
-    if (currentRecord != null && currentRecord!.isPlaying)
-      playbackStop(currentRecord!);
+    //Recording
+    // if (currentRecord != null && currentRecord!.isPlaying)
+    //   playbackStop(currentRecord!);
   }
 
   ///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -352,6 +369,28 @@ class Recorder extends ChangeNotifier {
     }
   }
 
+  void reorderRecord(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    RecFile _file = storedRecords[oldIndex].copyWith();
+    storedRecords.removeAt(oldIndex);
+    storedRecords.insert(newIndex, _file);
+    notifyListeners();
+
+    //Delete in in-app pref
+    Setting.prefsRecords!.removeAt(oldIndex);
+
+    //Convert new to string
+    String _asString = fileToString(_file);
+
+    //Insert new file(new name) at same index as before.
+    Setting.prefsRecords!.insert(newIndex, _asString);
+
+    //Update prefs
+    Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+  }
+
   ///Since user needs to click on specific record prior to do anything with that
   ///record. App will need to mark flag for active record for display purpose.
   void toggleActive(RecFile file) {
@@ -362,12 +401,15 @@ class Recorder extends ChangeNotifier {
       file.isActive = false;
     } else {
       //Cancel other(if any) before mark this one.
-      int i = storedRecords
-          .indexWhere((item) => item.id != file.id && item.isActive);
-      if (i >= 0) storedRecords[i].isActive = false;
+      _cancelActive();
       file.isActive = true;
     }
     notifyListeners();
+  }
+
+  void _cancelActive() {
+    int i = storedRecords.indexWhere((item) => item.isActive);
+    if (i >= 0) storedRecords[i].isActive = false;
   }
 
   ///There are 3 variables that storing records
@@ -380,13 +422,14 @@ class Recorder extends ChangeNotifier {
   void saveRecord(RecFile file) {
     //Append to in-app record list
     RecFile _clone = file.copyWith();
-    storedRecords.add(_clone);
+    storedRecords.insert(0, _clone);
 
     //Convert to string
     String _asString = fileToString(file);
 
     //Append to in-app prefs list
-    Setting.prefsRecords?.add(_asString);
+    Setting.prefsRecords?.insert(0, _asString);
+    // Setting.prefsRecords?.add(_asString);
 
     //Update prefs
     Setting.saveListString(kRecordsPref, Setting.prefsRecords!);

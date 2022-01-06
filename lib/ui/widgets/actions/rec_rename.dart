@@ -20,12 +20,7 @@ class RecordRename extends StatelessWidget {
       height: 30,
       isVertical: false,
       isActive: false,
-      icon: svgIcon(
-
-          ///TODO: unusable icon
-          name: kRecRenameIcon,
-          color: color,
-          width: kIconWidth),
+      icon: svgIcon(name: kRecRenameIcon, color: color, width: kIconWidth),
       onPressed: () async {
         await showDialog(
           context: context,

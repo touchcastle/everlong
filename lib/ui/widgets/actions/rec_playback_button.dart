@@ -29,8 +29,6 @@ class _RecordPlayOrStopState extends State<RecordPlayOrStop> {
       isVertical: false,
       isActive: false,
       icon: svgIcon(
-
-          ///TODO: unusable icon
           name: _isPlaying ? kRecStopIcon : kRecPlayIcon,
           color: widget.color,
           width: kIconWidth),

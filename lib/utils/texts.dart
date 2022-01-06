@@ -16,6 +16,8 @@ const String kLightFreeze =
 const String kToSetting = 'SETTING';
 const String kGoogleError =
     'Service is currently unavailable, please try again later';
+const String kSharedDisabled =
+    'Share function available when there are at least 2 participants in session.';
 
 ///Online Lobby
 const String kJoinHeader = 'Join Online Session';

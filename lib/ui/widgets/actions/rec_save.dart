@@ -21,25 +21,13 @@ class RecordSave extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // bool _isRecording = context.watch<Recorder>().isRecording;
     return Button(
       width: 30,
       height: 30,
       isVertical: false,
       isActive: false,
-      icon: svgIcon(
-
-          ///TODO: unusable icon
-          name: kSaveIcon,
-          // color: _isShow
-          //     ? Colors.white
-          //     : Setting.isOnline()
-          //         ? kTextColorLight
-          //         : kLocalLabelColor,
-          width: kIconWidth),
-      onPressed: () {
-        context.read<Recorder>().saveRecord(file);
-      },
+      icon: svgIcon(name: kSaveIcon, width: kIconWidth),
+      onPressed: () => context.read<Recorder>().saveRecord(file),
     );
   }
 }

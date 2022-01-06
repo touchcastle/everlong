@@ -27,17 +27,15 @@ class _RecordButtonState extends State<RecordButton> {
     return Button(
       isVertical: false,
       isActive: false,
-      width: 50,
-      height: 50,
+      width: _isRecording ? 48 : 50,
+      height: _isRecording ? 48 : 50,
       icon: svgIcon(
-
-          ///TODO: unusable icon
           name: _isRecording ? kRecStopIcon : kRecStartIcon,
-          color: _isRecording ? Colors.black : kRed2,
-          width: 50),
+          // color: _isRecording ? Colors.black : null,
+          width: _isRecording ? 48 : 50),
       onPressed: () {
         if (_isRecording) {
-          context.read<Recorder>().stop(context);
+          context.read<Recorder>().stop(context: context);
         } else {
           if (context.read<Classroom>().masterID != kNoMaster &&
               context.read<Classroom>().anyConnected()) {

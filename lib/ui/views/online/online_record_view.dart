@@ -131,24 +131,58 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
           RecordListContainer(
             decoration: kOnlineStoredMidiDecor,
             controller: _controller2,
-            child: ListView.builder(
-              controller: _controller2,
-              itemCount: context.watch<Recorder>().storedRecords.length,
-              itemBuilder: (BuildContext context, int _index) {
-                RecFile _file = context.watch<Recorder>().storedRecords[_index];
-                return RecordFile(
-                  file: _file,
-                  onTap: () => context.read<Recorder>().toggleActive(_file),
-                  activeLabelColor: Colors.white,
-                  inactiveLabelColor: Colors.white,
-                  activeBgColor: kGreen3,
-                  fileSource: FileSource.local,
-                  showPlay: true,
-                  showRename: true,
-                  showDelete: true,
-                  showUpload: true,
-                );
-              },
+            child: Theme(
+              data: ThemeData(canvasColor: kOrange5),
+              child: ReorderableListView(
+                scrollController: _controller2,
+                padding: EdgeInsets.all(0),
+                itemExtent: 28,
+                children: context
+                    .watch<Recorder>()
+                    .storedRecords
+                    .map((RecFile _file) => ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.all(0),
+                          visualDensity:
+                              VisualDensity(horizontal: 0, vertical: -4),
+                          key: GlobalKey(),
+                          title: RecordFile(
+                            file: _file,
+                            onTap: () =>
+                                context.read<Recorder>().toggleActive(_file),
+                            activeLabelColor: Colors.white,
+                            inactiveLabelColor: Colors.white,
+                            activeBgColor: kGreen3,
+                            fileSource: FileSource.local,
+                            showPlay: true,
+                            showRename: true,
+                            showDelete: true,
+                            showUpload: true,
+                          ),
+                        ))
+                    .toList(),
+                onReorder: (oldIndex, newIndex) {
+                  context.read<Recorder>().reorderRecord(oldIndex, newIndex);
+                },
+                // child: ListView.builder(
+                //   controller: _controller2,
+                //   itemCount: context.watch<Recorder>().storedRecords.length,
+                //   itemBuilder: (BuildContext context, int _index) {
+                //     RecFile _file = context.watch<Recorder>().storedRecords[_index];
+                //     return RecordFile(
+                //       file: _file,
+                //       onTap: () => context.read<Recorder>().toggleActive(_file),
+                //       activeLabelColor: Colors.white,
+                //       inactiveLabelColor: Colors.white,
+                //       activeBgColor: kGreen3,
+                //       fileSource: FileSource.local,
+                //       showPlay: true,
+                //       showRename: true,
+                //       showDelete: true,
+                //       showUpload: true,
+                //     );
+                //   },
+              ),
             ),
           ),
         ],

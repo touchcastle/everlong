@@ -8,6 +8,8 @@ import 'package:everlong/ui/widgets/actions/rec_rename.dart';
 import 'package:everlong/ui/widgets/actions/rec_upload.dart';
 import 'package:everlong/ui/widgets/actions/rec_download.dart';
 import 'package:everlong/ui/widgets/actions/rec_del_online.dart';
+import 'package:everlong/utils/styles.dart';
+import 'package:everlong/utils/sizes.dart';
 
 enum FileSource {
   local,
@@ -58,6 +60,12 @@ class RecordFile extends StatelessWidget {
             ? activeLabelColor
             : inactiveLabelColor
         : activeLabelColor;
+    TextStyle _style = TextStyle(
+      color: _activeLabel(),
+      fontFamily: kSecondaryFontFamily,
+      fontSize: kRecordDetailSize,
+      fontWeight: FontWeight.w700,
+    );
     return GestureDetector(
       // onTap: () => isLocalFile() ? onTap : null,
       onTap: onTap,
@@ -75,7 +83,7 @@ class RecordFile extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Text(
                     fileName(),
-                    style: TextStyle(color: _activeLabel()),
+                    style: _style,
                   ),
                 ),
               ),
@@ -121,7 +129,7 @@ class RecordFile extends StatelessWidget {
                   : SizedBox.shrink(),
               recordTimer(
                 timer: fileDuration(),
-                style: TextStyle(color: _activeLabel()),
+                style: _style,
               ),
             ],
           ),

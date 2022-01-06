@@ -24,6 +24,18 @@ class RecordRenameDialog extends StatefulWidget {
 
 class _RecordRenameDialogState extends State<RecordRenameDialog> {
   String? _newName;
+  final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = widget.file.name;
+    _controller.selection = TextSelection(
+      baseOffset:
+          widget.fileType == FileType.recording ? 0 : widget.file.name.length,
+      extentOffset: widget.file.name.length,
+    );
+  }
 
   ///Inner horizontal padding
   EdgeInsetsGeometry _innerPad =
@@ -42,13 +54,14 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
                 textSelectionTheme:
                     TextSelectionThemeData(selectionColor: Colors.green)),
             child: TextFormField(
-              initialValue: widget.file.name,
+              // initialValue: widget.file.name,
               style: kTextFieldStyle,
               cursorColor: Colors.black,
               autofocus: true,
               enabled: true,
               decoration: kRenameTextDecor(kRenameBoxLabel),
               onChanged: (newText) => _newName = newText,
+              controller: _controller,
             ),
           ),
         ],

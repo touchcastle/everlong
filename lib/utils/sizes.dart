@@ -11,6 +11,10 @@ double kDialogButtonTextSize = textSizeResp(ratio: 20);
 ///Info bar text size
 double kInfoBarTextSize = textSizeResp(ratio: 35);
 
+///Record
+const double kRecordDetailSize = 14;
+const double kRecordingTimer = 28;
+
 ///Dialog
 double kDialogSubTextSize = textSizeResp(ratio: 30);
 

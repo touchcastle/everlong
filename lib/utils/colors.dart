@@ -37,6 +37,9 @@ const Color kDarkOnlineBG = kGreen2;
 ///For Standing-by Button
 const Color kOnlineInactiveLabel = kYellowMain;
 
+///For Standing-by Button
+const Color kOnlineDisabledLabel = kGreen3;
+
 ///For Room Info.Subject.
 const Color kOnlineRoomSubject = kTextColorLight;
 

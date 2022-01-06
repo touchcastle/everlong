@@ -27,12 +27,7 @@ class RecordDelete extends StatelessWidget {
       height: 30,
       isVertical: false,
       isActive: false,
-      icon: svgIcon(
-
-          ///TODO: unusable icon
-          name: kRecDelIcon,
-          color: color,
-          width: kIconWidth),
+      icon: svgIcon(name: kRecDelIcon, color: color, width: kIconWidth),
       onPressed: () {
         if (fileType == FileType.recording) {
           context.read<Recorder>().clear();

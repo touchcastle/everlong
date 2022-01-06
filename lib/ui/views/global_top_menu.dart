@@ -40,7 +40,8 @@ class GlobalTopMenu extends StatelessWidget {
       );
     } else {
       await context.read<Classroom>().cancelAllMaster();
-      context.read<Recorder>().playbackStopAll();
+      // context.read<Recorder>().playbackStopAll();
+      context.read<Recorder>().stopAllActivities();
       context.read<Classroom>().showRecorder = false;
       Navigator.pop(context);
     }

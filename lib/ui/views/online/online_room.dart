@@ -85,9 +85,11 @@ class _OnlineRoomState extends State<OnlineRoom> {
 
   bool _showList() => context.watch<Classroom>().showList;
 
-  bool _showRecorder() =>
-      context.watch<Classroom>().showRecorder &&
-      context.watch<Online>().memberCount > 1;
+  bool _showRecorder() => context.watch<Classroom>().showRecorder;
+
+  // bool _showRecorder() =>
+  //     context.watch<Classroom>().showRecorder &&
+  //         context.watch<Online>().memberCount > 1;
 
   ///Set flag when user swipe to change view mode.
   void _swiper(DragEndDetails details) {
