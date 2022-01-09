@@ -36,14 +36,19 @@ class RecordDelete extends StatelessWidget {
           builder: (BuildContext context) => dialogBox(
             smallerDialog: true,
             context: context,
-            content: confirmDialog(context, onConfirm: () async {
-              if (fileType == FileType.recording) {
-                context.read<Recorder>().clear();
-              } else if (fileType == FileType.stored) {
-                context.read<Recorder>().deleteRecord(id!);
-              }
-              Navigator.pop(context);
-            }),
+            content: confirmDialog(
+              context,
+              icon: kRecDelIcon,
+              detail: 'Are you sure you want to delete record?',
+              onConfirm: () async {
+                if (fileType == FileType.recording) {
+                  context.read<Recorder>().clear();
+                } else if (fileType == FileType.stored) {
+                  context.read<Recorder>().deleteRecord(id!);
+                }
+                Navigator.pop(context);
+              },
+            ),
           ),
         );
       },

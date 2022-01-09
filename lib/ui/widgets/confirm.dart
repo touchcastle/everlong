@@ -13,17 +13,17 @@ import 'package:everlong/utils/texts.dart';
 Widget confirmDialog(
   BuildContext context, {
   required Function() onConfirm,
-  String icon = kBluetoothIconDisconnected,
-  Color headerColor = kTextColorLight,
-  String header = kConfirmHeader,
-  String detail = kConfirmInfo,
-  Color detailColor = kTextColorWhite,
-  Color bgColor = kGreen2,
+  String? icon,
+  Color? headerColor,
+  String? header,
+  String? detail,
+  Color? detailColor,
+  Color? bgColor,
 }) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: kAllBorderRadius,
-      color: bgColor,
+      color: bgColor ?? kGreen2,
     ),
     child: Padding(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -34,12 +34,16 @@ Widget confirmDialog(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              svgIcon(name: icon, width: 30, color: headerColor),
+              svgIcon(
+                name: icon ?? kOkIcon,
+                width: 25,
+                color: headerColor ?? kTextColorLight,
+              ),
               SizedBox(width: 15),
               Text(
-                header,
+                header ?? kConfirmHeader,
                 style: TextStyle(
-                  color: headerColor,
+                  color: headerColor ?? kTextColorLight,
                   fontSize: textSizeResp(ratio: 20),
                 ),
               ),
@@ -47,9 +51,9 @@ Widget confirmDialog(
           ),
           SizedBox(height: 20),
           Text(
-            detail,
+            detail ?? kConfirmInfo,
             style: TextStyle(
-              color: detailColor,
+              color: detailColor ?? kTextColorWhite,
               fontSize: textSizeResp(ratio: 30),
             ),
           ),
