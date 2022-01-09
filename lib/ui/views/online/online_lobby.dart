@@ -28,6 +28,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   String? _nameToJoin;
   TextEditingController? _roomIdInputCtrl;
   TextEditingController? _nameInputCtrl;
+  bool _focus = false;
 
   ///Lobby box width
   double _dialogRatio() =>
@@ -48,6 +49,16 @@ class _OnlineLobbyState extends State<OnlineLobby> {
     if (widget.roomID != null) {
       _roomToJoin = widget.roomID!;
       _roomIdInputCtrl = TextEditingController(text: _roomToJoin);
+    } else if (Setting.lastJoinedSession != null &&
+        Setting.lastJoinedSession != '' &&
+        Setting.lastJoinedSession!.length == kSessionIdLength) {
+      _roomToJoin = Setting.lastJoinedSession!;
+      _roomIdInputCtrl = TextEditingController(text: _roomToJoin);
+      _roomIdInputCtrl!.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: Setting.lastJoinedSession!.length,
+      );
+      _focus = true;
     }
     if (Setting.prefName != null) {
       _nameToJoin = Setting.prefName!;
@@ -92,7 +103,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
             keyboardType: TextInputType.number,
             style: kTextFieldStyle,
             decoration: kRenameTextDecor(kSession),
-            // autofocus: _autoFocus(),
+            autofocus: _focus,
             onChanged: (value) => _roomToJoin = value,
           ),
         ),

@@ -41,6 +41,8 @@ const String kSessionEndedInfo =
     'The session was terminated by the\nhost. You will be automatically taken\nback to main menu';
 const String kExitHeader = 'Leave room?';
 const String kExitInfo = 'Are you sure you want to leave room?';
+const String kConfirmHeader = 'Confirm?';
+const String kConfirmInfo = 'Confirm action?';
 
 ///Local Screen
 const String kMasterDevice = 'Master Device: ';

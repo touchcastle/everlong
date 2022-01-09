@@ -111,12 +111,13 @@ class _LocalPageState extends State<LocalPage>
   }
 
   ///Set flag when user swipe to change view mode.
+  ///New-requirement to disable this function.
   void _swiper(DragEndDetails details) {
-    if (details.primaryVelocity! > 0) {
-      context.read<Classroom>().toggleListDisplay(forceShow: false);
-    } else if (details.primaryVelocity! < 0) {
-      context.read<Classroom>().toggleListDisplay(forceShow: true);
-    }
+    // if (details.primaryVelocity! > 0) {
+    //   context.read<Classroom>().toggleListDisplay(forceShow: false);
+    // } else if (details.primaryVelocity! < 0) {
+    //   context.read<Classroom>().toggleListDisplay(forceShow: true);
+    // }
   }
 
   @override

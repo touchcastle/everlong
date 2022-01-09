@@ -223,6 +223,9 @@ class Online extends ChangeNotifier {
       _toggleRoomHost(true);
 
       await _onRoomEntered(id: this.roomID);
+
+      //reset joined session id when create.
+      Setting.joinedSession('');
     } catch (e) {
       throw (kErr1005);
       // throw (e);
@@ -271,6 +274,7 @@ class Online extends ChangeNotifier {
         isHost: this.isRoomHost,
       );
       await _onRoomEntered(id: id);
+      Setting.joinedSession(id);
     } catch (e) {
       throw (kErr1006);
     }
@@ -626,7 +630,8 @@ class Online extends ChangeNotifier {
       memberCount = membersList.length;
 
       ///Close record's view when member less than 2
-      if (classroom.showRecorder) classroom.toggleRecordManagerDisplay();
+      if (memberCount <= 1 && classroom.showRecorder)
+        classroom.toggleRecordManagerDisplay();
 
       notifyListeners();
     });

@@ -92,12 +92,13 @@ class _OnlineRoomState extends State<OnlineRoom> {
   //         context.watch<Online>().memberCount > 1;
 
   ///Set flag when user swipe to change view mode.
+  ///New-Requirement to disable this function
   void _swiper(DragEndDetails details) {
-    if (details.primaryVelocity! > 0) {
-      context.read<Classroom>().toggleListDisplay(forceShow: false);
-    } else if (details.primaryVelocity! < 0) {
-      context.read<Classroom>().toggleListDisplay(forceShow: true);
-    }
+    // if (details.primaryVelocity! > 0) {
+    // context.read<Classroom>().toggleListDisplay(forceShow: false);
+    // } else if (details.primaryVelocity! < 0) {
+    // context.read<Classroom>().toggleListDisplay(forceShow: true);
+    // }
   }
 
   Padding _recorder() => Padding(

@@ -43,6 +43,7 @@ const String kRecordIdAlphabet = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const String kDelayPref = 'delay';
 const String kModePref = 'mode';
 const String kNamePref = 'name';
+const String kSessionIdPref = 'session_id';
 const String kMasterRemindPref = 'remind_master';
 const String kRecordsPref = 'records';
 

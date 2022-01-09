@@ -57,6 +57,7 @@ class Setting {
   static List<LightMonitor> lightMonitor = [];
   static double onlineRecorderHeight = 350;
   static double localRecorderHeight = 250;
+  static String? lastJoinedSession;
 
   static void initialize(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -76,6 +77,9 @@ class Setting {
 
     ///Name
     prefName = prefs.getString(kNamePref);
+
+    ///Session ID
+    lastJoinedSession = prefs.getString(kSessionIdPref);
 
     ///Records
     prefsRecords = prefs.getStringList(kRecordsPref) ?? [];
@@ -144,6 +148,11 @@ class Setting {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       return androidDeviceInfo.androidId; // unique ID on Android
     }
+  }
+
+  static void joinedSession(String id) {
+    lastJoinedSession = id;
+    saveString(kSessionIdPref, id);
   }
 
   static Future<String> getName() async {
