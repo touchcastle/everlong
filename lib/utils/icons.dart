@@ -48,6 +48,7 @@ const String kRecStartIcon = 'assets/icons/rec_start.svg';
 const String kRecStopIcon = 'assets/icons/rec_stop.svg';
 const String kRecPlayIcon = 'assets/icons/rec_play.svg';
 const String kRecDelIcon = 'assets/icons/rec_del.svg';
+const String kRecLoopIcon = 'assets/icons/rec_loop.svg';
 const String kRecRenameIcon = 'assets/icons/rec_rename.svg';
 // double kIconWidth2 = textSizeResp(ratio: 15);
 const double kIconWidth = 25;

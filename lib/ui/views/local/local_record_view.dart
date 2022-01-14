@@ -96,6 +96,7 @@ class _LocalRecordViewState extends State<LocalRecordView> {
                             activeBgColor: kRed2,
                             fileSource: FileSource.local,
                             showPlay: true,
+                            showLoop: true,
                             showRename: true,
                             showDelete: true,
                           ),

@@ -65,6 +65,9 @@ const Color kOnlineDialog = kGreenMain;
 /// Background color gradient for online screen.
 const List<Color> kOnlineBG = [kGreenMain, kGreen5];
 
+/// Alternate Background color gradient for online screen.
+const List<Color> kOnlineBG2 = [kGreenMain, kGreen2];
+
 /// Background color gradient for session ended dialog.
 const List<Color> kSessionEndedBG = [kGreen2, kGreen2];
 
@@ -109,6 +112,9 @@ const Color kLocalDialog = kYellowMain;
 
 /// Background color gradient for local screen.
 const List<Color> kLocalBG = [kOrangeMain, kYellowMain];
+
+/// Alternate Background color gradient for local screen.
+const List<Color> kLocalBG2 = [kYellowMain, kOrangeMain];
 
 /// Background color gradient for setting screen.
 const List<Color> kSettingBG = [kYellowMain, kOrangeMain];

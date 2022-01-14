@@ -401,6 +401,14 @@ class Classroom extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///Turn off only 'still on' key.
+  Future turnOffMonitoredLight() async {
+    for (BLEDevice _d
+        in bluetoothDevices.where((d) => d.isConnected() && !d.isMaster)) {
+      await _d.lightOffOnlyMonitoredKeys();
+    }
+  }
+
   /// To switch editable text field of device's name.
   void toggleNameEditing(BLEDevice device) {
     device.isEditingName = !device.isEditingName;

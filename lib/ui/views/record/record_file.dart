@@ -3,6 +3,7 @@ import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/recorder.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/ui/widgets/actions/rec_playback_button.dart';
+import 'package:everlong/ui/widgets/actions/rec_loop.dart';
 import 'package:everlong/ui/widgets/actions/rec_del.dart';
 import 'package:everlong/ui/widgets/actions/rec_rename.dart';
 import 'package:everlong/ui/widgets/actions/rec_upload.dart';
@@ -26,6 +27,7 @@ class RecordFile extends StatelessWidget {
   final Color activeBgColor;
   final FileSource fileSource;
   final bool showPlay;
+  final bool showLoop;
   final bool showRename;
   final bool showDelete;
   final bool showUpload;
@@ -40,6 +42,7 @@ class RecordFile extends StatelessWidget {
     required this.activeBgColor,
     required this.fileSource,
     this.showPlay = false,
+    this.showLoop = false,
     this.showRename = false,
     this.showDelete = false,
     this.showUpload = false,
@@ -93,6 +96,9 @@ class RecordFile extends StatelessWidget {
                         showPlay
                             ? RecordPlayOrStop(
                                 file: file!, color: activeLabelColor)
+                            : SizedBox.shrink(),
+                        showLoop
+                            ? RecordLoop(file: file!, color: activeLabelColor)
                             : SizedBox.shrink(),
                         showRename
                             ? RecordRename(

@@ -92,7 +92,7 @@ class Recorder extends ChangeNotifier {
   String downloadSharedRecord(String data) {
     RecFile _new = StringToFile(data);
     if (storedRecords.indexWhere((e) => e.id == _new.id) < 0) {
-      saveRecord(_new);
+      _saveNewRecord(_new);
       return 'record ${_new.name} was saved.';
     } else {
       return 'record ${_new.name} was already stored';
@@ -208,7 +208,7 @@ class Recorder extends ChangeNotifier {
       }
 
       _cancelActive();
-      saveRecord(_new);
+      _saveNewRecord(_new);
     } else {
       Snackbar.show(
         Setting.currentContext!,
@@ -249,6 +249,7 @@ class Recorder extends ChangeNotifier {
     bool _continue = false;
     player = Timer.periodic(Duration(milliseconds: milliSecDivide), (t) {
       if (_play.isNotEmpty) {
+        //Do loop for multiple events in one timer.
         do {
           if (_play.length > 0 && _play[0].time <= _timeCursor) {
             final Uint8List _uintData = Uint8List.fromList(_play[0].data);
@@ -272,12 +273,21 @@ class Recorder extends ChangeNotifier {
 
       //When playing completed(Time cursor >= file duration).
       if (_timeCursor >= file.totalTimeMilliSec) {
-        t.cancel();
-        file.isPlaying = false;
-        _resetPlaybackTimer(file);
-        classroom.resetDisplay();
-        notifyListeners();
-        print('FINISHED');
+        if (!file.isLoop) {
+          t.cancel();
+          file.isPlaying = false;
+          _resetPlaybackTimer(file);
+          classroom.turnOffMonitoredLight();
+          classroom.resetDisplay();
+          notifyListeners();
+        } else if (file.isLoop) {
+          ///TODO: Check
+          _resetPlaybackTimer(file);
+          _play = List.from(file.events);
+          _timeCursor = 0;
+          _playBackTimer(file);
+          notifyListeners();
+        }
       }
     });
   }
@@ -313,6 +323,7 @@ class Recorder extends ChangeNotifier {
     player?.cancel();
     _resetPlaybackTimer(file);
     file.isPlaying = false;
+    classroom.turnOffMonitoredLight();
     classroom.resetDisplay();
     notifyListeners();
   }
@@ -348,23 +359,8 @@ class Recorder extends ChangeNotifier {
       file.name = newName;
 
       //Modify and update file in mobile's memory(prefs).
-      if (fileType == FileType.stored) {
-        //Get current index for further insert.
-        int _prefIndex = Setting.prefsRecords!.indexWhere(
-            (item) => item.substring(0, kRecordIdLength) == file.id);
+      if (fileType == FileType.stored) _updatePrefs(file);
 
-        //Delete in in-app pref
-        Setting.prefsRecords!.removeAt(_prefIndex);
-
-        //Convert new to string
-        String _asString = fileToString(file);
-
-        //Insert new file(new name) at same index as before.
-        Setting.prefsRecords!.insert(_prefIndex, _asString);
-
-        //Update prefs
-        Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
-      }
       notifyListeners();
     }
   }
@@ -407,6 +403,33 @@ class Recorder extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///When enable/disable loop play, also update in device prefs.
+  void toggleLoop(RecFile file) {
+    file.isLoop = !file.isLoop;
+
+    _updatePrefs(file);
+
+    notifyListeners();
+  }
+
+  void _updatePrefs(RecFile file) {
+    //Get current index for further insert.
+    int _prefIndex = Setting.prefsRecords!
+        .indexWhere((item) => item.substring(0, kRecordIdLength) == file.id);
+
+    //Delete in in-app pref
+    Setting.prefsRecords!.removeAt(_prefIndex);
+
+    //Convert new to string
+    String _asString = fileToString(file);
+
+    //Insert new file(new name) at same index as before.
+    Setting.prefsRecords!.insert(_prefIndex, _asString);
+
+    //Update prefs
+    Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+  }
+
   void _cancelActive() {
     int i = storedRecords.indexWhere((item) => item.isActive);
     if (i >= 0) storedRecords[i].isActive = false;
@@ -419,7 +442,7 @@ class Recorder extends ChangeNotifier {
   ///3.[kRecordsPref] in device's memory that need to Get() or Set().
   ///
   ///Save new recorded to in-app list and device's memory(pref).
-  void saveRecord(RecFile file) {
+  void _saveNewRecord(RecFile file) {
     //Append to in-app record list
     RecFile _clone = file.copyWith();
     storedRecords.insert(0, _clone);
@@ -480,10 +503,13 @@ class Recorder extends ChangeNotifier {
     //[4]
     _new += file.totalTimeSecText + kRecordHeaderDivider;
 
+    //[5]
+    _new += file.loopToString() + kRecordHeaderDivider;
+
     //----------------
     //EVENTS
     //----------------
-    //[5]
+    //[6]
     for (int i = 0; i < file.events.length; i++) {
       _new += file.events[i].time.toString() + kRecordEventDivider;
       String _shortenMidi = Setting.messageEncryptor(raw: file.events[i].data);
@@ -507,7 +533,7 @@ class Recorder extends ChangeNotifier {
     List<String> _header = string.split(kRecordHeaderDivider);
 
     //Will get list of events (Still as string)
-    List<String> _events = _header[5].split(kRecordItemDivider);
+    List<String> _events = _header[6].split(kRecordItemDivider);
 
     //Append each string event into list of <RecEvent>.
     for (int i = 0; i < _events.length; i++) {
@@ -528,6 +554,7 @@ class Recorder extends ChangeNotifier {
       totalTimeMilliSec: int.parse(_header[2]),
       totalTimeSec: int.parse(_header[3]),
       totalTimeSecText: _header[4],
+      isLoop: _header[5] == '1' ? true : false,
       events: _RecordEvents,
     );
     return _out;

@@ -155,6 +155,7 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
                             activeBgColor: kGreen3,
                             fileSource: FileSource.local,
                             showPlay: true,
+                            showLoop: true,
                             showRename: true,
                             showDelete: true,
                             showUpload: true,

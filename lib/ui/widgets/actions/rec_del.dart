@@ -39,7 +39,7 @@ class RecordDelete extends StatelessWidget {
             content: confirmDialog(
               context,
               icon: kRecDelIcon,
-              detail: 'Are you sure you want to delete record?',
+              detail: 'Are you sure you want to delete?',
               onConfirm: () async {
                 if (fileType == FileType.recording) {
                   context.read<Recorder>().clear();
@@ -48,6 +48,10 @@ class RecordDelete extends StatelessWidget {
                 }
                 Navigator.pop(context);
               },
+              bgGradColor: Setting.isOnline() ? kOnlineBG2 : kLocalBG2,
+              headerColor: Setting.isOnline() ? kTextColorLight : kTextColorRed,
+              detailColor: Setting.isOnline() ? kYellow3 : Colors.white,
+              buttonColor: Setting.isOnline() ? Colors.white : kTextColorRed,
             ),
           ),
         );

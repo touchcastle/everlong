@@ -18,12 +18,14 @@ Widget confirmDialog(
   String? header,
   String? detail,
   Color? detailColor,
-  Color? bgColor,
+  Color? buttonColor,
+  required List<Color> bgGradColor,
 }) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: kAllBorderRadius,
-      color: bgColor ?? kGreen2,
+      gradient: kBGGradient(bgGradColor),
+      // color: bgColor ?? kGreen2,
     ),
     child: Padding(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -61,8 +63,16 @@ Widget confirmDialog(
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              OkOrCustomButton(label: kCancel, icon: kCancelIcon),
-              OkOrCustomButton(onPressed: onConfirm, label: kConfirm),
+              OkOrCustomButton(
+                label: kCancel,
+                icon: kCancelIcon,
+                labelColor: buttonColor,
+              ),
+              OkOrCustomButton(
+                onPressed: onConfirm,
+                label: kConfirm,
+                labelColor: buttonColor,
+              ),
             ],
           )
         ],

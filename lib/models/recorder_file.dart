@@ -14,7 +14,6 @@ class RecEvent {
 
 ///Recorded file.
 class RecFile extends ChangeNotifier {
-
   ///UUID for each file
   String id;
 
@@ -36,6 +35,9 @@ class RecFile extends ChangeNotifier {
   ///Is active for do any action via local/online session
   bool isActive;
 
+  ///Is playing as loop.
+  bool isLoop;
+
   ///Events(simulate MIDI events)
   List<RecEvent> events;
 
@@ -47,6 +49,7 @@ class RecFile extends ChangeNotifier {
     required this.events,
     this.isPlaying = false,
     this.isActive = false,
+    this.isLoop = false,
     this.name = 'New Record',
   });
 
@@ -78,4 +81,10 @@ class RecFile extends ChangeNotifier {
     totalTimeMilliSec = 0;
     events.clear();
   }
+
+  // void toggleLoop() {
+  //   this.isLoop = !this.isLoop;
+  // }
+
+  String loopToString() => this.isLoop ? '1' : '0';
 }
