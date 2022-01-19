@@ -150,6 +150,11 @@ class BLEDevice extends ChangeNotifier {
     _classroom.sortList(ReorderType.connected, this.id());
 
     //Handshake for Pop Piano.
+    /**
+     * @todo improve the pre setup message for the POP piano
+     * the LED mode on possible message can be just F00FF7
+     * ( and also the message below are not follow the standard of Sysex format )
+     */
     if (_isPopPiano()) {
       this.write(message: kStart2);
       await Future.delayed(Duration(milliseconds: 200));

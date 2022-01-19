@@ -22,7 +22,12 @@ class _TutorialState extends State<Tutorial> {
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
     imagePaths = manifestMap.keys
-        .where((String key) => key.contains('assets/images/tutorial/$_type/'))
+        .where((String key) =>
+            key.contains('assets/images/tutorial/$_type/') &&
+            (key.contains('.png') ||
+                key.contains('.jpg') ||
+                key.contains('.PNG') ||
+                key.contains('.JPG')))
         .toList();
     setState(() => _loaded = true);
   }
