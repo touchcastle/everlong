@@ -760,21 +760,22 @@ class Online extends ChangeNotifier {
 
   Future<Uri> _buildLink() async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
-        uriPrefix: kPrefix,
-        link: Uri.parse('$kDisplayUrl/join?$roomID/'),
-        androidParameters: AndroidParameters(
-          packageName: kBundle,
-          minimumVersion: kAndroidMinVer,
-        ),
-        iosParameters: IosParameters(
-          bundleId: kBundle,
-          ipadBundleId: kBundle,
-          minimumVersion: kAppStoreMinVer,
-          appStoreId: kAppStoreId,
-        ));
-    // final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
-    // final Uri outUrl = shortDynamicLink.shortUrl;
-    final Uri outUrl = parameters.link;
+      uriPrefix: kPrefix,
+      link: Uri.parse('$kDisplayUrl/join?$roomID/'),
+      androidParameters: AndroidParameters(
+        packageName: kBundle,
+        minimumVersion: kAndroidMinVer,
+      ),
+      iosParameters: IosParameters(
+        bundleId: kBundle,
+        ipadBundleId: kBundle,
+        minimumVersion: kAppStoreMinVer,
+        appStoreId: kAppStoreId,
+      ),
+    );
+
+    final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+    final Uri outUrl = shortDynamicLink.shortUrl;
     return outUrl;
   }
 
