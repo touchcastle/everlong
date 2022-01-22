@@ -57,16 +57,19 @@ const String kConnectingText = 'Connecting';
 const String kDisconnectedText = 'Disconnected';
 const String kDisconnectingText = 'Disconnecting';
 const String kMaster = 'Master';
-const String kDevicesMng = 'Devices Manager';
+const String kDevicesMng = 'Devices';
+// const String kDevicesMng = 'Devices Manager';
 const String kUntitled = 'untitled';
 
 ///Button label
 const String kToHold = 'Hold';
 const String kToUnHold = 'Release';
-const String kResetLight = 'Reset Keys';
+const String kResetLight = 'Reset';
+// const String kResetLight = 'Reset Keys';
 const String kResetting = 'Resetting';
 const String kScan = 'Re-scan';
-const String kIdentAll = 'Ping All';
+const String kIdentAll = 'Ping';
+// const String kIdentAll = 'Ping All';
 const String kDeviceManager = 'Devices';
 const String kBack = 'Back';
 const String kSave = 'Save';

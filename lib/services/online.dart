@@ -772,8 +772,9 @@ class Online extends ChangeNotifier {
           minimumVersion: kAppStoreMinVer,
           appStoreId: kAppStoreId,
         ));
-    final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
-    final Uri outUrl = shortDynamicLink.shortUrl;
+    // final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+    // final Uri outUrl = shortDynamicLink.shortUrl;
+    final Uri outUrl = parameters.link;
     return outUrl;
   }
 
