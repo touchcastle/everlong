@@ -8,6 +8,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/views/global_top_menu.dart';
 import 'package:everlong/ui/views/online/online_bottom_menu.dart';
 import 'package:everlong/ui/views/screens/screen.dart';
@@ -145,9 +146,11 @@ class _OnlineRoomState extends State<OnlineRoom> {
             decoration: BoxDecoration(gradient: kBGGradient(kOnlineBG)),
             child: Center(
               child: _roomClosed()
-                  ? sessionEnded(
-                      onPressed: () => Navigator.popUntil(
-                          context, ModalRoute.withName(kMainPageName)))
+                  ? sessionEnded(onPressed: () {
+                      context.read<Recorder>().stopAllActivities();
+                      Navigator.popUntil(
+                          context, ModalRoute.withName(kMainPageName));
+                    })
                   : Column(
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,

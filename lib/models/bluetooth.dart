@@ -291,7 +291,8 @@ class BLEDevice extends ChangeNotifier {
           if (Setting.isOffline()) {
             _classroom.prepareBeforeLocalBroadcast(_uintData);
           } else if (Setting.isOnline()) {
-            _online.broadcastMessage(_uintData);
+            ///Do not broadcast if recording.
+            if (!Setting.isRecording) _online.broadcastMessage(_uintData);
           }
         }
       });
@@ -309,7 +310,7 @@ class BLEDevice extends ChangeNotifier {
 
   /// Write MIDI data to device.
   Future write({required Uint8List message}) async {
-    if (this.characteristic != null) {
+    if (this.characteristic != null && message.isNotEmpty) {
       await this.characteristic?.write(message, withoutResponse: true);
     }
   }

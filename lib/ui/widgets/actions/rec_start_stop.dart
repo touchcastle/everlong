@@ -37,7 +37,9 @@ class _RecordButtonState extends State<RecordButton> {
         if (_isRecording) {
           context.read<Recorder>().stop(context: context);
         } else {
-          if (context.read<Classroom>().masterID != kNoMaster &&
+          if (((Setting.isOffline() &&
+                      context.read<Classroom>().masterID != kNoMaster) ||
+                  Setting.isOnline()) &&
               context.read<Classroom>().anyConnected()) {
             context.read<Recorder>().start(context);
           } else {

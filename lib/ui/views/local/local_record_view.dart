@@ -5,18 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:everlong/models/recorder_file.dart';
 import 'package:everlong/services/recorder.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/drag_handle.dart';
-import 'package:everlong/ui/widgets/actions/rec_start_stop.dart';
-import 'package:everlong/ui/widgets/actions/rec_playback_button.dart';
-import 'package:everlong/ui/widgets/actions/rec_del.dart';
-import 'package:everlong/ui/widgets/actions/rec_rename.dart';
-import 'package:everlong/ui/widgets/actions/rec_save.dart';
 import 'package:everlong/ui/views/record/record_container.dart';
 import 'package:everlong/ui/views/record/record_list_container.dart';
 import 'package:everlong/ui/views/record/record_file.dart';
+import 'package:everlong/ui/views/record/record_panel.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/sizes.dart';
+import 'package:everlong/utils/icons.dart';
 
 ///View for display recorder and list of record file on local session.
 class LocalRecordView extends StatefulWidget {
@@ -55,10 +53,28 @@ class _LocalRecordViewState extends State<LocalRecordView> {
     );
   }
 
+  SizedBox fileSourceLabel(
+      {required String icon, required double iconWidth, required String text}) {
+    return SizedBox(
+      height: 25,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          svgIcon(name: icon, color: kRed2, width: iconWidth),
+          SizedBox(width: 10),
+          Text(
+            text,
+            style: TextStyle(color: kRed2, fontSize: kDialogSubTextSize),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ScrollController _controller = new ScrollController();
-    double _minHeight = MediaQuery.of(context).size.height * 0.2;
+    double _minHeight = MediaQuery.of(context).size.height * 0.3;
     double _maxHeight = MediaQuery.of(context).size.height * 0.45;
     return RecordContainer(
       decoration: kLocalRecordBoxDecor,
@@ -67,6 +83,9 @@ class _LocalRecordViewState extends State<LocalRecordView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           resizeHandle(context, _minHeight, _maxHeight),
+          SizedBox(height: 15),
+          fileSourceLabel(icon: kBookIcon, iconWidth: 25, text: 'My Records'),
+          SizedBox(height: 5),
           RecordingPanel(),
           SizedBox(height: 5),
           RecordListContainer(
@@ -127,61 +146,6 @@ class _LocalRecordViewState extends State<LocalRecordView> {
           ),
         ],
       ),
-    );
-  }
-}
-
-///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-///Recording panel widget.
-///+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-class RecordingPanel extends StatelessWidget {
-  //Countdown timer display during recording
-  Center timer(String _timer) =>
-      Center(child: Text(_timer, style: kRecorderCountdown));
-
-  @override
-  Widget build(BuildContext context) {
-    // RecFile? _currentRecord = context.watch<Recorder>().currentRecord;
-    String _recordingDuration = context.watch<Recorder>().recordingTimerText;
-
-    //True when has recorded file pending for save.
-    // bool _hasRecorded() =>
-    //     _currentRecord != null &&
-    //     _currentRecord.events.length > 0 &&
-    //     !context.watch<Recorder>().isRecording;
-
-    return Row(
-      children: [
-        Expanded(flex: 2, child: RecordButton()),
-        Expanded(
-          flex: 3,
-          child: SizedBox(
-            height: 70,
-            child:
-                // _hasRecorded()
-                // ? Column(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Text(_currentRecord!.name),
-                //       Row(
-                //         mainAxisAlignment: MainAxisAlignment.center,
-                //         children: [
-                //           RecordPlayOrStop(file: _currentRecord),
-                //           RecordDelete(fileType: FileType.recording),
-                //           RecordRename(
-                //               fileType: FileType.recording,
-                //               file: _currentRecord),
-                //           RecordSave(file: _currentRecord),
-                //           recordTimer(timer: _currentRecord.totalTimeSecText),
-                //         ],
-                //       ),
-                //     ],
-                //   )
-                // :
-                timer(_recordingDuration),
-          ),
-        ),
-      ],
     );
   }
 }

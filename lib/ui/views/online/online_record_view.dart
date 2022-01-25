@@ -10,9 +10,11 @@ import 'package:everlong/services/online.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/drag_handle.dart';
+import 'package:everlong/ui/widgets/actions/rec_start_stop.dart';
 import 'package:everlong/ui/views/record/record_container.dart';
 import 'package:everlong/ui/views/record/record_list_container.dart';
 import 'package:everlong/ui/views/record/record_file.dart';
+import 'package:everlong/ui/views/record/record_panel.dart';
 import 'package:everlong/utils/colors.dart';
 import 'package:everlong/utils/styles.dart';
 import 'package:everlong/utils/sizes.dart';
@@ -80,7 +82,7 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
   Widget build(BuildContext context) {
     ScrollController _controller = new ScrollController();
     ScrollController _controller2 = new ScrollController();
-    double _minHeight = MediaQuery.of(context).size.height * 0.3;
+    double _minHeight = MediaQuery.of(context).size.height * 0.4;
     double _maxHeight = MediaQuery.of(context).size.height * 0.5;
     return RecordContainer(
       decoration: kOnlineRecordBoxDecor,
@@ -121,13 +123,14 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
           ),
 
           //Separator
-          SizedBox(height: 15),
+          SizedBox(height: 20),
 
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           //Local records
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           fileSourceLabel(icon: kBookIcon, iconWidth: 25, text: 'My Records'),
           SizedBox(height: 5),
+          RecordingPanel(),
           RecordListContainer(
             decoration: kOnlineStoredMidiDecor,
             controller: _controller2,

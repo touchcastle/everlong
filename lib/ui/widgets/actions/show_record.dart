@@ -20,11 +20,15 @@ class _ShowRecordState extends State<ShowRecord> {
   @override
   Widget build(BuildContext context) {
     bool _isShow = context.watch<Classroom>().showRecorder;
-    bool _online2Members() => context.read<Online>().memberCount > 1;
+
+    ///Change requirement to always available.
+    // bool _online2Members() => context.read<Online>().memberCount > 1;
+    bool _online2Members() => true;
+
     return Button(
       isActive: _isShow,
       icon: svgIcon(
-          name: Setting.isOffline() ? kWaveIcon : kShareIcon,
+          name: Setting.isOffline() ? kWaveIcon : kRecPlusIcon,
           color: _isShow
               ? Colors.white
               : Setting.isOnline()
@@ -33,7 +37,7 @@ class _ShowRecordState extends State<ShowRecord> {
                       : kOnlineDisabledLabel
                   : kLocalInactiveLabel,
           width: Setting.isOffline() ? kIconWidth : kIconWidth + 10),
-      text: Text(Setting.isOffline() ? 'Record' : 'Share',
+      text: Text(Setting.isOffline() ? 'Record' : 'Record+',
           style: buttonTextStyle(
               isActive: _isShow,
               isVertical: true,

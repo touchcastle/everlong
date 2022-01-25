@@ -44,6 +44,7 @@ const String kUploadIcon = 'assets/icons/upload.svg';
 const String kDownloadIcon = 'assets/icons/download.svg';
 const String kBookIcon = 'assets/icons/book.svg';
 const String kCloudIcon = 'assets/icons/cloud.svg';
+const String kRecPlusIcon = 'assets/icons/record_plus.svg';
 const String kRecStartIcon = 'assets/icons/rec_start.svg';
 const String kRecStopIcon = 'assets/icons/rec_stop.svg';
 const String kRecPlayIcon = 'assets/icons/rec_play.svg';

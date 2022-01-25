@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:everlong/services/setting.dart';
+import 'package:everlong/services/recorder.dart';
 import 'package:everlong/ui/widgets/svg.dart';
 import 'package:everlong/ui/widgets/actions/ok.dart';
 import 'package:everlong/ui/widgets/text_resp.dart';

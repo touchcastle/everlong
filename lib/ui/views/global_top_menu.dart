@@ -31,6 +31,7 @@ class GlobalTopMenu extends StatelessWidget {
                 .read<Online>()
                 .roomExit(context.read<Online>().roomID);
             context.read<Classroom>().resetClass();
+            context.read<Recorder>().stopAllActivities();
             context.read<Classroom>().showRecorder = false;
 
             //Pop back to main menu page.
