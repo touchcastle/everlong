@@ -55,8 +55,8 @@ class Setting {
   static List<String>? prefsRecords = [];
   static bool hostOnlineFeedback = false;
   static List<LightMonitor> lightMonitor = [];
-  static double onlineRecorderHeight = 350;
-  static double localRecorderHeight = 250;
+  static double onlineRecorderHeight = 380;
+  static double localRecorderHeight = 280;
   static String? lastJoinedSession;
 
   static void initialize(BuildContext context) async {

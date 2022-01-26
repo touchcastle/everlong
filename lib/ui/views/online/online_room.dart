@@ -95,11 +95,15 @@ class _OnlineRoomState extends State<OnlineRoom> {
   ///Set flag when user swipe to change view mode.
   ///New-Requirement to disable this function
   void _swiper(DragEndDetails details) {
-    // if (details.primaryVelocity! > 0) {
-    // context.read<Classroom>().toggleListDisplay(forceShow: false);
-    // } else if (details.primaryVelocity! < 0) {
-    // context.read<Classroom>().toggleListDisplay(forceShow: true);
-    // }
+    //Not swipe when resizing recorder view
+    double _yVelocity = details.velocity.pixelsPerSecond.dy;
+    double _xVelocity = details.velocity.pixelsPerSecond.dx;
+    bool _notVerticalDrag() => _xVelocity.abs() > _yVelocity.abs();
+    if (details.primaryVelocity! > 0 && _notVerticalDrag()) {
+      context.read<Classroom>().toggleListDisplay(forceShow: false);
+    } else if (details.primaryVelocity! < 0 && _notVerticalDrag()) {
+      context.read<Classroom>().toggleListDisplay(forceShow: true);
+    }
   }
 
   Padding _recorder() => Padding(
