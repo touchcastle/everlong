@@ -64,17 +64,19 @@ final Uint8List kLightMessagePopPiano =
 const int kLightKeyIndex = 7;
 const int kLightSwitchIndex = 8;
 
-final Uint8List kStart1 = Uint8List.fromList([1, 0]);
-final Uint8List kStart2 = Uint8List.fromList(
-    [k128, k128, 240, 15, 51, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-final Uint8List kStart2_2 = Uint8List.fromList(
-    [k128, k128, 240, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+// final Uint8List kStart1 = Uint8List.fromList([1, 0]);
+final Uint8List kStart2 =
+    Uint8List.fromList([240, 15, 51, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247]);
+// [k128, k128, 240, 15, 51, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 247]);
+// final Uint8List kStart2_2 = Uint8List.fromList(
+//     [k128, k128, 240, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 final Uint8List kStart3 =
-    Uint8List.fromList([k128, k128, 241, 5, 51, 22, 0, 0, 0, 247]);
-final Uint8List kStart4 =
-    Uint8List.fromList([k128, k128, 240, 12, 01, 115, 126, 128, 247]);
-final Uint8List kStart5 =
-    Uint8List.fromList([240, 0, 103, 101, 116, 1, 6, 0, 247]);
+    Uint8List.fromList([k128, k128, 240, 5, 51, 22, 0, 0, 0, 247]);
+// final Uint8List kStart4 =
+//     Uint8List.fromList([k128, k128, 240, 12, 01, 115, 126, 128, 247]);
+// final Uint8List kStart5 =
+//     Uint8List.fromList([240, 0, 103, 101, 116, 1, 6, 0, 247]);
+// final Uint8List kStartAlt = Uint8List.fromList([240, 15, 247]);
 
 /// Designated keys to light up during ping.
 final Uint8List kIdentLight = Uint8List.fromList([21, 41, 64, 84, 106]);

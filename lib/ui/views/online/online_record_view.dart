@@ -35,10 +35,11 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
   double _changed = 0;
 
   //drag-able widget to resize recorder's height
-  GestureDetector resizeHandle(
-      BuildContext context, double _minHeight, double _maxHeight) {
+  GestureDetector _resizeHandle(
+      BuildContext context, double _minHeight, double _maxHeight,
+      {required Widget child}) {
     return GestureDetector(
-      child: DragHandle(height: 15),
+      child: Container(color: Colors.transparent, child: child),
       onVerticalDragStart: (details) {
         _start = MediaQuery.of(context).size.height - details.globalPosition.dy;
       },
@@ -91,15 +92,24 @@ class _OnlineRecordViewState extends State<OnlineRecordView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          resizeHandle(context, _minHeight, _maxHeight),
-          SizedBox(height: 15),
+          _resizeHandle(
+            context,
+            _minHeight,
+            _maxHeight,
+            child: Column(
+              children: [
+                DragHandle(height: 15),
+                SizedBox(height: 15),
+                fileSourceLabel(
+                    icon: kCloudIcon, iconWidth: 30, text: 'Cloud Records'),
+                SizedBox(height: 5),
+              ],
+            ),
+          ),
 
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           //Cloud records
           //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-          fileSourceLabel(
-              icon: kCloudIcon, iconWidth: 30, text: 'Cloud Records'),
-          SizedBox(height: 5),
           RecordListContainer(
             decoration: kOnlineStoredMidiDecor,
             controller: _controller,

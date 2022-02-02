@@ -174,6 +174,9 @@ class Online extends ChangeNotifier {
   Future _createRoom(String displayName) async {
     this.roomID = await _generateRoomID();
     try {
+      /// Close any existing room with same host.
+      await _fireStore.closeExisting(uuid: _uid());
+
       ///Prepare room collections.
       await _fireStore.prepareCollections(roomID);
 
@@ -282,10 +285,11 @@ class Online extends ChangeNotifier {
 
   /// Function when entered room.
   Future _onRoomEntered({required String id}) async {
-    ///For host, when entered online room. Listen to all connected device.
+    ///when entered online room. Listen to all connected device.
     ///for new connected device after entered the room, logic in connection
     ///state will know and auto listen to new device.
-    if (isRoomHost) classroom.subscribeAllConnectedDevice();
+    // if (isRoomHost) classroom.subscribeAllConnectedDevice();
+    classroom.subscribeAllConnectedDevice();
 
     ///Subscribe to members document.
     _membersListener(id);
@@ -385,7 +389,7 @@ class Online extends ChangeNotifier {
           if (classroom.isHolding) classroom.holdingKeys.add(raw[kKeyPos]);
           _sendRoomMessage(_message);
         }
-      } else {
+      } else if (this.imListenable) {
         // Broadcast from student.
         // Student will broadcast message only between C3 and B5
         if (raw[kKeyPos] >= 48 && raw[kKeyPos] <= 83) {
@@ -712,11 +716,12 @@ class Online extends ChangeNotifier {
         memberId == _uid() &&
         listenable != this.imListenable) {
       this.imListenable = listenable;
-      if (this.imListenable) {
-        classroom.subscribeAllConnectedDevice();
-      } else {
-        classroom.cancelDeviceSubscribe();
-      }
+      // 29-JAN-2020: always listen to keyboard.
+      // if (this.imListenable) {
+      //   classroom.subscribeAllConnectedDevice();
+      // } else {
+      //   classroom.cancelDeviceSubscribe();
+      // }
     }
   }
 

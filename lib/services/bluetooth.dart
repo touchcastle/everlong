@@ -27,7 +27,8 @@ class BluetoothControl extends ChangeNotifier {
   bool isReScan = true;
 
   /// Constructor
-  BluetoothControl(this._classroom, this._online, this._recorder, this._db, this._ui);
+  BluetoothControl(
+      this._classroom, this._online, this._recorder, this._db, this._ui);
 
   /// Scan bluetooth devices with timeout as [kScanDuration] and
   /// MIDI service as [kMIDIService].
@@ -66,21 +67,25 @@ class BluetoothControl extends ChangeNotifier {
   bool _filterDuplicate({required ScanResult result}) {
     bool _success = false;
     print('scan result: ${result.device.name}');
-    if (_classroom.bluetoothDevices
-            .indexWhere((d) => d.id() == result.device.id.id) <
-        0) {
-      String _displayName =
-          _db.getStoredName(id: result.device.id.id, name: result.device.name);
-      BLEDevice _new = BLEDevice(_classroom, _online, _recorder,
-          device: result.device, displayName: _displayName);
-      _new.initDevice();
-      _classroom.bluetoothDevices.add(_new);
-      if (isReScan && _classroom.bluetoothDevices.length > 1) {
-        _ui.listViewInsert(_classroom.bluetoothDevices.length - 1);
+    if (result.device.name != '') {
+      if (_classroom.bluetoothDevices
+              .indexWhere((d) => d.id() == result.device.id.id) <
+          0) {
+        String _displayName = _db.getStoredName(
+            id: result.device.id.id, name: result.device.name);
+        BLEDevice _new = BLEDevice(_classroom, _online, _recorder,
+            device: result.device, displayName: _displayName);
+        _new.initDevice();
+        _classroom.bluetoothDevices.add(_new);
+        if (isReScan && _classroom.bluetoothDevices.length > 1) {
+          _ui.listViewInsert(_classroom.bluetoothDevices.length - 1);
+        }
+        _success = true;
+      } else {
+        print('Duplicate to trash');
       }
-      _success = true;
     } else {
-      print('Duplicate to trash');
+      print('untitle detected!');
     }
     return _success;
   }

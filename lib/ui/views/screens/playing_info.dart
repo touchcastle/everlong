@@ -47,16 +47,12 @@ class PlayingInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: [
-                SizedBox(
-                  width: 70,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text('Note(s): ',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
-                  ),
+                Container(
+                  child: Text('Note(s): ',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black)),
                 ),
                 Flexible(
                   child: Text(

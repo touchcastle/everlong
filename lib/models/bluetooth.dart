@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
@@ -128,7 +129,6 @@ class BLEDevice extends ChangeNotifier {
     this.lastKnownState = BluetoothDeviceState.connected;
     this.onceConnected = true;
     this.initPiano();
-    // if (Platform.isAndroid) this._requestMTU();
     await this._getMIDIService();
     await this._getMIDICharacteristic();
 
@@ -144,10 +144,13 @@ class BLEDevice extends ChangeNotifier {
     bool _isOnlineSpeaker() =>
         Setting.sessionMode == SessionMode.online &&
         (_online.isRoomHost || _online.imListenable);
+    bool _isOnline() => Setting.sessionMode == SessionMode.online;
 
-    if (_isLocalMaster() || _isOnlineSpeaker()) this.listenTo();
+    // if (_isLocalMaster() || _isOnlineSpeaker()) this.listenTo();
+    if (_isLocalMaster() || _isOnline()) this.listenTo();
 
     _classroom.sortList(ReorderType.connected, this.id());
+    if (Platform.isAndroid) await this._requestMTU();
 
     //Handshake for Pop Piano.
     /**
@@ -156,20 +159,21 @@ class BLEDevice extends ChangeNotifier {
      * ( and also the message below are not follow the standard of Sysex format )
      */
     if (_isPopPiano()) {
-      this.write(message: kStart2);
-      await Future.delayed(Duration(milliseconds: 200));
-      this.write(message: kStart3);
+      if (Platform.isAndroid) await Future.delayed(Duration(milliseconds: 300));
+      await this.write(message: kStart2);
+      // await Future.delayed(Duration(milliseconds: 200));
+      // this.write(message: kStart3);
     }
   }
 
   /// Request maximum MTU for android device.
-  // void _requestMTU() async {
-  //   try {
-  //     await this.device.requestMtu(512);
-  //   } catch (e) {
-  //     print('MTU Request error: $e');
-  //   }
-  // }
+  Future _requestMTU() async {
+    try {
+      await this.device.requestMtu(512);
+    } catch (e) {
+      print('MTU Request error: $e');
+    }
+  }
 
   /// Disconnected Event(Device stage) handler
   void _onDisconnected() async {

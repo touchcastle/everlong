@@ -48,7 +48,9 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(kRecRenameBoxLabel, style: textFieldLabel(color: kTextColorRed)),
+          Text(kRecRenameBoxLabel,
+              style: textFieldLabel(
+                  color: Setting.isOnline() ? Colors.white : kTextColorRed)),
           Theme(
             data: Theme.of(context).copyWith(
                 textSelectionTheme:
@@ -104,7 +106,7 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: kAllBorderRadius,
-        gradient: kBGGradient(kLocalBG),
+        gradient: kBGGradient(Setting.isOnline() ? kOnlineBG : kLocalBG),
       ),
       child: Padding(
         padding: EdgeInsets.only(bottom: 15),
@@ -112,9 +114,11 @@ class _RecordRenameDialogState extends State<RecordRenameDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             dialogHeaderBar(
-              barColor: kLocalAccentColor,
-              exitIconAreaColor: kYellowMain,
-              exitIconColor: kTextColorRed,
+              barColor:
+                  Setting.isOnline() ? kOnlineAccentColor : kLocalAccentColor,
+              exitIconAreaColor:
+                  Setting.isOnline() ? kDarkOnlineBG : kYellowMain,
+              exitIconColor: Setting.isOnline() ? null : kTextColorRed,
               titleIconName: kRenameIcon,
               title: kRecRenameHeader,
             ),

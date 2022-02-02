@@ -218,42 +218,36 @@ class FireStore {
         .catchError((error) => print("Failed to delete member: $error"));
   }
 
-  /// Delete room function
-  /// 1. delete available member from room.
-  /// 2. delete room(doc)
-  Future closeRoom(String roomID) async {
-    //Room's message
-    await messageCol.doc(kFireStoreMessageDoc).delete();
-
-    //Student's message
-    await studentMessageCol.doc(kFireStoreMessageDoc).delete();
-
-    //Members
-    WriteBatch _batch = FirebaseFirestore.instance.batch();
-    await membersCol.get().then((querySnapshot) {
-      querySnapshot.docs.forEach((document) {
-        _batch.delete(document.reference);
-      });
-    });
-
-    //Records
-    await recordsCol.get().then((querySnapshot) {
-      querySnapshot.docs.forEach((document) {
-        _batch.delete(document.reference);
-      });
-    });
-    await _batch.commit();
-
-    await col.doc(roomID).delete();
-    // //Record delete
-    // WriteBatch _recBatch = FirebaseFirestore.instance.batch();
-    // await recordsCol.get().then((querySnapshot) {
-    //   querySnapshot.docs.forEach((document) {
-    //     _recBatch.delete(document.reference);
-    //   });
-    // });
-    // await _recBatch.commit();
-  }
+  // /// Delete room function
+  // /// 1. delete available member from room.
+  // /// 2. delete room(doc)
+  // Future closeRoom(String roomID) async {
+  //   //Room's message
+  //   await messageCol.doc(kFireStoreMessageDoc).delete();
+  //
+  //   //Student's message
+  //   await studentMessageCol.doc(kFireStoreMessageDoc).delete();
+  //
+  //   WriteBatch _batch = FirebaseFirestore.instance.batch();
+  //
+  //   //Records
+  //   await recordsCol.get().then((querySnapshot) {
+  //     querySnapshot.docs.forEach((document) {
+  //       _batch.delete(document.reference);
+  //     });
+  //   });
+  //
+  //   //Members
+  //   await membersCol.get().then((querySnapshot) {
+  //     querySnapshot.docs.forEach((document) {
+  //       _batch.delete(document.reference);
+  //     });
+  //   });
+  //
+  //   await _batch.commit();
+  //
+  //   await col.doc(roomID).delete();
+  // }
 
   /// To check is room ID is available.
   Future<bool> checkRoomAvail(String id) async {
@@ -309,6 +303,56 @@ class FireStore {
       sender: sender,
     );
     return _result;
+  }
+
+  ///Find ant docs(room) which filed 'create_by' is same as [uuid] then close.
+  Future closeExisting({required String uuid}) async {
+    await col
+      ..where('create_by', isEqualTo: uuid).get().then((value) async {
+        if (value.docs.length > 0) {
+          for (int _i = 0; _i < value.docs.length; _i++) {
+            await closeRoom(value.docs[_i].id);
+          }
+        }
+      });
+  }
+
+  Future closeRoom(String roomID) async {
+    CollectionReference _messageCol =
+        col.doc(roomID).collection(kFireStoreMessageCol);
+    CollectionReference _studentMessageCol =
+        col.doc(roomID).collection(kFireStoreStudentMessageCol);
+    CollectionReference _membersCol =
+        col.doc(roomID).collection(kFireStoreMemberCol);
+    CollectionReference _recordsCol =
+        col.doc(roomID).collection(kFireStoreRecordsCol);
+
+    //Room's message
+    await _messageCol.doc(kFireStoreMessageDoc).delete();
+
+    //Student's message
+    await _studentMessageCol.doc(kFireStoreMessageDoc).delete();
+
+    WriteBatch _batch = FirebaseFirestore.instance.batch();
+
+    //Records
+    await _recordsCol.get().then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        _batch.delete(document.reference);
+      });
+    });
+
+    //Members
+    //**Should be last
+    await _membersCol.get().then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        _batch.delete(document.reference);
+      });
+    });
+
+    await _batch.commit();
+
+    await col.doc(roomID).delete();
   }
 
   /// Share midi record to room.
