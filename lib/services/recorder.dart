@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:nanoid/nanoid.dart';
 import 'package:intl/intl.dart';
 import 'package:everlong/models/recorder_file.dart';
+import 'package:everlong/models/record_database.dart';
 import 'package:everlong/services/classroom.dart';
+import 'package:everlong/services/record_db.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/ui/views/record/record_rename.dart';
 import 'package:everlong/ui/widgets/dialog.dart';
@@ -26,6 +28,7 @@ enum FileType {
 ///Class for recording new file and manage with recorded file.
 class Recorder extends ChangeNotifier {
   Classroom classroom;
+  RecordDatabase recordDatabase;
 
   ///List of each note in particular timestamp during new recording.
   List<RecEvent> recordingEvents = [];
@@ -58,7 +61,7 @@ class Recorder extends ChangeNotifier {
   ///in-app list).
   List<RecFile> storedRecords = [];
 
-  Recorder(this.classroom);
+  Recorder(this.classroom, this.recordDatabase);
 
   ///Initialize recorder
   void init() {
@@ -77,12 +80,30 @@ class Recorder extends ChangeNotifier {
   ///Get list of stored records from memory(String) and sync to in-app list.
   void _getFromPrefs() {
     storedRecords.clear();
-    if (Setting.prefsRecords != null && Setting.prefsRecords!.length > 0) {
-      //Convert all memory records(String) into workable data type.
+    // if (Setting.prefsRecords != null && Setting.prefsRecords!.length > 0) {
+    //   //Convert all memory records(String) into workable data type.
+    //   for (int i = 0; i < Setting.prefsRecords!.length; i++) {
+    //     RecFile _append = StringToFile(Setting.prefsRecords![i]);
+    //     storedRecords.add(_append);
+    //   }
+    // }
+
+    ///TODO: NEW
+    if (recordDatabase.databaseRecord != null &&
+        recordDatabase.databaseRecord!.length > 0) {
       for (int i = 0; i < Setting.prefsRecords!.length; i++) {
-        RecFile _append = StringToFile(Setting.prefsRecords![i]);
-        storedRecords.add(_append);
+        for (DatabaseRecord _record in recordDatabase.databaseRecord!
+            .where((element) => element.id == Setting.prefsRecords![i])) {
+          RecFile _append = StringToFile(_record.record);
+          storedRecords.add(_append);
+        }
       }
+
+      // for (int i = 0; i < recordDatabase.databaseRecord!.length; i++) {
+      //   RecFile _append =
+      //       StringToFile(recordDatabase.databaseRecord![i].record);
+      //   storedRecords.add(_append);
+      // }
     }
   }
 
@@ -378,10 +399,11 @@ class Recorder extends ChangeNotifier {
     Setting.prefsRecords!.removeAt(oldIndex);
 
     //Convert new to string
-    String _asString = fileToString(_file);
+    // String _asString = fileToString(_file);
 
     //Insert new file(new name) at same index as before.
-    Setting.prefsRecords!.insert(newIndex, _asString);
+    Setting.prefsRecords!.insert(newIndex, _file.id);
+    // Setting.prefsRecords!.insert(newIndex, _asString);
 
     //Update prefs
     Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
@@ -424,10 +446,14 @@ class Recorder extends ChangeNotifier {
     String _asString = fileToString(file);
 
     //Insert new file(new name) at same index as before.
-    Setting.prefsRecords!.insert(_prefIndex, _asString);
+    Setting.prefsRecords!.insert(_prefIndex, file.id);
+    // Setting.prefsRecords!.insert(_prefIndex, _asString);
 
     //Update prefs
     Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+
+    ///TODO: NEW
+    recordDatabase.updateRecord(id: file.id, data: _asString);
   }
 
   void _cancelActive() {
@@ -451,11 +477,15 @@ class Recorder extends ChangeNotifier {
     String _asString = fileToString(file);
 
     //Append to in-app prefs list
-    Setting.prefsRecords?.insert(0, _asString);
+    // Setting.prefsRecords?.insert(0, _asString);
+    Setting.prefsRecords?.insert(0, file.id);
     // Setting.prefsRecords?.add(_asString);
 
     //Update prefs
     Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+
+    ///TODO: NEW
+    recordDatabase.updateRecord(id: file.id, data: _asString);
 
     //Clear current record after saved
     clear();
@@ -466,11 +496,15 @@ class Recorder extends ChangeNotifier {
   void deleteRecord(String recordId) {
     storedRecords.removeWhere((item) => item.id == recordId);
 
-    Setting.prefsRecords
-        ?.removeWhere((item) => item.substring(0, kRecordIdLength) == recordId);
+    Setting.prefsRecords?.removeWhere((item) => item == recordId);
+    // Setting.prefsRecords
+    //     ?.removeWhere((item) => item.substring(0, kRecordIdLength) == recordId);
 
     //Update prefs
     Setting.saveListString(kRecordsPref, Setting.prefsRecords!);
+
+    ///TODO: NEW
+    recordDatabase.dbDeleteRecord(id: recordId);
 
     notifyListeners();
   }

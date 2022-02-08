@@ -75,7 +75,8 @@ const String kMainPageName = '/main_menu_page';
 
 /// Database name and Table name.
 const String kDbName = 'midi_device.db'; //Database name
-const String kDbDeviceName = 'device_name'; //Table name
+const String kDbDeviceName = 'device_name'; //Table name for device name
+const String kDbRecord = 'record'; //Table name for record
 
 /// String to store in static when there is no host.
 const String kNoMaster = 'N/A';

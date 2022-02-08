@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:everlong/services/bluetooth.dart';
 import 'package:everlong/services/database.dart';
 import 'package:everlong/services/device_db.dart';
+import 'package:everlong/services/record_db.dart';
 import 'package:everlong/services/classroom.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/services/online.dart';
@@ -23,13 +24,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   DeviceDatabase db = DeviceDatabase();
+  RecordDatabase dbRecord = RecordDatabase();
   ListAnimation ui = ListAnimation();
   // Analytic analytic = Analytic();
   // FireStore fireStore = FireStore(analytic);
   Classroom classroom = Classroom(db, ui);
   // Online online = Online(classroom, fireStore, analytic);
   Online online = Online(classroom);
-  Recorder recorder = Recorder(classroom);
+  Recorder recorder = Recorder(classroom, dbRecord);
   BluetoothControl bluetooth =
       BluetoothControl(classroom, online, recorder, db, ui);
 

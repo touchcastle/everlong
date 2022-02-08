@@ -9,6 +9,7 @@ import 'package:everlong/services/online.dart';
 import 'package:everlong/services/animation.dart';
 import 'package:everlong/services/setting.dart';
 import 'package:everlong/services/device_db.dart';
+import 'package:everlong/services/record_db.dart';
 import 'package:everlong/services/staff.dart';
 import 'package:everlong/ui/views/main_menu.dart';
 import 'package:everlong/utils/constants.dart';
@@ -26,6 +27,10 @@ class _LandingScreenState extends State<LandingScreen> {
   void _readStoredDevices() async =>
       context.read<DeviceDatabase>().databaseDeviceName =
           await context.read<DeviceDatabase>().dbQueryDevice();
+
+  void _readStoredRecords() async =>
+      context.read<RecordDatabase>().databaseRecord =
+          await context.read<RecordDatabase>().dbQueryRecord();
 
   void _appInitialize() async {
     try {
@@ -55,6 +60,7 @@ class _LandingScreenState extends State<LandingScreen> {
     Setting.sessionMode = SessionMode.none;
     Setting.initialize(context);
     _readStoredDevices();
+    _readStoredRecords();
     _appInitialize();
     super.initState();
   }
