@@ -39,6 +39,7 @@ void main() async {
     providers: [
       ListenableProvider<BluetoothControl>(create: (_) => bluetooth),
       Provider<DeviceDatabase>(create: (_) => db),
+      Provider<RecordDatabase>(create: (_) => dbRecord),
       Provider<ListAnimation>(create: (_) => ui),
       ListenableProvider<Online>(create: (_) => online),
       ListenableProvider<Recorder>(create: (_) => recorder),

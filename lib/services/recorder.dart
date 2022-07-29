@@ -445,7 +445,6 @@ class Recorder extends ChangeNotifier {
     //Convert new to string
     String _asString = fileToString(file);
 
-    //Insert new file(new name) at same index as before.
     Setting.prefsRecords!.insert(_prefIndex, file.id);
     // Setting.prefsRecords!.insert(_prefIndex, _asString);
 

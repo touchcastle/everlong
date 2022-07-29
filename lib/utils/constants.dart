@@ -27,7 +27,7 @@ const double kMobileDialogMargin = (1.0 - kMobileDialogRatio) / 2;
 
 ///Config
 // String kVersion = Platform.isIOS ? '1.2.0' : '1.2.0';
-const String kVersion = '1.2.0';
+const String kVersion = '1.2.1';
 const String kHeroLogo = 'logo';
 const Duration kClockInPeriod = Duration(milliseconds: 15000);
 const int kClockInCheckPeriod = 25000; //in millisec.

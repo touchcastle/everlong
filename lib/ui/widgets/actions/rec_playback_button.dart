@@ -39,8 +39,9 @@ class _RecordPlayOrStopState extends State<RecordPlayOrStop> {
         } else {
           if (!context.read<Classroom>().anyConnected()) {
             Snackbar.show(context, text: kNoConnectedMsg);
+          } else {
+            context.read<Recorder>().playbackStart(widget.file);
           }
-          context.read<Recorder>().playbackStart(widget.file);
         }
       },
     );
